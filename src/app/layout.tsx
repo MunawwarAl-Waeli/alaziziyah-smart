@@ -1,17 +1,16 @@
 import type { Metadata } from "next";
-import { Tajawal } from "next/font/google"; // استيراد الخط
+import { Inter } from "next/font/google"; // 1. استيراد الخط
 import "./globals.css";
+import { Header } from "@/components/layout/header";
+import { ThemeProvider } from "@/components/theme/provider";
+import { GridBackground } from "@/components/ui/GridBackground";
 
-// إعداد الخط بجميع الأوزان المطلوبة
-const tajawal = Tajawal({
-  subsets: ["arabic"],
-  weight: ["200", "400", "500", "700", "800"],
-  variable: "--font-tajawal", // متغير CSS
-});
+// 2. تعريف الخط وإعداده
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "اسم  | للمظلات والسواتر",
-  description: "أفضل حلول التظليل في جدة والمملكة",
+  title: "العزيزية للحلول الذكية",
+  description: "المصنع السعودي الرائد للمظلات والأنظمة الذكية",
 };
 
 export default function RootLayout({
@@ -20,9 +19,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ar" dir="rtl"> {/* تفعيل الاتجاه من اليمين لليسار */}
-      <body className={tajawal.className}>
-        {children}
+    <html lang="ar" dir="rtl" suppressHydrationWarning>
+      {/* 3. استخدام الخط هنا أصبح صحيحاً الآن */}
+      <body className={`${inter.className} bg-background text-foreground`}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark" // الافتراضي ليلي
+          enableSystem
+          disableTransitionOnChange
+        >
+          <GridBackground />
+          <Header />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
