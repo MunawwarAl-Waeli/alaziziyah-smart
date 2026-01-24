@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/layout/header";
 import { ThemeProvider } from "@/components/theme/provider";
 import { GridBackground } from "@/components/ui/GridBackground";
+import { Footer } from "@/components/layout/footer";
 
 // 2. تعريف الخط وإعداده
 const inter = Inter({ subsets: ["latin"] });
@@ -31,6 +32,7 @@ export default function RootLayout({
           <GridBackground />
           <Header />
           {children}
+          <Footer />
         </ThemeProvider>
       </body>
     </html>

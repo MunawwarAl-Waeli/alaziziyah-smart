@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState } from "react";
@@ -212,7 +213,6 @@ export function Hero() {
         <ArrowDown className="w-5 h-5 drop-shadow-md" />
       </motion.div>
 
-    
     </section>
   );
 }
