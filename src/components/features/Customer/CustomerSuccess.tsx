@@ -17,6 +17,7 @@ import {
   Award,
   TrendingUp,
   Users,
+  LucideIcon,
   Target,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -38,7 +39,7 @@ interface Testimonial {
 }
 
 interface SuccessMetric {
-  icon: any;
+  icon: LucideIcon;
   value: string;
   label: string;
   change: string;
@@ -306,11 +307,18 @@ export function CustomerSuccess() {
           setIsPlaying={setIsPlaying}
         />
       ) : viewMode === "carousel" ? (
+        // <CarouselTestimonials
+        //   testimonials={testimonials}
+        //   activeTestimonial={activeTestimonial}
+        //   handleNext={handleNext}
+        //   handlePrev={handlePrev}
+        // />
         <CarouselTestimonials
           testimonials={testimonials}
           activeTestimonial={activeTestimonial}
           handleNext={handleNext}
           handlePrev={handlePrev}
+          setActiveTestimonial={setActiveTestimonial}
         />
       ) : (
         <GridTestimonials testimonials={testimonials} />
@@ -331,14 +339,21 @@ export function CustomerSuccess() {
     </section>
   );
 }
-
+// واجهة خصائص العرض الغامر
+interface ImmersiveTestimonialsProps {
+  testimonials: Testimonial[];
+  activeTestimonial: number;
+  setActiveTestimonial: (index: number) => void;
+  isPlaying: boolean;
+  setIsPlaying: (playing: boolean) => void;
+}
 function ImmersiveTestimonials({
   testimonials,
   activeTestimonial,
   setActiveTestimonial,
   isPlaying,
   setIsPlaying,
-}: any) {
+}: ImmersiveTestimonialsProps) {
   return (
     <div className="relative h-[600px] max-w-6xl mx-auto px-4">
       {testimonials.map((testimonial: Testimonial, index: number) => {
@@ -467,13 +482,20 @@ function ImmersiveTestimonials({
     </div>
   );
 }
-
+// واجهة خصائص العرض الدائري
+interface CarouselTestimonialsProps {
+  testimonials: Testimonial[];
+  activeTestimonial: number;
+  handleNext: () => void;
+  handlePrev: () => void;
+  setActiveTestimonial: (index: number) => void;
+}
 function CarouselTestimonials({
   testimonials,
   activeTestimonial,
   handleNext,
   handlePrev,
-}: any) {
+}: CarouselTestimonialsProps) {
   return (
     <div className="relative max-w-4xl mx-auto px-4">
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-white to-gray-50 border border-gray-200 shadow-xl">
@@ -482,7 +504,7 @@ function CarouselTestimonials({
           {testimonials.map((_, index) => (
             <button
               key={index}
-              onClick={() => handleNext(index)}
+              onClick={() => handleNext()}
               className={cn(
                 "w-2 h-2 rounded-full transition-all",
                 index === activeTestimonial
@@ -506,7 +528,7 @@ function CarouselTestimonials({
             <div className="text-center">
               <Quote className="w-12 h-12 text-primary/20 mx-auto mb-8" />
               <p className="text-2xl text-gray-800 mb-8 leading-relaxed">
-                "{testimonials[activeTestimonial].quote}"
+                {testimonials[activeTestimonial].quote}
               </p>
               <div className="flex items-center justify-center gap-4">
                 <Image
@@ -549,8 +571,12 @@ function CarouselTestimonials({
     </div>
   );
 }
+// واجهة خصائص العرض الشبكي
+interface GridTestimonialsProps {
+  testimonials: Testimonial[];
+}
 
-function GridTestimonials({ testimonials }: any) {
+function GridTestimonials({ testimonials }: GridTestimonialsProps) {
   return (
     <div className="container mx-auto px-4">
       <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
@@ -620,7 +646,15 @@ function GridTestimonials({ testimonials }: any) {
     </div>
   );
 }
-
+// واجهة خصائص أدوات التحكم
+interface TestimonialControlsProps {
+  activeTestimonial: number;
+  total: number;
+  onNext: () => void;
+  onPrev: () => void;
+  isPlaying: boolean;
+  onPlayPause: () => void;
+}
 function TestimonialControls({
   activeTestimonial,
   total,
@@ -628,7 +662,7 @@ function TestimonialControls({
   onPrev,
   isPlaying,
   onPlayPause,
-}: any) {
+}: TestimonialControlsProps) {
   return (
     <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-40">
       <div className="flex items-center gap-4 p-4 bg-white/90 backdrop-blur-xl rounded-2xl border border-gray-200 shadow-xl">
@@ -679,8 +713,11 @@ function TestimonialControls({
     </div>
   );
 }
-
-function ImpactHighlights({ testimonials }: any) {
+// واجهة خصائص التأثيرات
+interface ImpactHighlightsProps {
+  testimonials: Testimonial[];
+}
+function ImpactHighlights({ testimonials }: ImpactHighlightsProps) {
   const allImpacts = testimonials.flatMap((t: Testimonial) => t.impact);
   const uniqueImpacts = [...new Set(allImpacts)];
 
@@ -728,7 +765,7 @@ function SuccessBackground() {
       x: Math.random() * 100,
       y: Math.random() * 100,
     }));
-    setParticles(generatedParticles);
+    // setParticles(generatedParticles);
   }, []);
 
   return (

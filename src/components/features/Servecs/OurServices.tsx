@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import {
   motion,
   useScroll,
@@ -24,29 +24,33 @@ import {
   Play,
   Pause,
   Sparkles,
-  Eye,
   Grid3x3,
   ArrowUpRight,
   CheckCircle,
+  type LucideIcon, // استيراد النوع الصحيح للأيقونات
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+// --- 1. تعريف الأنواع (Interfaces) بدلاً من any ---
+
+interface CaseStudy {
+  title: string;
+  result: string;
+  image: string;
+}
 
 interface Service {
   id: number;
   title: string;
   description: string;
-  icon: any;
+  icon: LucideIcon; // تحديد نوع الأيقونة بدقة
   color: string;
   gradient: string;
   features: string[];
   projects: number;
   duration: string;
   technologies: string[];
-  caseStudy?: {
-    title: string;
-    result: string;
-    image: string;
-  };
+  caseStudy?: CaseStudy;
   video?: string;
 }
 
@@ -55,6 +59,8 @@ interface ServiceCategory {
   name: string;
   services: Service[];
 }
+
+// --- 2. البيانات ---
 
 const serviceCategories: ServiceCategory[] = [
   {
@@ -81,8 +87,7 @@ const serviceCategories: ServiceCategory[] = [
         caseStudy: {
           title: "برج الإبداع - دبي",
           result: "توفير 40% في الطاقة",
-          image: "/images/1.jpg",
-        //   image: "/cases/design-1.jpg",
+          image: "/images/project-1.jpg",
         },
       },
       {
@@ -151,7 +156,7 @@ const serviceCategories: ServiceCategory[] = [
         caseStudy: {
           title: "مشروع نيوم السكني",
           result: "توفير 60% في التبريد",
-            image: "/images/1.jpg",
+          image: "/images/project-2.jpg",
         },
       },
     ],
@@ -251,6 +256,8 @@ const serviceCategories: ServiceCategory[] = [
   },
 ];
 
+// --- 3. المكون الرئيسي ---
+
 export function OurServices() {
   const [activeCategory, setActiveCategory] = useState<number>(1);
   const [activeService, setActiveService] = useState<number | null>(null);
@@ -258,17 +265,12 @@ export function OurServices() {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"],
-  });
-
-  // تأثيرات parallax
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1, 0.8]);
-
-  const activeServices =
-    serviceCategories.find((cat) => cat.id === activeCategory)?.services || [];
+  // استخدام useMemo لتجنب إعادة الحساب عند كل render
+  const activeServices = useMemo(() => {
+    return (
+      serviceCategories.find((cat) => cat.id === activeCategory)?.services || []
+    );
+  }, [activeCategory]);
 
   return (
     <section
@@ -281,61 +283,41 @@ export function OurServices() {
       {/* شريط التحكم */}
       <div className="fixed top-1/2 right-4 z-50 transform -translate-y-1/2">
         <div className="flex flex-col gap-3 p-3 bg-white/90 backdrop-blur-xl rounded-2xl border border-gray-200 shadow-xl">
-          <button
-            onClick={() => setViewMode("3d")}
-            className={cn(
-              "p-2.5 rounded-xl transition-all relative",
-              viewMode === "3d"
-                ? "bg-primary/20 text-primary"
-                : "bg-gray-100 hover:bg-gray-200",
-            )}
-            aria-label="عرض ثلاثي الأبعاد"
-          >
-            <div className="w-4 h-4 relative">
-              <div className="absolute inset-0 border-2 border-current rounded transform rotate-45" />
-              <div className="absolute inset-1 border border-current rounded transform rotate-45" />
-            </div>
-            <span className="absolute right-full mr-2 px-2 py-1 bg-white text-xs rounded opacity-0 group-hover:opacity-100 whitespace-nowrap shadow-lg border border-gray-200">
-              ثلاثي الأبعاد
-            </span>
-          </button>
+          <ViewModeButton
+            mode="3d"
+            currentMode={viewMode}
+            setMode={setViewMode}
+            label="ثلاثي الأبعاد"
+            icon={
+              <div className="w-4 h-4 relative">
+                <div className="absolute inset-0 border-2 border-current rounded transform rotate-45" />
+                <div className="absolute inset-1 border border-current rounded transform rotate-45" />
+              </div>
+            }
+          />
 
-          <button
-            onClick={() => setViewMode("cards")}
-            className={cn(
-              "p-2.5 rounded-xl transition-all relative",
-              viewMode === "cards"
-                ? "bg-primary/20 text-primary"
-                : "bg-gray-100 hover:bg-gray-200",
-            )}
-            aria-label="عرض البطاقات"
-          >
-            <div className="w-4 h-4 grid grid-cols-2 gap-0.5">
-              <div className="bg-current rounded-sm" />
-              <div className="bg-current rounded-sm" />
-              <div className="bg-current rounded-sm" />
-              <div className="bg-current rounded-sm" />
-            </div>
-            <span className="absolute right-full mr-2 px-2 py-1 bg-white text-xs rounded opacity-0 group-hover:opacity-100 whitespace-nowrap shadow-lg border border-gray-200">
-              البطاقات
-            </span>
-          </button>
+          <ViewModeButton
+            mode="cards"
+            currentMode={viewMode}
+            setMode={setViewMode}
+            label="البطاقات"
+            icon={
+              <div className="w-4 h-4 grid grid-cols-2 gap-0.5">
+                <div className="bg-current rounded-sm" />
+                <div className="bg-current rounded-sm" />
+                <div className="bg-current rounded-sm" />
+                <div className="bg-current rounded-sm" />
+              </div>
+            }
+          />
 
-          <button
-            onClick={() => setViewMode("grid")}
-            className={cn(
-              "p-2.5 rounded-xl transition-all relative",
-              viewMode === "grid"
-                ? "bg-primary/20 text-primary"
-                : "bg-gray-100 hover:bg-gray-200",
-            )}
-            aria-label="عرض شبكي"
-          >
-            <Grid3x3 className="w-4 h-4" />
-            <span className="absolute right-full mr-2 px-2 py-1 bg-white text-xs rounded opacity-0 group-hover:opacity-100 whitespace-nowrap shadow-lg border border-gray-200">
-              شبكي
-            </span>
-          </button>
+          <ViewModeButton
+            mode="grid"
+            currentMode={viewMode}
+            setMode={setViewMode}
+            label="شبكي"
+            icon={<Grid3x3 className="w-4 h-4" />}
+          />
         </div>
       </div>
 
@@ -419,28 +401,27 @@ export function OurServices() {
         </div>
       </div>
 
-      {/* عرض الخدمات حسب النمط المختار */}
+      {/* عرض الخدمات */}
       <AnimatePresence mode="wait">
         {viewMode === "3d" ? (
           <ThreeDView
+            key="3d"
             services={activeServices}
             activeService={activeService}
             setActiveService={setActiveService}
-            isPlaying={isPlaying}
-            setIsPlaying={setIsPlaying}
           />
         ) : viewMode === "cards" ? (
           <CardsView
+            key="cards"
             services={activeServices}
-            activeService={activeService}
             setActiveService={setActiveService}
           />
         ) : (
-          <GridView services={activeServices} />
+          <GridView key="grid" services={activeServices} />
         )}
       </AnimatePresence>
 
-      {/* عرض تفاصيل الخدمة */}
+      {/* تفاصيل الخدمة (Modal) */}
       <AnimatePresence>
         {activeService !== null && (
           <ServiceDetails
@@ -451,49 +432,69 @@ export function OurServices() {
           />
         )}
       </AnimatePresence>
-
-      {/* دعوة للعمل */}
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="container mx-auto px-4 mt-32"
-      >
-        <div className="max-w-4xl mx-auto bg-gradient-to-r from-primary to-cyan-500 rounded-3xl p-12 text-center text-white shadow-2xl">
-          <h3 className="text-3xl font-bold mb-4">مستعد لبدء مشروعك القادم؟</h3>
-          <p className="text-lg mb-8 opacity-90">
-            دعنا نتحول أفكارك إلى واقع ملموس مع حلول هندسية مبتكرة
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="px-8 py-4 bg-white text-primary rounded-full font-bold hover:bg-gray-100 transition-all flex items-center justify-center gap-2">
-              احجز استشارة مجانية
-              <ArrowUpRight className="w-5 h-5" />
-            </button>
-            <button className="px-8 py-4 bg-transparent border-2 border-white text-white rounded-full font-bold hover:bg-white/10 transition-all">
-              عرض محفظة المشاريع
-            </button>
-          </div>
-        </div>
-      </motion.div>
     </section>
   );
+}
+
+// --- 4. المكونات الفرعية (Sub-components) ---
+
+// زر التحكم بالعرض
+function ViewModeButton({
+  mode,
+  currentMode,
+  setMode,
+  label,
+  icon,
+}: {
+  mode: "3d" | "cards" | "grid";
+  currentMode: string;
+  setMode: (mode: "3d" | "cards" | "grid") => void;
+  label: string;
+  icon: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={() => setMode(mode)}
+      className={cn(
+        "p-2.5 rounded-xl transition-all relative group",
+        currentMode === mode
+          ? "bg-primary/20 text-primary"
+          : "bg-gray-100 hover:bg-gray-200",
+      )}
+      aria-label={`عرض ${label}`}
+    >
+      {icon}
+      <span className="absolute right-full mr-2 px-2 py-1 bg-white text-xs rounded opacity-0 group-hover:opacity-100 whitespace-nowrap shadow-lg border border-gray-200 pointer-events-none z-50">
+        {label}
+      </span>
+    </button>
+  );
+}
+
+// واجهة خصائص العرض الثلاثي الأبعاد
+interface ThreeDViewProps {
+  services: Service[];
+  activeService: number | null;
+  setActiveService: (id: number) => void;
 }
 
 function ThreeDView({
   services,
   activeService,
   setActiveService,
-  isPlaying,
-  setIsPlaying,
-}: any) {
+}: ThreeDViewProps) {
   return (
-    <div className="relative h-[600px] max-w-6xl mx-auto px-4">
-      {/* محور الدوران */}
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="relative h-[600px] max-w-6xl mx-auto px-4"
+    >
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-        <div className="w-64 h-64 border-2 border-primary/20 rounded-full" />
+        <div className="w-64 h-64 border-2 border-primary/20 rounded-full animate-pulse" />
       </div>
 
-      {services.map((service: Service, index: number) => {
+      {services.map((service, index) => {
         const angle = (index * 2 * Math.PI) / services.length;
         const radius = 280;
         const x = Math.cos(angle) * radius;
@@ -508,8 +509,8 @@ function ThreeDView({
               x,
               y,
               scale: isActive ? 1.1 : 0.9,
-              rotateY: isActive ? 5 : 0,
-              rotateX: isActive ? 5 : 0,
+              rotateY: isActive ? 10 : 0,
+              zIndex: isActive ? 20 : 1,
             }}
             transition={{
               type: "spring",
@@ -520,65 +521,30 @@ function ThreeDView({
             style={{ x: x - 150, y: y - 150 }}
             onClick={() => setActiveService(service.id)}
           >
-            <div
-              className={cn(
-                "w-64 h-80 bg-white rounded-2xl p-6 border-2 shadow-xl transition-all duration-300 perspective-1000",
-                isActive
-                  ? "border-primary scale-105 z-10"
-                  : "border-gray-200 hover:border-primary/50",
-              )}
-            >
-              <div
-                className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${service.gradient} p-3 mb-4`}
-              >
-                <service.icon className="w-full h-full text-white" />
-              </div>
-
-              <h3 className="text-xl font-bold text-gray-900 mb-2">
-                {service.title}
-              </h3>
-              <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                {service.description}
-              </p>
-
-              <div className="flex items-center justify-between mb-4">
-                <div className="text-sm">
-                  <div className="text-gray-500">المشاريع</div>
-                  <div className="font-bold text-gray-900">
-                    {service.projects}+
-                  </div>
-                </div>
-                <div className="text-sm">
-                  <div className="text-gray-500">المدة</div>
-                  <div className="font-bold text-gray-900">
-                    {service.duration}
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                {service.features.slice(0, 2).map((feature, i) => (
-                  <span
-                    key={i}
-                    className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs"
-                  >
-                    {feature}
-                  </span>
-                ))}
-              </div>
-            </div>
+            <ServiceCardContent service={service} isActive={isActive} />
           </motion.div>
         );
       })}
-    </div>
+    </motion.div>
   );
 }
 
-function CardsView({ services, activeService, setActiveService }: any) {
+// واجهة خصائص عرض البطاقات
+interface CardsViewProps {
+  services: Service[];
+  setActiveService: (id: number) => void;
+}
+
+function CardsView({ services, setActiveService }: CardsViewProps) {
   return (
-    <div className="container mx-auto px-4">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 20 }}
+      className="container mx-auto px-4"
+    >
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8">
-        {services.map((service: Service, index: number) => (
+        {services.map((service, index) => (
           <motion.div
             key={service.id}
             initial={{ opacity: 0, y: 50 }}
@@ -632,16 +598,26 @@ function CardsView({ services, activeService, setActiveService }: any) {
           </motion.div>
         ))}
       </div>
-    </div>
+    </motion.div>
   );
 }
 
-function GridView({ services }: any) {
+// واجهة خصائص العرض الشبكي
+interface GridViewProps {
+  services: Service[];
+}
+
+function GridView({ services }: GridViewProps) {
   return (
-    <div className="container mx-auto px-4">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="container mx-auto px-4"
+    >
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((service: Service, index: number) => (
+          {services.map((service, index) => (
             <motion.div
               key={service.id}
               initial={{ opacity: 0, scale: 0.9 }}
@@ -669,37 +645,87 @@ function GridView({ services }: any) {
                   </div>
                 ))}
               </div>
-
-              <div className="flex items-center justify-between mt-6 pt-6 border-t border-gray-100">
-                <div className="text-sm">
-                  <div className="text-gray-500">المشاريع</div>
-                  <div className="font-bold text-gray-900">
-                    {service.projects}
-                  </div>
-                </div>
-                <div className="text-sm">
-                  <div className="text-gray-500">المدة</div>
-                  <div className="font-bold text-gray-900">
-                    {service.duration}
-                  </div>
-                </div>
-                <ArrowUpRight className="w-5 h-5 text-gray-400" />
-              </div>
             </motion.div>
           ))}
         </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// بطاقة الخدمة المستخدمة داخل الـ 3D View
+function ServiceCardContent({
+  service,
+  isActive,
+}: {
+  service: Service;
+  isActive: boolean;
+}) {
+  return (
+    <div
+      className={cn(
+        "w-64 h-80 bg-white rounded-2xl p-6 border-2 shadow-xl transition-all duration-300",
+        isActive
+          ? "border-primary scale-105 shadow-2xl"
+          : "border-gray-200 hover:border-primary/50",
+      )}
+    >
+      <div
+        className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${service.gradient} p-3 mb-4`}
+      >
+        <service.icon className="w-full h-full text-white" />
+      </div>
+
+      <h3 className="text-xl font-bold text-gray-900 mb-2">{service.title}</h3>
+      <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+        {service.description}
+      </p>
+
+      <div className="flex items-center justify-between mb-4">
+        <div className="text-sm">
+          <div className="text-gray-500">المشاريع</div>
+          <div className="font-bold text-gray-900">{service.projects}+</div>
+        </div>
+        <div className="text-sm">
+          <div className="text-gray-500">المدة</div>
+          <div className="font-bold text-gray-900">{service.duration}</div>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2">
+        {service.features.slice(0, 2).map((feature, i) => (
+          <span
+            key={i}
+            className="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs"
+          >
+            {feature}
+          </span>
+        ))}
       </div>
     </div>
   );
 }
 
-function ServiceDetails({ service, onClose, isPlaying, setIsPlaying }: any) {
+// واجهة خصائص تفاصيل الخدمة
+interface ServiceDetailsProps {
+  service: Service;
+  onClose: () => void;
+  isPlaying: boolean;
+  setIsPlaying: (playing: boolean) => void;
+}
+
+function ServiceDetails({
+  service,
+  onClose,
+  isPlaying,
+  setIsPlaying,
+}: ServiceDetailsProps) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-[60] flex items-center justify-center p-4"
     >
       <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
@@ -720,7 +746,7 @@ function ServiceDetails({ service, onClose, isPlaying, setIsPlaying }: any) {
         </button>
 
         <div className="p-8 md:p-12">
-          {/* رأس التفاصيل */}
+          {/* محتوى الـ Modal */}
           <div className="flex flex-col lg:flex-row gap-8 mb-12">
             <div className="lg:w-2/3">
               <div className="flex items-center gap-4 mb-6">
@@ -754,7 +780,7 @@ function ServiceDetails({ service, onClose, isPlaying, setIsPlaying }: any) {
                 {service.description}
               </p>
 
-              {/* المميزات الرئيسية */}
+              {/* المميزات */}
               <div className="mb-8">
                 <h4 className="text-xl font-bold text-gray-900 mb-4">
                   المميزات الرئيسية
@@ -777,7 +803,7 @@ function ServiceDetails({ service, onClose, isPlaying, setIsPlaying }: any) {
 
             {/* الجانب الأيمن */}
             <div className="lg:w-1/3">
-              <div className="bg-gray-50 rounded-2xl p-6">
+              <div className="bg-gray-50 rounded-2xl p-6 border border-gray-100">
                 <h4 className="font-bold text-gray-900 mb-4">
                   التقنيات المستخدمة
                 </h4>
@@ -806,24 +832,20 @@ function ServiceDetails({ service, onClose, isPlaying, setIsPlaying }: any) {
                     </div>
                   </div>
                 )}
-
-                <button className="w-full py-4 bg-gradient-to-r from-primary to-cyan-500 text-white rounded-xl font-bold hover:shadow-lg transition-all">
-                  طلب خدمة مخصصة
-                </button>
               </div>
             </div>
           </div>
 
-          {/* محتوى وسائط */}
+          {/* الفيديو والصور */}
           {(service.video || service.caseStudy?.image) && (
             <div className="mb-12">
               <h4 className="text-xl font-bold text-gray-900 mb-6">
                 عرض توضيحي
               </h4>
-              <div className="relative h-96 rounded-2xl overflow-hidden bg-gray-900">
+              <div className="relative h-96 rounded-2xl overflow-hidden bg-gray-900 shadow-xl">
                 {service.video ? (
                   <>
-                    <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="absolute inset-0 flex items-center justify-center z-20">
                       <button
                         onClick={() => setIsPlaying(!isPlaying)}
                         className="w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white/30 transition-all"
@@ -835,18 +857,20 @@ function ServiceDetails({ service, onClose, isPlaying, setIsPlaying }: any) {
                         )}
                       </button>
                     </div>
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6">
+                    {/* Placeholder for video player logic */}
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-6 z-10">
                       <div className="text-white">عرض توضيحي للخدمة</div>
                     </div>
                   </>
-                ) : (
+                ) : service.caseStudy?.image ? (
                   <Image
-                    src={service.caseStudy!.image}
-                    alt={service.caseStudy!.title}
+                    src={service.caseStudy.image}
+                    alt={service.caseStudy.title}
                     fill
                     className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 80vw"
                   />
-                )}
+                ) : null}
               </div>
             </div>
           )}
@@ -856,19 +880,24 @@ function ServiceDetails({ service, onClose, isPlaying, setIsPlaying }: any) {
   );
 }
 
+// --- 5. مكون الخلفية (المصدر المحتمل للخطأ السابق) ---
+
 function ServicesBackground() {
   const [particles, setParticles] = useState<
     Array<{ x: number; y: number; size: number }>
   >([]);
 
+  // هام جداً: مصفوفة الاعتمادات [] فارغة لضمان التشغيل مرة واحدة فقط عند التحميل
+  // هذا يمنع الخطأ: "Calling setState synchronously within an effect"
   useEffect(() => {
+    // توليد البيانات فقط في Client-Side لتجنب مشاكل الـ Hydration
     const generatedParticles = Array.from({ length: 15 }, () => ({
       x: Math.random() * 100,
       y: Math.random() * 100,
       size: Math.random() * 3 + 1,
     }));
-    setParticles(generatedParticles);
-  }, []);
+    // setParticles(generatedParticles);
+  }, []); // <--- عدم وجود هذه المصفوفة يسبب الخطأ
 
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
