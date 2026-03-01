@@ -1,177 +1,226 @@
 @import "tailwindcss";
-
 @plugin "tailwindcss-animate";
-
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* 1. إعدادات الثيم وربط المتغيرات (Tailwind v4 Configuration) */
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
-
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
-
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
-
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
-
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
-  --color-ring: var(--ring);
-
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
 }
 
-/* 2. تعريف قيم المتغيرات (Base Layer) */
-@layer base {
-  :root {
-    /* === الوضع النهاري (Snow White) === */
-    --background: hsl(210 40% 98%);
-    --foreground: hsl(222 47% 11%);
+/* ===== الوضع الفاتح ===== */
+:root {
+  /* الأساسيات - ألوان محايدة فاخرة */
+  --background: #f8fafc;
+  --foreground: #1e293b;
 
-    --card: hsl(0 0% 100%);
-    --card-foreground: hsl(222 47% 11%);
+  /* الرئيسي - أزرق داكن أنيق (بديل للبني) */
+  --primary: #0f2b3d;
+  --primary-foreground: #ffffff;
+  --primary-light: #1e4a6a;
+  --primary-dark: #0a1e2a;
 
-    --popover: hsl(0 0% 100%);
-    --popover-foreground: hsl(222 47% 11%);
+  /* الثانوي - ذهبي دافئ */
+  --secondary: #b8914a;
+  --secondary-foreground: #ffffff;
+  --secondary-light: #d4b178;
+  --secondary-dark: #8e6e3c;
 
-    --primary: hsl(43 96% 64%); /* الذهبي */
-    --primary-foreground: hsl(222 47% 11%);
+  /* الألوان المساعدة */
+  --muted: #f1f5f9;
+  --muted-foreground: #64748b;
 
-    --secondary: hsl(210 40% 96.1%);
-    --secondary-foreground: hsl(222 47% 11%);
+  --accent: #e9eef3;
+  --accent-foreground: #1e293b;
 
-    --muted: hsl(210 40% 96.1%);
-    --muted-foreground: hsl(215.4 16.3% 46.9%);
+  /* خلفيات العناصر */
+  --popover: #ffffff;
+  --popover-foreground: #1e293b;
 
-    --accent: hsl(210 40% 96.1%);
-    --accent-foreground: hsl(222 47% 11%);
+  --card: #ffffff;
+  --card-foreground: #1e293b;
 
-    --destructive: hsl(0 84.2% 60.2%);
-    --destructive-foreground: hsl(210 40% 98%);
+  /* حدود وإطارات */
+  --border: #e2e8f0;
+  --input: #e2e8f0;
 
-    --border: hsl(214.3 31.8% 91.4%);
-    --input: hsl(214.3 31.8% 91.4%);
-    --ring: hsl(43 96% 64%);
+  --radius: 0.75rem;
 
-    --radius: 0.75rem;
+  /* ألوان الـ Hero */
+  --hero-overlay-day: linear-gradient(
+    135deg,
+    rgba(15, 43, 61, 0.2) 0%,
+    rgba(15, 43, 61, 0.6) 100%
+  );
+  --hero-overlay-night: linear-gradient(
+    135deg,
+    rgba(10, 30, 42, 0.7) 0%,
+    rgba(10, 30, 42, 0.9) 100%
+  );
+  --hero-text-glow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  --hero-text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+
+  /* Badge */
+  --badge-day-bg: rgba(184, 145, 74, 0.15);
+  --badge-night-bg: rgba(15, 43, 61, 0.2);
+  --badge-border: rgba(184, 145, 74, 0.3);
+
+  /* ألوان إضافية */
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #3b82f6;
+}
+
+/* ===== الوضع الداكن ===== */
+.dark {
+  /* الأساسيات */
+  --background: #0f172a;
+  --foreground: #f1f5f9;
+
+  /* الرئيسي - أزرق أعمق */
+  --primary: #1e3a5f;
+  --primary-foreground: #ffffff;
+  --primary-light: #2d4f7c;
+  --primary-dark: #142b44;
+
+  /* الثانوي - ذهبي ناعم */
+  --secondary: #c9a45c;
+  --secondary-foreground: #0f172a;
+  --secondary-light: #e0c287;
+  --secondary-dark: #9e7d45;
+
+  /* الألوان المساعدة */
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+
+  --accent: #1e293b;
+  --accent-foreground: #f1f5f9;
+
+  /* خلفيات العناصر */
+  --popover: #1e293b;
+  --popover-foreground: #f1f5f9;
+
+  --card: #1e293b;
+  --card-foreground: #f1f5f9;
+
+  /* حدود وإطارات */
+  --border: #334155;
+  --input: #334155;
+
+  /* ألوان الـ Hero */
+  --hero-overlay-day: linear-gradient(
+    135deg,
+    rgba(30, 58, 95, 0.4) 0%,
+    rgba(30, 58, 95, 0.8) 100%
+  );
+  --hero-overlay-night: linear-gradient(
+    135deg,
+    rgba(15, 23, 42, 0.8) 0%,
+    rgba(15, 23, 42, 0.95) 100%
+  );
+  --hero-text-glow: 0 2px 4px rgba(0, 0, 0, 0.5);
+
+  /* Badge */
+  --badge-day-bg: rgba(201, 164, 92, 0.2);
+  --badge-night-bg: rgba(30, 58, 95, 0.3);
+  --badge-border: rgba(201, 164, 92, 0.4);
+
+  /* ألوان إضافية */
+  --success: #059669;
+  --warning: #d97706;
+  --error: #dc2626;
+  --info: #2563eb;
+}
+
+/* إعدادات عامة */
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: "Tajawal", "Arial", sans-serif;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
+}
+
+/* تحسينات الظلال */
+.shadow-luxury {
+  box-shadow:
+    0 20px 40px -15px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(184, 145, 74, 0.1);
+}
+
+.shadow-golden {
+  box-shadow: 0 10px 30px -5px rgba(184, 145, 74, 0.2);
+}
+
+.shadow-primary {
+  box-shadow: 0 10px 30px -5px rgba(15, 43, 61, 0.2);
+}
+
+/* أنيميشن محسن */
+@keyframes gradient {
+  0%,
+  100% {
+    opacity: 0.3;
+    background-position: 0% 50%;
   }
-
-  .dark {
-    /* === الوضع الليلي الفخم (Gunmetal) === */
-    --background: hsl(222 47% 11%);
-    --foreground: hsl(210 40% 98%);
-
-    --card: hsl(217 33% 17%);
-    --card-foreground: hsl(210 40% 98%);
-
-    --popover: hsl(222 47% 11%);
-    --popover-foreground: hsl(210 40% 98%);
-
-    --primary: hsl(43 96% 64%);
-    --primary-foreground: hsl(222 47% 11%);
-
-    --secondary: hsl(217.2 32.6% 17.5%);
-    --secondary-foreground: hsl(210 40% 98%);
-
-    --muted: hsl(217.2 32.6% 17.5%);
-    --muted-foreground: hsl(215 20.2% 65.1%);
-
-    --accent: hsl(217.2 32.6% 17.5%);
-    --accent-foreground: hsl(210 40% 98%);
-
-    --destructive: hsl(0 62.8% 30.6%);
-    --destructive-foreground: hsl(210 40% 98%);
-
-    --border: hsl(217.2 32.6% 17.5%);
-    --input: hsl(217.2 32.6% 17.5%);
-    --ring: hsl(43 96% 64%);
-  }
-
-  * {
-    @apply border-border outline-ring/50;
-  }
-
-  body {
-    @apply bg-background text-foreground antialiased;
-    /* Noise Texture */
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
-    background-attachment: fixed;
-  }
-
-  /* تخصيص خلفية الوضع الليلي (الإضاءة المركزية) */
-  .dark body {
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E"),
-      radial-gradient(circle at 50% 0%, #1e293b 0%, #020617 80%);
+  50% {
+    opacity: 0.7;
+    background-position: 100% 50%;
   }
 }
 
-/* 3. كلاسات الخدمات (Utilities) */
-@layer utilities {
-  /* تأثير الزجاج القوي */
-  .glass {
-    @apply bg-background/60 backdrop-blur-xl border border-border/50 shadow-xl;
-  }
+.animate-gradient {
+  animation: gradient 15s ease infinite;
+  background: linear-gradient(
+    45deg,
+    var(--secondary-light),
+    var(--primary-light),
+    var(--secondary)
+  );
+  background-size: 200% 200%;
+}
 
-  /* تأثير الزجاج الخفيف */
-  .glass-sm {
-    @apply bg-background/40 backdrop-blur-md border border-border/30;
-  }
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
 
-  /* النص الذهبي المتدرج */
-  .text-gradient-gold {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#FCD34D] via-[#F59E0B] to-[#FCD34D];
-  }
+/* تدرجات مخصصة */
+.bg-gradient-hero {
+  background: linear-gradient(
+    135deg,
+    rgba(15, 43, 61, 0.8) 0%,
+    rgba(184, 145, 74, 0.2) 100%
+  );
+}
 
-  /* الشبكة الهندسية الخلفية */
-  .bg-grid-white {
-    background-size: 50px 50px;
-    background-image: linear-gradient(
-        to right,
-        rgba(255, 255, 255, 0.05) 1px,
-        transparent 1px
-      ),
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-    mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+/* في ملف globals.css */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
   }
-
-  /* إخفاء شريط التمرير */
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-  .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+  100% {
+    transform: translateX(-50%);
   }
 }
 
-/* 4. تخصيص شريط التمرير العام */
-::-webkit-scrollbar {
-  width: 10px;
-}
-::-webkit-scrollbar-track {
-  @apply bg-background;
-}
-::-webkit-scrollbar-thumb {
-  @apply bg-muted-foreground/30 rounded-full border-2 border-background;
-}
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-primary/70;
+.animate-marquee {
+  animation: marquee 40s linear infinite;
 }
