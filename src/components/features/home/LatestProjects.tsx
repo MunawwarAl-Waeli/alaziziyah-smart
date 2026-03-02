@@ -41,16 +41,16 @@ export function LatestProjects({ projects }: { projects: Project[] }) {
   //   },
   // };
   const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6,
-      ease: "easeOut" as Transition["ease"], // 🟢 Type-safe
+    hidden: { opacity: 0, y: 30 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut" as Transition["ease"], // 🟢 Type-safe
+      },
     },
-  },
-};
+  };
 
   return (
     <section className="py-20 bg-accent/20">

@@ -14,7 +14,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-
+import Link from "next/link";
 // أنواع المنتجات
 const PRODUCT_TYPES = [
   {
@@ -63,9 +63,22 @@ const MATERIALS_MAP: Record<
     { id: "shinko", name: "شينكو معزول", price: 80, desc: "تكلفة مناسبة" },
   ],
 };
+interface Material {
+  id: string;
+  name: string;
+  color?: string; // اختياري
+  price: number;
+  desc: string;
+  icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>; // إذا فيه أيقونة
+}
 
+interface MaterialCardProps {
+  material: Material;
+  selected: boolean;
+  onClick: () => void;
+}
 // مكون بطاقة المواد المحسنة
-function MaterialCard({ material, selected, onClick }: any) {
+function MaterialCard({ material, selected, onClick }: MaterialCardProps) {
   return (
     <motion.button
       whileHover={{ scale: 1.02 }}
@@ -316,13 +329,12 @@ export function SmartCalculator() {
                     <span className="text-lg font-bold text-white/90">ر.س</span>
                   </div>
                 </div>
-
-                <a
+                <Link
                   href="/contact"
                   className="w-12 h-12 bg-white text-primary rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-transform shadow-lg shadow-black/20"
                 >
                   <ArrowLeft className="w-6 h-6" />
-                </a>
+                </Link>
               </div>
             </motion.div>
           </AnimatePresence>
