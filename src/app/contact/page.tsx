@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-
+import { Variants, Transition } from "framer-motion";
 // --- Types & Interfaces ---
 interface ProjectType {
   id: string;
@@ -41,9 +41,20 @@ const projectTypes: ProjectType[] = [
 ];
 
 // --- Animations ---
-const fadeInUp = {
+// const fadeInUp = {
+//   hidden: { opacity: 0, y: 30 },
+//   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+// };
+const fadeInUp: Variants = {
   hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: "easeOut" as Transition["ease"], // 🟢 Type-safe
+    },
+  },
 };
 
 const staggerContainer = {
@@ -392,16 +403,16 @@ export default function ContactPage() {
   );
 }
 
-// --- Sub Components ---
-// الاستغناء عن any باستخدام ContactItemProps المحددة مسبقاً
-function ContactItem({
-  icon: Icon,
-  label,
-  value,
-  subValue,
-  href,
-}: ContactItemProps) {
-  const Content = () => (
+interface ContentProps {
+  Icon: LucideIcon;
+  label: string;
+  value: string;
+  subValue?: string;
+  href?: string;
+}
+
+function Content({ Icon, label, value, subValue, href }: ContentProps) {
+  return (
     <div className="flex items-start gap-4 group/item cursor-pointer p-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
       <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center group-hover/item:bg-[#d4af37] group-hover/item:text-slate-900 text-[#d4af37] transition-colors duration-500 shrink-0">
         <Icon className="w-5 h-5" />
@@ -424,7 +435,14 @@ function ContactItem({
       </div>
     </div>
   );
-
+}
+function ContactItem({
+  icon: Icon,
+  label,
+  value,
+  subValue,
+  href,
+}: ContactItemProps) {
   if (href) {
     return (
       <a
@@ -433,10 +451,65 @@ function ContactItem({
         rel="noopener noreferrer"
         className="block"
       >
-        <Content />
+        <Content
+          Icon={Icon}
+          label={label}
+          value={value}
+          subValue={subValue}
+          href={href}
+        />
       </a>
     );
   }
 
-  return <Content />;
+  return (
+    <Content Icon={Icon} label={label} value={value} subValue={subValue} />
+  );
 }
+// الاستغناء عن any باستخدام ContactItemProps المحددة مسبقاً
+// function ContactItem({
+//   icon: Icon,
+//   label,
+//   value,
+//   subValue,
+//   href,
+// }: ContactItemProps) {
+//   const Content = () => (
+//     <div className="flex items-start gap-4 group/item cursor-pointer p-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
+//       <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center group-hover/item:bg-[#d4af37] group-hover/item:text-slate-900 text-[#d4af37] transition-colors duration-500 shrink-0">
+//         <Icon className="w-5 h-5" />
+//       </div>
+//       <div>
+//         <p className="text-sm font-bold text-slate-500 dark:text-gray-400 mb-1">
+//           {label}
+//         </p>
+//         <p
+//           className="font-bold text-slate-900 dark:text-white text-base md:text-lg"
+//           dir={href?.includes("tel:") ? "ltr" : "rtl"}
+//         >
+//           {value}
+//         </p>
+//         {subValue && (
+//           <p className="text-sm text-slate-500 dark:text-gray-500 mt-1">
+//             {subValue}
+//           </p>
+//         )}
+//       </div>
+//     </div>
+//   );
+
+//   if (href) {
+//     return (
+//       <a
+//         href={href}
+//         target="_blank"
+//         rel="noopener noreferrer"
+//         className="block"
+//       >
+//         <Content />
+//       </a>
+//     );
+//   }
+
+//   return <Content />;
+// }

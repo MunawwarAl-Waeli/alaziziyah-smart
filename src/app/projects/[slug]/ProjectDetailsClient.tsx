@@ -53,15 +53,23 @@ export default function ProjectDetailsClient({
 
   // 2. معالجة البيانات: استخراج الصور من محتوى الووردبريس لصنع المعرض
   useEffect(() => {
-    if (project.content) {
-      const imgRegex = /<img[^>]+src="([^">]+)"/g;
-      const images: string[] = [];
-      let match;
-      while ((match = imgRegex.exec(project.content)) !== null) {
-        images.push(match[1]);
+    const timer = setTimeout(() => {
+      if (project.content) {
+        const imgRegex = /<img[^>]+src="([^">]+)"/g;
+        const images: string[] = [];
+        let match: RegExpExecArray | null;
+
+        while ((match = imgRegex.exec(project.content)) !== null) {
+          if (match[1]) images.push(match[1]);
+        }
+
+        setGalleryImages(images);
+      } else {
+        setGalleryImages([]);
       }
-      setGalleryImages(images);
-    }
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, [project.content]);
 
   // تجهيز المتغيرات الآمنة
@@ -285,8 +293,12 @@ export default function ProjectDetailsClient({
     </main>
   );
 }
-
-function InfoItem({ label, value, icon: Icon }: any) {
+interface InfoItemProps {
+  label: string;
+  value: string | number;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+}
+function InfoItem({ label, value, icon: Icon }: InfoItemProps) {
   return (
     <div className="flex flex-col items-center justify-center text-center p-2 group hover:-translate-y-1 transition-transform duration-300">
       <div className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-2xl flex items-center justify-center mb-3 text-primary group-hover:bg-primary group-hover:text-white transition-colors">

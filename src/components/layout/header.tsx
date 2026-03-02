@@ -164,13 +164,13 @@ export function Header({ wpMenuData = [] }: HeaderProps) {
             },
           );
           const json = await res.json();
-          const foundPosts = json.data.posts.nodes.map((item: any) => ({
+          const foundPosts = json.data.posts.nodes.map((item:Product) => ({
             id: item.id,
             title: item.title,
             category: "مقالات/أخبار",
             price: "تصفح للمزيد",
           }));
-          const foundPages = json.data.pages.nodes.map((item: any) => ({
+          const foundPages = json.data.pages.nodes.map((item: Product) => ({
             id: item.id,
             title: item.title,
             category: "خدمات",
@@ -351,8 +351,7 @@ export function Header({ wpMenuData = [] }: HeaderProps) {
                       <div
                         className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110"
                         style={{
-                          backgroundImage:
-                            "url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=600&auto=format&fit=crop')",
+                          backgroundImage: "url('images/0.jpg')",
                         }}
                       />
                       {/* طبقة التعتيم لضمان وضوح النص */}
