@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowLeft, Image as ImageIcon } from "lucide-react";
-
+import { Variants, Transition } from "framer-motion";
 // تعريف نوع بيانات المشروع القادمة من الووردبريس
 type Project = {
   id: string;
@@ -32,14 +32,25 @@ export function LatestProjects({ projects }: { projects: Project[] }) {
     },
   };
 
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    show: {
-      opacity: 1,
-      y: 0,
-      transition: { type: "spring", stiffness: 300, damping: 24 },
+  // const itemVariants = {
+  //   hidden: { opacity: 0, y: 30 },
+  //   show: {
+  //     opacity: 1,
+  //     y: 0,
+  //     transition: { type: "spring", stiffness: 300, damping: 24 },
+  //   },
+  // };
+  const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: "easeOut" as Transition["ease"], // 🟢 Type-safe
     },
-  };
+  },
+};
 
   return (
     <section className="py-20 bg-accent/20">
