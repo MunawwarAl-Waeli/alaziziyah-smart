@@ -1,21 +1,38 @@
+/* eslint-disable react/jsx-no-undef */
+import { BlogSection } from "@/components/features/home/BlogSection";
 import { CTASection } from "@/components/features/home/cta-section";
-import { Hero } from "@/components/features/home/hero";
+import {  MainHero } from "@/components/features/home/hero";
+
 import { SmartCalculator } from "@/components/features/home/SmartCalculator";
 import { VideoGallery } from "@/components/features/home/video-section";
 import { KeywordsMarquee } from "@/components/layout/KeywordsMarquee";
+import { ProjectsSection } from "@/components/sections/projects-section";
 import { ServicesSection } from "@/components/sections/services-section";
+
+
+
 import { Metadata } from "next";
 
+// 1. تحديث الواجهة (Interface) لتعريف الحقل الجديد
 interface HomePageData {
-  generalSettings: { title: string; description: string };
-  nodeByUri: { title: string; content: string } | null;
+  generalSettings: {
+    title: string;
+    description: string;
+  };
+  nodeByUri: {
+    title: string;
+    content: string;
+    // إضافة الحقول المخصصة هنا
+    homeCustomFields?: {
+      heroMotivationText?: string;
+    };
+  } | null;
 }
 
 function cleanContent(html: string | null | undefined): string {
   if (!html) return "";
   let text = html.replace(/<[^>]*>?/gm, "");
   text = text.replace(/\s+/g, " ").trim();
-  // قص احترافي: يقص عند أقرب مسافة وليس في منتصف الكلمة
   if (text.length > 250) {
     text = text.substr(0, 250);
     text =
@@ -24,6 +41,7 @@ function cleanContent(html: string | null | undefined): string {
   return text;
 }
 
+// 2. تحديث دالة جلب البيانات لإضافة الحقل للاستعلام
 async function getData(): Promise<HomePageData> {
   const query = `
     query GetHomePageContent {
@@ -35,10 +53,16 @@ async function getData(): Promise<HomePageData> {
         ... on Page {
           title
           content(format: RENDERED)
+          
+          # استدعاء مجموعة حقول ACF التي أنشأناها
+          homeCustomFields {
+            heroMotivationText
+          }
         }
       }
     }
   `;
+
   try {
     const res = await fetch(
       process.env.NEXT_PUBLIC_WORDPRESS_API_URL as string,
@@ -46,12 +70,23 @@ async function getData(): Promise<HomePageData> {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query }),
-        next: { revalidate: 3600 }, // التحديث كل ساعة (أفضل لأداء الموقع)
+        next: { revalidate: 10 }, // يمكنك جعلها 10 ثواني للتجربة الآن ثم رفعها لاحقاً
       },
     );
+
     const json = await res.json();
-    return json.data;
+
+    // سطر لمساعدتك على رؤية البيانات القادمة في التيرمنال
+    console.log("ACF Data:", json?.data?.nodeByUri?.homeCustomFields);
+
+    return (
+      json?.data || {
+        generalSettings: { title: "العزيزية", description: "" },
+        nodeByUri: null,
+      }
+    );
   } catch (e) {
+    console.error("Error fetching data:", e);
     return {
       generalSettings: { title: "العزيزية", description: "" },
       nodeByUri: null,
@@ -62,68 +97,44 @@ async function getData(): Promise<HomePageData> {
 export async function generateMetadata(): Promise<Metadata> {
   const data = await getData();
   const seoDescription =
-    "شركة العزيزية للمظلات والسواتر: متخصصون في تركيب مظلات سيارات، سواتر حديد، برجولات حدائق، هناجر ومستودعات، وأعمال الشد الإنشائي في جدة والمملكة. جودة عالية وضمان شامل.";
+    "شركة العزيزية للمظلات والسواتر: متخصصون في تركيب مظلات سيارات، سواتر حديد، برجولات حدائق، هناجر ومستودعات، وأعمال الشد الإنشائي في جدة والمملكة.";
 
   return {
-    title:
-      data.generalSettings?.title ||
-      "العزيزية للمظلات والسواتر | فخامة التظليل",
+    title: data?.generalSettings?.title || "العزيزية للمظلات والسواتر",
     description: seoDescription,
-    openGraph: {
-      title: data.generalSettings?.title,
-      description: seoDescription,
-      locale: "ar_SA",
-      type: "website",
-      siteName: "العزيزية للمظلات والسواتر",
-    },
   };
 }
 
 export default async function Home() {
   const data = await getData();
-  let heroDescription = cleanContent(data.nodeByUri?.content);
 
+  let heroDescription = cleanContent(data?.nodeByUri?.content);
   if (heroDescription.length < 10) {
     heroDescription =
       "نحول المساحات الخارجية إلى مناطق حيوية مستدامة بتقنيات هندسية متطورة وتصاميم عصرية تناسب ذوقك الرفيع.";
   }
 
-  // إضافة Schema.org SEO لشركة محلية
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    name: "العزيزية للمظلات والسواتر",
-    image: "رابط_شعار_الشركة",
-    "@id": "رابط_موقعك",
-    url: "رابط_موقعك",
-    telephone: "+966500000000",
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: "جدة",
-      addressCountry: "SA",
-    },
-  };
+  // سحب النص الذي كتبناه في الووردبريس (ACF)
+  const acfHeroText = data?.nodeByUri?.homeCustomFields?.heroMotivationText;
 
   return (
     <main className="min-h-screen bg-background font-sans" dir="rtl">
-      {/* حقن سكريبت SEO */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
+  
+      <MainHero
+         title={data?.generalSettings?.title || "العزيزية للمظلات"}
+        description={acfHeroText || heroDescription}/>
 
-      <Hero
-        title={data.generalSettings?.title || "العزيزية للمظلات"}
-        description={heroDescription}
-      />
       <KeywordsMarquee />
       <ServicesSection />
+      <ProjectsSection />
       <VideoGallery />
+      <BlogSection/>
       <SmartCalculator />
       <CTASection />
     </main>
   );
 }
+
 // {
 //   "data": {
 //     "pages": {

@@ -1,21 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
-  ChevronRight,
+  Phone,
+  MessageCircle,
+  MapPin,
+  ShieldCheck,
+  PenTool,
   CheckCircle2,
-  PhoneCall,
-  MessageSquare,
+  ChevronDown,
+  ArrowLeft,
+  Layers,
+  HelpCircle,
+  Camera,
   Share2,
-  Maximize2,
-  ChevronLeft,
 } from "lucide-react";
 import { ServiceItem } from "@/lib/api";
-import { ServiceCard } from "./services-card";
-import { cn } from "@/lib/utils";
 
 interface Props {
   service: ServiceItem;
@@ -26,21 +29,7 @@ export default function ServiceDetailClient({
   service,
   relatedServices,
 }: Props) {
-  // افترضنا أن البيانات قد تحتوي على معرض صور، إذا لم توجد نستخدم الصورة الرئيسية مكررة كمثال
-  const gallery = [
-    service.image,
-    service.image,
-    service.image,
-    service.image,
-    service.image,
-    service.image,
-    service.image,
-    service.image,
-    service.image,
-    service.image,
-  ].slice(0, 9);
-  const [activeImage, setActiveImage] = useState(0);
-
+  // دالة المشاركة
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({ title: service.title, url: window.location.href });
@@ -49,225 +38,326 @@ export default function ServiceDetailClient({
 
   return (
     <main
-      className="min-h-screen pb-24 px-6 bg-background text-right"
+      className="min-h-screen bg-background pt-20 pb-16 selection:bg-primary/30"
       dir="rtl"
     >
-      {/* 1. Breadcrumbs - مسار التنقل هادئ */}
-      <nav className="container pt-28 pb-8">
-        <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-          <Link href="/" className="hover:text-primary transition-colors">
-            الرئيسية
-          </Link>
-          <ChevronLeft className="w-3 h-3 rotate-180" />
-          <Link
-            href="/services"
-            className="hover:text-primary transition-colors"
+      {/* 1. قسم الهيرو (Hero Section) */}
+      <section className="relative w-full h-[40vh] md:h-[60vh] min-h-[400px] flex items-end pb-12 overflow-hidden rounded-b-[2rem] md:rounded-b-[4rem] shadow-2xl z-10">
+        <Image
+          src={
+            service.featuredImage?.node.sourceUrl || "/images/placeholder.jpg"
+          }
+          alt={service.title}
+          fill
+          className="object-cover"
+          priority
+          unoptimized
+        />
+        {/* تدرجات لونية داكنة لفخامة الحديد وحماية النص */}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-transparent opacity-90"></div>
+
+        <div className="container relative z-10 px-4 md:px-8 w-full">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="max-w-4xl"
           >
-            الخدمات
-          </Link>
-          <ChevronLeft className="w-3 h-3 rotate-180" />
-          <span className="text-foreground truncate">{service.title}</span>
-        </div>
-      </nav>
-
-      <section className="container">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-          {/* العمود الأيمن: معرض الصور والمحتوى */}
-          <div className="lg:col-span-8 space-y-10">
-            {/* معرض الصور الحديث */}
-            <div className="space-y-4">
-              <div className="relative aspect-[16/9] w-full overflow-hidden rounded-3xl bg-muted border border-border/50">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeImage}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.5 }}
-                    className="absolute inset-0"
-                  >
-                    <Image
-                      src={gallery[activeImage]}
-                      alt={service.title}
-                      fill
-                      unoptimized
-                      className="object-cover"
-                      priority
-                    />
-                  </motion.div>
-                </AnimatePresence>
-                <div className="absolute bottom-6 right-6 px-4 py-2 bg-black/30 backdrop-blur-md rounded-full text-white text-xs font-bold border border-white/10">
-                  {activeImage + 1} / {gallery.length}
-                </div>
-              </div>
-
-              {/* الصور المصغرة */}
-              {/* شريط الصور المصغرة (Scroll Strip) */}
-              <div
-                className="flex items-center gap-3 overflow-x-auto pb-4 pt-2 px-1 select-none"
-                // هذا السطر لإخفاء شريط التمرير وجعل الشكل أنظف
-                style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+            {/* مسار الصفحة (Breadcrumbs) */}
+            <nav className="flex items-center flex-wrap gap-2 text-slate-300 text-xs md:text-sm font-medium mb-4 bg-white/5 backdrop-blur-md w-fit px-4 py-1.5 rounded-full border border-white/10">
+              <Link href="/" className="hover:text-primary transition-colors">
+                الرئيسية
+              </Link>
+              <span className="text-white/30">/</span>
+              <Link
+                href="/services"
+                className="hover:text-primary transition-colors"
               >
-                {gallery.map((img, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setActiveImage(idx)}
-                    className={cn(
-                      // shrink-0: هي الأهم، تمنع الصورة من الصغر وتجبر الشريط على التمرير
-                      "relative shrink-0 rounded-xl overflow-hidden transition-all duration-300 border-2",
-                      // أحجام ثابتة لضمان التناسق
-                      "w-24 h-16 md:w-28 md:h-20",
-                      activeImage === idx
-                        ? "border-primary ring-2 ring-primary/20 scale-105 opacity-100"
-                        : "border-transparent opacity-60 hover:opacity-100 hover:scale-105",
-                    )}
-                  >
-                    <Image
-                      src={img}
-                      alt=""
-                      fill
-                      unoptimized
-                      className="object-cover"
-                    />
-                  </button>
-                ))}
-              </div>
-            </div>
+                الخدمات
+              </Link>
+              <span className="text-white/30">/</span>
+              <span className="text-primary font-bold">{service.title}</span>
+            </nav>
 
-            {/* العنوان والمحتوى */}
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <span className="text-primary font-bold text-sm tracking-widest uppercase">
-                  {service.categoryName}
-                </span>
-                <h1 className="text-3xl md:text-5xl font-black text-foreground">
-                  {service.title}
-                </h1>
-              </div>
-
-              <div
-                className="prose prose-lg dark:prose-invert max-w-none 
-    text-foreground/80 leading-loose
-    /* تنسيق العناوين */
-    prose-headings:font-black prose-headings:text-foreground prose-headings:mb-4
-    /* تنسيق الفقرات */
-    prose-p:text-base md:prose-p:text-lg prose-p:leading-8 prose-p:mb-6
-    /* 🔥 تنسيق الروابط (الحل لمشكلتك) */
-    prose-a:text-primary prose-a:font-bold prose-a:no-underline 
-    hover:prose-a:underline hover:prose-a:text-primary/80 transition-colors
-    /* تنسيق القوائم */
-    prose-li:text-foreground/80 prose-li:marker:text-primary
-    /* تنسيق الصور داخل الوصف */
-    prose-img:rounded-2xl prose-img:shadow-lg prose-img:border prose-img:border-border"
-                dangerouslySetInnerHTML={{ __html: service.fullContent }}
-              />
-            </div>
-
-            {/* المميزات - تصميم متزن وغير متهور */}
-            <div className="pt-10 border-t border-border/50">
-              <h3 className="text-xl font-black mb-6">
-                لماذا تختار هذه الخدمة؟
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
-                {[
-                  "تنفيذ دقيق تحت إشراف هندسي",
-                  "خامات مختارة بعناية لمقاومة المناخ",
-                  "حلول مخصصة تناسب مساحة منزلك",
-                  "تركيز عالي على التفاصيل واللمسات النهائية",
-                ].map((feature, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center gap-3 py-2 border-b border-border/30 last:border-0 md:border-b"
-                  >
-                    <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
-                      <CheckCircle2 className="w-3 h-3 text-primary" />
-                    </div>
-                    <span className="text-sm font-medium text-muted-foreground">
-                      {feature}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* العمود الأيسر: الأكشن (Sidebar) */}
-          <div className="lg:col-span-4">
-            <div className="sticky top-28 space-y-6">
-              {/* بطاقة التواصل المباشر - تركيز على الواتساب والاتصال فقط */}
-              <div className="bg-card border border-border/60 rounded-[2.5rem] p-8 shadow-sm">
-                <div className="space-y-6">
-                  <div className="text-center pb-6 border-b border-border/50">
-                    <p className="text-muted-foreground text-sm mb-2">
-                      مهتم بهذا المشروع؟
-                    </p>
-                    <h3 className="text-xl font-black">
-                      احصل على استشارة فنية
-                    </h3>
-                  </div>
-
-                  <div className="space-y-3">
-                    <a
-                      href="https://wa.me/966500000000" // ضع رقمك هنا
-                      className="w-full bg-[#25D366] text-white font-black h-14 rounded-2xl flex items-center justify-center gap-3 hover:scale-[1.02] transition-transform shadow-lg shadow-green-500/10"
-                    >
-                      <MessageSquare className="w-5 h-5" />
-                      طلب السعر عبر الواتساب
-                    </a>
-
-                    <a
-                      href="tel:0500000000" // ضع رقمك هنا
-                      className="w-full bg-primary text-white font-black h-14 rounded-2xl flex items-center justify-center gap-3 hover:scale-[1.02] transition-transform shadow-lg shadow-primary/10"
-                    >
-                      <PhoneCall className="w-5 h-5" />
-                      اتصال هاتفي مباشر
-                    </a>
-                  </div>
-
-                  <button
-                    onClick={handleShare}
-                    className="w-full flex items-center justify-center gap-2 text-muted-foreground hover:text-foreground text-sm font-bold pt-2 transition-colors"
-                  >
-                    <Share2 className="w-4 h-4" />
-                    مشاركة رابط المشروع
-                  </button>
-                </div>
-              </div>
-
-              {/* بطاقة الثقة البسيطة */}
-              <div className="p-8 bg-muted/30 rounded-[2.5rem] border border-border/40">
-                <p className="text-xs leading-relaxed text-muted-foreground text-center italic">
-                  نحن في العزيزية نلتزم بتحويل رؤيتكم إلى واقع ملموس، بجودة
-                  تتحدث عن نفسها في كل مشروع.
-                </p>
-              </div>
-            </div>
-          </div>
+            <h1 className="text-3xl md:text-5xl lg:text-7xl font-black text-white mb-4 leading-tight drop-shadow-lg">
+              {service.title}
+            </h1>
+            <p className="text-base md:text-xl text-slate-300 max-w-2xl leading-relaxed">
+              {service.serviceDetails?.heroSubtitle}
+            </p>
+          </motion.div>
         </div>
       </section>
 
-      {/* 3. مشاريع مشابهة - عرض شبكي منتظم */}
-      {relatedServices.length > 0 && (
-        <section className="container mt-32">
-          <div className="flex items-center justify-between mb-12">
-            <h2 className="text-3xl font-black">
-              مشاريع <span className="text-primary">مشابهة</span>
-            </h2>
-            <div className="h-px flex-grow mx-8 bg-border hidden md:block" />
-            <Link
-              href="/services"
-              className="text-sm font-bold text-primary hover:underline"
+      {/* 2. الحاوية الرئيسية (المحتوى + الشريط الجانبي) */}
+      <div className="container mx-auto px-4 py-12 md:py-20 flex flex-col lg:flex-row gap-10 md:gap-12 items-start relative z-20 -mt-10">
+        {/* == القسم الأيمن: المحتوى الرئيسي (70%) == */}
+        <div className="w-full lg:w-2/3 flex flex-col gap-12 md:gap-16">
+          {/* تفاصيل الخدمة والمميزات */}
+          <section className="bg-card rounded-[2rem] p-6 md:p-10 shadow-sm border border-border">
+            <div className="flex items-center gap-3 mb-8 border-b border-border pb-6">
+              <div className="p-2 bg-primary/10 rounded-xl">
+                <PenTool className="text-primary w-6 h-6" />
+              </div>
+              <h2 className="text-2xl md:text-3xl font-black text-foreground">
+                عن الخدمة
+              </h2>
+            </div>
+
+            {/* محتوى المقالة من الووردبريس (مُنسق تلقائياً) */}
+            <div
+              className="prose prose-lg md:prose-xl max-w-none text-muted-foreground leading-relaxed prose-headings:text-foreground prose-headings:font-bold prose-a:text-primary prose-strong:text-foreground prose-img:rounded-2xl"
+              dangerouslySetInnerHTML={{ __html: service.content }}
+            />
+
+            {/* كروت المميزات */}
+            {service.serviceDetails?.features &&
+              service.serviceDetails.features.length > 0 && (
+                <div className="grid sm:grid-cols-2 gap-4 md:gap-6 mt-10 pt-10 border-t border-border">
+                  {service.serviceDetails.features.map((feature, idx) => (
+                    <div
+                      key={idx}
+                      className="bg-background p-6 rounded-[1.5rem] border border-border/50 flex flex-col gap-4 hover:border-primary/30 transition-colors group"
+                    >
+                      <div className="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors shadow-sm">
+                        {idx === 0 ? (
+                          <ShieldCheck className="w-6 h-6" />
+                        ) : (
+                          <CheckCircle2 className="w-6 h-6" />
+                        )}
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-lg text-foreground mb-2">
+                          {feature.title}
+                        </h3>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          {feature.description}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+          </section>
+
+          {/* الأنواع والخيارات المتاحة */}
+          {service.serviceDetails?.types &&
+            service.serviceDetails.types.length > 0 && (
+              <section className="space-y-6">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="p-2 bg-primary/10 rounded-xl">
+                    <Layers className="text-primary w-6 h-6" />
+                  </div>
+                  <h3 className="text-2xl md:text-3xl font-black text-foreground">
+                    الأنواع والخيارات
+                  </h3>
+                </div>
+
+                <div className="grid gap-6">
+                  {service.serviceDetails.types.map((type, idx) => (
+                    <div
+                      key={idx}
+                      className="bg-card rounded-[2rem] border border-border shadow-sm flex flex-col md:flex-row overflow-hidden hover:shadow-lg hover:border-primary/30 transition-all duration-300 group"
+                    >
+                      {/* الصورة */}
+                      <div className="relative w-full md:w-72 h-60 md:h-auto bg-muted shrink-0 overflow-hidden">
+                        <Image
+                          src={
+                            type.image?.sourceUrl || "/images/placeholder.jpg"
+                          }
+                          alt={type.title}
+                          fill
+                          className="object-cover transition-transform duration-700 group-hover:scale-105"
+                          unoptimized
+                        />
+                      </div>
+                      {/* النص */}
+                      <div className="p-6 md:p-8 flex-1 flex flex-col justify-center bg-card">
+                        <h4 className="text-xl md:text-2xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">
+                          {type.title}
+                        </h4>
+                        <p className="text-sm md:text-base text-muted-foreground mb-6 leading-relaxed">
+                          {type.description}
+                        </p>
+                        <div className="mt-auto flex items-center gap-2 text-sm font-bold text-primary bg-primary/5 w-fit px-4 py-2 rounded-lg border border-primary/10">
+                          <ShieldCheck className="w-4 h-4" /> ضمان وتصميم معتمد
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+          {/* معرض الصور (Gallery) */}
+          {service.serviceDetails?.gallery &&
+            service.serviceDetails.gallery.length > 0 && (
+              <section className="bg-card p-6 md:p-10 rounded-[2rem] border border-border shadow-sm">
+                <div className="flex items-center justify-between mb-8 pb-6 border-b border-border">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-primary/10 rounded-xl">
+                      <Camera className="text-primary w-6 h-6" />
+                    </div>
+                    <h3 className="text-2xl md:text-3xl font-black text-foreground">
+                      نماذج من أعمالنا
+                    </h3>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+                  {service.serviceDetails.gallery.map((imgUrl, idx) => (
+                    <div
+                      key={idx}
+                      className="relative aspect-square rounded-[1.5rem] overflow-hidden group cursor-zoom-in border border-border shadow-sm"
+                    >
+                      <Image
+                        src={imgUrl}
+                        alt={`${service.title} - ${idx + 1}`}
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-110"
+                        unoptimized
+                      />
+                      <div className="absolute inset-0 bg-slate-900/10 group-hover:bg-transparent transition-colors"></div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+          {/* الأسئلة الشائعة (FAQ) */}
+          {service.serviceDetails?.faqs &&
+            service.serviceDetails.faqs.length > 0 && (
+              <section className="bg-card rounded-[2rem] p-6 md:p-10 border border-border shadow-sm">
+                <div className="flex items-center gap-3 mb-8">
+                  <div className="p-2 bg-primary/10 rounded-xl">
+                    <HelpCircle className="text-primary w-6 h-6" />
+                  </div>
+                  <h3 className="text-2xl md:text-3xl font-black text-foreground">
+                    الأسئلة الشائعة
+                  </h3>
+                </div>
+
+                <div className="space-y-4">
+                  {service.serviceDetails.faqs.map((faq, idx) => (
+                    <details
+                      key={idx}
+                      className="group border border-border bg-background rounded-2xl p-5 [&_summary::-webkit-details-marker]:hidden"
+                    >
+                      <summary className="flex items-center justify-between font-bold text-foreground cursor-pointer list-none hover:text-primary transition-colors">
+                        <span className="pr-2">{faq.question}</span>
+                        <div className="w-8 h-8 rounded-full bg-accent flex items-center justify-center shrink-0 group-open:bg-primary/10 group-open:text-primary transition-colors">
+                          <ChevronDown className="w-5 h-5 transition-transform duration-300 group-open:rotate-180" />
+                        </div>
+                      </summary>
+                      <div className="mt-4 pt-4 border-t border-border pr-2">
+                        <p className="text-muted-foreground text-sm md:text-base leading-relaxed">
+                          {faq.answer}
+                        </p>
+                      </div>
+                    </details>
+                  ))}
+                </div>
+              </section>
+            )}
+        </div>
+
+        {/* == القسم الأيسر: الشريط الجانبي (Sidebar) == */}
+        <aside className="w-full lg:w-1/3 flex flex-col gap-6 md:gap-8 sticky top-28">
+          {/* كرت التواصل الفخم (CTA) */}
+          <div className="bg-slate-900 rounded-[2rem] p-8 md:p-10 text-center shadow-2xl relative overflow-hidden border border-slate-800">
+            {/* إضاءات خلفية للكرت */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+            <div className="absolute bottom-0 left-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none"></div>
+
+            <div className="w-16 h-16 bg-primary/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <Phone className="w-8 h-8 text-primary" />
+            </div>
+
+            <h3 className="text-2xl font-black text-white mb-4 relative z-10 leading-tight">
+              مهتم بتنفيذ {service.title}؟
+            </h3>
+            <p className="text-slate-400 mb-8 relative z-10 text-sm md:text-base leading-relaxed">
+              تواصل معنا الآن للحصول على استشارة هندسية مجانية، مقاييس دقيقة،
+              وعرض سعر مخصص لمشروعك.
+            </p>
+
+            <div className="flex flex-col gap-3 relative z-10">
+              <a
+                href="tel:0500000000"
+                className="w-full bg-gradient-to-l from-primary-dark to-primary hover:from-primary hover:to-primary-light text-primary-foreground font-black py-4 px-6 rounded-xl flex items-center justify-center gap-3 transition-all shadow-lg shadow-primary/25 hover:-translate-y-1"
+              >
+                <Phone className="w-5 h-5" /> اتصل بنا الآن
+              </a>
+              <a
+                href="https://wa.me/966500000000"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-4 px-6 rounded-xl flex items-center justify-center gap-3 transition-all hover:-translate-y-1"
+              >
+                <MessageCircle className="w-5 h-5 text-emerald-400" /> راسلنا
+                واتساب
+              </a>
+            </div>
+
+            {/* زر المشاركة */}
+            <button
+              onClick={handleShare}
+              className="mt-6 flex items-center justify-center gap-2 text-slate-400 hover:text-white text-sm font-medium w-full transition-colors"
             >
-              مشاهدة الكل
-            </Link>
+              <Share2 className="w-4 h-4" /> شارك هذه الخدمة
+            </button>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {relatedServices.map((item, idx) => (
-              <ServiceCard key={item.id} service={item} index={idx} />
-            ))}
+
+          {/* خدمات ذات صلة */}
+          {relatedServices.length > 0 && (
+            <div className="bg-card rounded-[2rem] p-6 md:p-8 shadow-sm border border-border">
+              <h3 className="text-lg md:text-xl font-black text-foreground mb-6 border-b border-border pb-4 flex items-center gap-2">
+                <Layers className="w-5 h-5 text-primary" /> خدمات ذات صلة
+              </h3>
+              <ul className="space-y-3">
+                {relatedServices.map((s, idx) => (
+                  <li key={idx}>
+                    <Link
+                      href={`/services/${s.slug}`}
+                      className="flex items-center justify-between p-4 rounded-xl hover:bg-accent border border-transparent hover:border-border transition-all group"
+                    >
+                      <span className="flex items-center gap-3 font-bold text-sm text-foreground group-hover:text-primary transition-colors">
+                        <div className="w-8 h-8 rounded-lg bg-background flex items-center justify-center group-hover:bg-primary/10 transition-colors shrink-0">
+                          <ShieldCheck className="w-4 h-4 text-muted-foreground group-hover:text-primary" />
+                        </div>
+                        {s.title}
+                      </span>
+                      <ArrowLeft className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 group-hover:-translate-x-1 transition-all" />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* كرت الموقع الجغرافي */}
+          <div className="bg-card rounded-[2rem] p-6 shadow-sm border border-border text-center overflow-hidden">
+            <div className="relative w-full h-40 bg-muted rounded-xl mb-5 overflow-hidden border border-border group cursor-pointer">
+              <Image
+                src="/images/0.jpg" // يمكن استبدالها بصورة خريطة حقيقية
+                alt="موقعنا"
+                fill
+                className="object-cover opacity-70 group-hover:opacity-100 transition-opacity duration-500 grayscale group-hover:grayscale-0"
+                unoptimized
+              />
+              <div className="absolute inset-0 flex items-center justify-center bg-slate-900/20 group-hover:bg-transparent transition-colors">
+                <span className="bg-background/90 backdrop-blur-md text-foreground font-bold text-xs py-2 px-4 rounded-full shadow-lg flex items-center gap-2 border border-border">
+                  <MapPin className="w-4 h-4 text-primary" /> عرض على الخريطة
+                </span>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground flex items-start justify-center gap-2 leading-relaxed px-2">
+              <MapPin className="w-4 h-4 shrink-0 text-primary mt-0.5" />
+              المملكة العربية السعودية، جدة، حي البوادي، شارع المكرونة
+            </p>
           </div>
-        </section>
-      )}
+        </aside>
+      </div>
     </main>
   );
 }

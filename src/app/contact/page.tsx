@@ -1,515 +1,378 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   Phone,
-  Mail,
   MapPin,
+  Mail,
   Clock,
   Send,
-  CheckCircle2,
-  Loader2,
-  Building2,
-  Home,
-  Briefcase,
-  LucideIcon,
+  ShieldCheck,
+  Hammer,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import Link from "next/link";
-import { Variants, Transition } from "framer-motion";
-// --- Types & Interfaces ---
-interface ProjectType {
-  id: string;
-  label: string;
-  icon: LucideIcon;
-}
-
-interface ContactItemProps {
-  icon: LucideIcon;
-  label: string;
-  value: string;
-  subValue?: string;
-  href?: string;
-}
-
-// --- Data ---
-const projectTypes: ProjectType[] = [
-  { id: "residential", label: "سكني (فيلات/قصور)", icon: Home },
-  { id: "commercial", label: "تجارية (مطاعم/فنادق)", icon: Briefcase },
-  { id: "government", label: "مشاريع حكومية وكبرى", icon: Building2 },
-];
-
-// --- Animations ---
-// const fadeInUp = {
-//   hidden: { opacity: 0, y: 30 },
-//   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
-// };
-const fadeInUp: Variants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6,
-      ease: "easeOut" as Transition["ease"], // 🟢 Type-safe
-    },
-  },
-};
-
-const staggerContainer = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.15 },
-  },
-};
 
 export default function ContactPage() {
+  // 1. تعريف حالات النموذج (States)
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
-    email: "",
-    projectType: "",
-    message: "",
+    service: "",
+    details: "",
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [status, setStatus] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
+  const [responseMessage, setResponseMessage] = useState("");
 
+  // 2. معالجة تغيير الحقول
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >,
+  ) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // 3. معالجة الإرسال عبر GraphQL
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    setStatus("loading");
+    setResponseMessage("");
 
-    // محاكاة إرسال البيانات للسيرفر
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    // بناء استعلام GraphQL (Mutation)
+    const graphqlQuery = {
+      query: `
+       mutation SubmitForm($input: SubmitContactFormInput!) {
+          submitContactForm(input: $input) {
+            success
+            message
+          }
+        }
+      `,
+      variables: {
+        input: {
+          clientMutationId: "contactFormSubmit", // مطلوب دائماً في WPGraphQL
+          name: formData.name,
+          phone: formData.phone,
+          service: formData.service,
+          details: formData.details,
+        },
+      },
+    };
 
-    setIsSubmitting(false);
-    setIsSuccess(true);
-    setFormData({
-      name: "",
-      phone: "",
-      email: "",
-      projectType: "",
-      message: "",
-    });
+    try {
+      // تنبيه: استبدل هذا الرابط برابط GraphQL الخاص بموقع ووردبريس الفعلي
+      const res = await fetch(process.env.NEXT_PUBLIC_WORDPRESS_API_URL as string, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(graphqlQuery),
+      });
+
+      const responseData = await res.json();
+
+      // استخراج النتيجة من مسار الرد الخاص بـ GraphQL
+      const result = responseData?.data?.submitContactForm;
+
+      if (result?.success) {
+        setStatus("success");
+        setResponseMessage(result.message);
+        // تفريغ النموذج بعد النجاح
+        setFormData({ name: "", phone: "", service: "", details: "" });
+      } else {
+        setStatus("error");
+        // في حال وجود أخطاء من GraphQL نفسها
+        const graphqlErrors = responseData?.errors
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          ?.map((err: any) => err.message)
+          .join(", ");
+        setResponseMessage(
+          result?.message || graphqlErrors || "حدث خطأ غير متوقع.",
+        );
+      }
+    } catch (error) {
+      setStatus("error");
+      setResponseMessage("تعذر الاتصال بالخادم. تأكد من اتصالك بالإنترنت.");
+    }
   };
 
   return (
     <main
-      className="min-h-screen bg-[#f8fafc] dark:bg-[#020617] pt-32 pb-20 overflow-hidden relative"
+      className="min-h-screen bg-stone-50 dark:bg-slate-950 font-sans selection:bg-amber-500/30"
       dir="rtl"
     >
-      {/* خلفيات جمالية فخمة */}
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#d4af37]/10 rounded-full blur-[120px] pointer-events-none translate-x-1/3 -translate-y-1/4" />
-      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none -translate-x-1/3 translate-y-1/3" />
+      {/* 1. Hero Section - مع تدرجات لونية تعكس الثيم الجديد */}
+      <section className="relative pt-32 pb-40 lg:pt-40 lg:pb-48 overflow-hidden bg-slate-900 rounded-b-[3rem] md:rounded-b-[4rem] shadow-2xl z-0">
+        {/* تأثيرات إضاءة خلفية (Glows) */}
+        <div className="absolute top-0 right-0 w-[40rem] h-[40rem] bg-amber-500/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[30rem] h-[30rem] bg-blue-500/10 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/3 pointer-events-none" />
 
-      <div className="container mx-auto px-4 relative z-10 max-w-7xl">
-        {/* رأس الصفحة */}
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          variants={staggerContainer}
-          className="text-center mb-16 max-w-3xl mx-auto"
-        >
+        {/* نمط شبكي خفيف يضيف طابع هندسي (Grid Pattern) */}
+        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))] opacity-10" />
+
+        <div className="container mx-auto px-4 relative z-10 text-center">
           <motion.div
-            variants={fadeInUp}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#d4af37]/10 text-[#d4af37] text-sm font-bold mb-6"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="max-w-3xl mx-auto"
           >
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#d4af37] opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#d4af37]"></span>
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/20 text-sm font-bold mb-6">
+              <Hammer className="w-4 h-4" />
+              نحن هنا لخدمتك
             </span>
-            تواصل معنا الآن
+            <h1 className="text-4xl md:text-5xl lg:text-7xl font-black text-white mb-6 leading-tight">
+              دعنا نبني{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-amber-600">
+                رؤيتك
+              </span>{" "}
+              معاً
+            </h1>
+            <p className="text-slate-300 text-lg md:text-xl leading-relaxed">
+              سواء كنت تفكر في تركيب مظلة حديثة، أو بناء برجولة خشبية فخمة،
+              فريقنا الهندسي مستعد لتحويل أفكارك إلى واقع بأعلى معايير الجودة.
+            </p>
           </motion.div>
-          <motion.h1
-            variants={fadeInUp}
-            className="text-4xl md:text-5xl lg:text-6xl font-black mb-6 text-slate-900 dark:text-white tracking-tight"
-          >
-            لنبدأ بناء <span className="text-[#d4af37]">رؤيتك</span> الهندسية
-          </motion.h1>
-          <motion.p
-            variants={fadeInUp}
-            className="text-lg md:text-xl text-slate-600 dark:text-gray-400 leading-relaxed"
-          >
-            فريقنا الهندسي جاهز لتحويل مساحتك إلى تحفة فنية. تواصل معنا اليوم
-            لاستشارة مجانية وتصميم مبدئي لمشروعك.
-          </motion.p>
-        </motion.div>
+        </div>
+      </section>
 
-        <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-          {/* الجانب الأيمن: معلومات الاتصال */}
+      {/* 2. المحتوى الرئيسي - متداخل مع الهيرو للأناقة */}
+      <section className="container mx-auto px-4 lg:px-8 relative z-10 -mt-24 md:-mt-32 pb-20">
+        <div className="grid lg:grid-cols-12 gap-8 lg:gap-12">
+          {/* الجانب الأيمن: معلومات التواصل */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
+            initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
             className="lg:col-span-5 space-y-6"
           >
-            {/* بطاقة المعلومات الرئيسية */}
-            <div className="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-white/5 rounded-3xl p-8 shadow-xl relative overflow-hidden group">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[#d4af37]/10 rounded-bl-full transition-transform duration-700 group-hover:scale-110" />
-
-              <h3 className="text-2xl font-bold mb-8 text-slate-900 dark:text-white relative z-10">
-                بيانات التواصل
+            {/* بطاقة معلومات الاتصال */}
+            <div
+              className="bg-white dark:bg-slate-900 rounded-[2rem] p-8 md:p-10 shadow-xl 
+         border border-stone-200 dark:border-slate-800 
+         hover:shadow-2xl hover:-translate-y-1 transition-all duration-500"
+            >
+              <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-8">
+                معلومات التواصل
               </h3>
 
-              <div className="space-y-6 relative z-10">
-                <ContactItem
+              <div className="space-y-8">
+                <ContactInfoItem
                   icon={Phone}
-                  label="المبيعات والاستشارات"
-                  value="+966 50 000 0000"
-                  href="tel:+966500000000"
+                  title="اتصل بنا مباشرة"
+                  details={["+966 53 098 9975", "+966 55 818 1955"]}
                 />
-                <ContactItem
-                  icon={Mail}
-                  label="البريد الإلكتروني"
-                  value="info@alaziziyah.com"
-                  href="mailto:info@alaziziyah.com"
-                />
-                <ContactItem
+                <ContactInfoItem
                   icon={MapPin}
-                  label="المقر الرئيسي"
-                  value="الرياض، المنطقة الصناعية الثانية"
-                  subValue="مبنى رقم 45، شارع الإبداع"
+                  title="موقعنا"
+                  details={[
+                    "المملكة العربية السعودية",
+                    "الرياض، حي الملقا، شارع الملك فهد",
+                  ]}
                 />
-                <ContactItem
+                <ContactInfoItem
+                  icon={Mail}
+                  title="البريد الإلكتروني"
+                  details={["info@al-azizia.com"]}
+                />
+                <ContactInfoItem
                   icon={Clock}
-                  label="ساعات العمل"
-                  value="السبت - الخميس"
-                  subValue="8:00 صباحاً - 6:00 مساءً"
+                  title="ساعات العمل"
+                  details={[
+                    "السبت - الخميس: 8 صباحاً - 10 مساءً",
+                    "الجمعة: مغلق",
+                  ]}
                 />
               </div>
-            </div>
 
-            {/* بطاقة الدعم السريع */}
-            <div className="bg-gradient-to-br from-slate-900 to-[#0f172a] dark:from-[#0b1120] dark:to-[#020617] border border-slate-800 dark:border-white/5 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden group">
-              <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay" />
-              <div className="absolute -right-10 -top-10 w-40 h-40 bg-[#d4af37]/20 blur-3xl rounded-full group-hover:bg-[#d4af37]/30 transition-colors" />
+              {/* فاصل */}
+              <div className="w-full h-px bg-stone-100 dark:bg-slate-800 my-8" />
 
-              <h3 className="font-bold text-xl mb-3 relative z-10">
-                هل لديك استفسار سريع؟
-              </h3>
-              <p className="text-gray-400 mb-8 text-sm relative z-10 leading-relaxed">
-                وفر وقتك وتصفح قسم الأسئلة الشائعة، فقد قمنا بالإجابة على أكثر
-                استفسارات عملائنا شيوعاً.
-              </p>
-              <Link
-                href="/faq"
-                className="inline-flex w-full justify-center items-center gap-2 bg-[#d4af37] text-slate-900 px-6 py-3.5 rounded-xl font-bold hover:bg-[#c4a027] transition-all relative z-10 shadow-[0_0_20px_rgba(212,175,55,0.3)] hover:shadow-[0_0_25px_rgba(212,175,55,0.5)]"
-              >
-                تصفح الأسئلة الشائعة
-              </Link>
+              {/* قسم الضمان */}
+              <div className="flex items-center gap-4 bg-stone-50 dark:bg-slate-950 p-5 rounded-2xl border border-stone-100 dark:border-slate-800">
+                <div className="p-3 bg-amber-500/10 rounded-xl text-amber-600 dark:text-amber-500">
+                  <ShieldCheck className="w-8 h-8" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-slate-900 dark:text-white">
+                    ضمان الجودة
+                  </h4>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+                    نقدم ضماناً شاملاً على كافة أعمالنا لمدة تصل إلى 10 سنوات.
+                  </p>
+                </div>
+              </div>
             </div>
           </motion.div>
 
-          {/* الجانب الأيسر: نموذج التواصل */}
+          {/* الجانب الأيسر: نموذج التواصل (Form) */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
+            initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
             className="lg:col-span-7"
           >
-            <div className="bg-white dark:bg-[#0f172a] border border-slate-200 dark:border-white/5 rounded-3xl p-8 md:p-10 shadow-xl relative overflow-hidden">
-              <AnimatePresence mode="wait">
-                {!isSuccess ? (
-                  <motion.form
-                    key="form"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.3 }}
-                    onSubmit={handleSubmit}
-                    className="space-y-8"
+            <div className="bg-white dark:bg-slate-900 rounded-[2rem] p-8 md:p-12 shadow-xl border border-stone-200 dark:border-slate-800 h-full">
+              <div className="mb-10">
+                <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-3">
+                  اطلب عرض سعر مجاني
+                </h2>
+                <p className="text-slate-500 dark:text-slate-400">
+                  يرجى تعبئة النموذج أدناه وسيقوم فريقنا بالتواصل معك في أقرب
+                  وقت ممكن.
+                </p>
+              </div>
+
+              {/* ربط النموذج بدالة الإرسال */}
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid md:grid-cols-2 gap-6">
+                  {/* الاسم */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                      الاسم الكريم
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      required
+                      placeholder="أدخل اسمك"
+                      className="w-full px-5 py-4 bg-stone-50 dark:bg-slate-950 border border-stone-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all text-slate-900 dark:text-white placeholder:text-slate-400"
+                    />
+                  </div>
+                  {/* رقم الجوال */}
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                      رقم الجوال
+                    </label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      required
+                      placeholder="05X XXX XXXX"
+                      className="w-full px-5 py-4 bg-stone-50 dark:bg-slate-950 border border-stone-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all text-slate-900 dark:text-white placeholder:text-slate-400 text-right"
+                      dir="ltr"
+                    />
+                  </div>
+                </div>
+
+                {/* نوع الخدمة */}
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                    الخدمة المطلوبة
+                  </label>
+                  <select
+                    name="service"
+                    value={formData.service}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-5 py-4 bg-stone-50 dark:bg-slate-950 border border-stone-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all text-slate-900 dark:text-white appearance-none cursor-pointer"
                   >
-                    {/* الحقول النصية */}
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div className="space-y-3">
-                        <label className="text-sm font-bold text-slate-700 dark:text-gray-300">
-                          الاسم الكامل <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          required
-                          type="text"
-                          placeholder="مثلاً: محمد عبدالله"
-                          className="w-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37] transition-all"
-                          value={formData.name}
-                          onChange={(e) =>
-                            setFormData({ ...formData, name: e.target.value })
-                          }
-                        />
-                      </div>
-                      <div className="space-y-3">
-                        <label className="text-sm font-bold text-slate-700 dark:text-gray-300">
-                          رقم الجوال <span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          required
-                          type="tel"
-                          placeholder="05xxxxxxxx"
-                          className="w-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37] transition-all text-right"
-                          dir="ltr"
-                          value={formData.phone}
-                          onChange={(e) =>
-                            setFormData({ ...formData, phone: e.target.value })
-                          }
-                        />
-                      </div>
-                    </div>
+                    <option value="">اختر نوع الخدمة...</option>
+                    <option value="pergolas">
+                      🏗️ تركيب برجولات (خشب/حديد)
+                    </option>
+                    <option value="umbrellas">☂️ مظلات سيارات وحدائق</option>
+                    <option value="barriers">🛡️ سواتر للحماية والخصوصية</option>
+                    <option value="other">📋 أخرى</option>
+                  </select>
+                </div>
 
-                    {/* خيارات نوع المشروع */}
-                    <div className="space-y-4">
-                      <label className="text-sm font-bold text-slate-700 dark:text-gray-300">
-                        نوع المشروع المستهدف{" "}
-                        <span className="text-red-500">*</span>
-                      </label>
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        {projectTypes.map((type) => {
-                          const Icon = type.icon;
-                          const isSelected = formData.projectType === type.id;
-                          return (
-                            <button
-                              key={type.id}
-                              type="button"
-                              onClick={() =>
-                                setFormData({
-                                  ...formData,
-                                  projectType: type.id,
-                                })
-                              }
-                              className={cn(
-                                "flex flex-col items-center justify-center gap-3 p-4 rounded-xl border-2 transition-all duration-300",
-                                isSelected
-                                  ? "border-[#d4af37] bg-[#d4af37]/5 text-[#d4af37] shadow-[0_0_15px_rgba(212,175,55,0.15)]"
-                                  : "border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-[#020617] text-slate-500 hover:border-[#d4af37]/40 hover:text-slate-700 dark:hover:text-gray-300",
-                              )}
-                            >
-                              <Icon
-                                className={cn(
-                                  "w-6 h-6",
-                                  isSelected
-                                    ? "text-[#d4af37]"
-                                    : "text-slate-400",
-                                )}
-                              />
-                              <span className="text-xs font-bold text-center">
-                                {type.label}
-                              </span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
+                {/* الرسالة */}
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-slate-700 dark:text-slate-300">
+                    تفاصيل المشروع (اختياري)
+                  </label>
+                  <textarea
+                    name="details"
+                    value={formData.details}
+                    onChange={handleChange}
+                    rows={4}
+                    placeholder="حدثنا عن مساحة المكان، الفكرة التي في بالك، أو أي تفاصيل أخرى..."
+                    className="w-full px-5 py-4 bg-stone-50 dark:bg-slate-950 border border-stone-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 transition-all text-slate-900 dark:text-white placeholder:text-slate-400 resize-none"
+                  />
+                </div>
 
-                    {/* الرسالة */}
-                    <div className="space-y-3">
-                      <label className="text-sm font-bold text-slate-700 dark:text-gray-300">
-                        تفاصيل المشروع <span className="text-red-500">*</span>
-                      </label>
-                      <textarea
-                        required
-                        rows={5}
-                        placeholder="أخبرنا المزيد عن مشروعك (المساحة التقريبية، الموقع، المتطلبات الخاصة)..."
-                        className="w-full bg-slate-50 dark:bg-[#020617] border border-slate-200 dark:border-white/10 rounded-xl px-4 py-3.5 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:border-[#d4af37] focus:ring-1 focus:ring-[#d4af37] transition-all resize-none"
-                        value={formData.message}
-                        onChange={(e) =>
-                          setFormData({ ...formData, message: e.target.value })
-                        }
-                      />
-                    </div>
-
-                    {/* زر الإرسال */}
-                    <button
-                      type="submit"
-                      disabled={isSubmitting || !formData.projectType}
-                      className="w-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold py-4 rounded-xl hover:bg-[#d4af37] dark:hover:bg-[#d4af37] hover:text-slate-900 transition-all shadow-lg flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed group"
-                    >
-                      {isSubmitting ? (
-                        <>
-                          <Loader2 className="w-5 h-5 animate-spin" />
-                          جاري إرسال الطلب...
-                        </>
-                      ) : (
-                        <>
-                          إرسال طلب التسعير
-                          <Send className="w-5 h-5 transform rotate-180 group-hover:-translate-x-1 transition-transform" />
-                        </>
-                      )}
-                    </button>
-                  </motion.form>
-                ) : (
+                {/* رسائل التنبيه (النجاح / الخطأ) */}
+                {status === "success" && (
                   <motion.div
-                    key="success"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="flex flex-col items-center justify-center text-center py-16"
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-4 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-xl border border-green-200 dark:border-green-800 text-sm font-medium"
                   >
-                    <div className="relative mb-8">
-                      <div className="absolute inset-0 bg-emerald-500/20 rounded-full blur-xl animate-pulse" />
-                      <div className="w-24 h-24 bg-emerald-100 dark:bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center justify-center relative z-10">
-                        <CheckCircle2 className="w-12 h-12 text-emerald-600 dark:text-emerald-400" />
-                      </div>
-                    </div>
-                    <h3 className="text-3xl font-black text-slate-900 dark:text-white mb-4">
-                      تم استلام طلبك بنجاح!
-                    </h3>
-                    <p className="text-slate-500 dark:text-gray-400 text-lg max-w-md mb-10 leading-relaxed">
-                      شكراً لثقتك بـ{" "}
-                      <span className="text-[#d4af37] font-bold">العزيزية</span>
-                      . سيقوم أحد مستشارينا الهندسيين بمراجعة تفاصيل مشروعك
-                      والتواصل معك في أقرب وقت.
-                    </p>
-                    <button
-                      onClick={() => setIsSuccess(false)}
-                      className="text-[#d4af37] font-bold hover:text-[#c4a027] border-b border-transparent hover:border-[#c4a027] transition-all pb-1"
-                    >
-                      &rarr; إرسال طلب جديد
-                    </button>
+                    {responseMessage}
                   </motion.div>
                 )}
-              </AnimatePresence>
+
+                {status === "error" && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-4 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-xl border border-red-200 dark:border-red-800 text-sm font-medium"
+                  >
+                    {responseMessage}
+                  </motion.div>
+                )}
+
+                {/* زر الإرسال */}
+                <button
+                  type="submit"
+                  disabled={status === "loading"}
+                  className="w-full flex items-center justify-center gap-2 py-4 bg-gradient-to-l from-amber-600 to-amber-500 text-white font-bold rounded-xl hover:from-amber-700 hover:to-amber-600 transition-all shadow-lg shadow-amber-500/25 hover:-translate-y-1 group disabled:opacity-70 disabled:hover:translate-y-0 disabled:cursor-not-allowed"
+                >
+                  <span>
+                    {status === "loading" ? "جاري الإرسال..." : "إرسال الطلب"}
+                  </span>
+                  {status !== "loading" && (
+                    <Send className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
+                  )}
+                </button>
+                <p className="text-xs text-center text-slate-500 mt-4">
+                  نحن نحترم خصوصيتك. لن يتم مشاركة معلوماتك مع أي جهة خارجية.
+                </p>
+              </form>
             </div>
           </motion.div>
         </div>
-
-        {/* قسم الخريطة */}
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="mt-20 h-[450px] w-full rounded-3xl overflow-hidden shadow-2xl border border-slate-200 dark:border-white/5 relative group"
-        >
-          {/* رابط حقيقي لخريطة الرياض للتجربة */}
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d115934.34685023908!2d46.7214711!3d24.6394578!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e2f03890d489399%3A0xba974d1c98e79fd5!2z2KfZhNix2YrYp9i2INin2YTZhdmF2YTYg9ipINin2YTYudix2KjZitipINin2YTYs9i52YjYrdiv2YrYqQ!5e0!3m2!1sar!2s!4v1699999999999!5m2!1sar!2s"
-            width="100%"
-            height="100%"
-            style={{ border: 0 }}
-            allowFullScreen
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            className="grayscale-[50%] group-hover:grayscale-0 transition-all duration-700"
-          />
-
-          {/* شارة فوق الخريطة */}
-          <div className="absolute top-6 left-6 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md px-6 py-3 rounded-2xl shadow-lg border border-slate-200 dark:border-white/10 pointer-events-none">
-            <p className="font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-              موقعنا الحالي
-            </p>
-          </div>
-        </motion.div>
-      </div>
+      </section>
     </main>
   );
 }
 
-interface ContentProps {
-  Icon: LucideIcon;
-  label: string;
-  value: string;
-  subValue?: string;
-  href?: string;
-}
-
-function Content({ Icon, label, value, subValue, href }: ContentProps) {
+// مكون بسيط لعرض معلومات التواصل بشكل أنيق
+function ContactInfoItem({
+  icon: Icon,
+  title,
+  details,
+}: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  icon: any;
+  title: string;
+  details: string[];
+}) {
   return (
-    <div className="flex items-start gap-4 group/item cursor-pointer p-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
-      <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center group-hover/item:bg-[#d4af37] group-hover/item:text-slate-900 text-[#d4af37] transition-colors duration-500 shrink-0">
-        <Icon className="w-5 h-5" />
+    <div className="flex items-start gap-4 group">
+      <div className="mt-1 p-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-xl group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300">
+        <Icon className="w-6 h-6" />
       </div>
       <div>
-        <p className="text-sm font-bold text-slate-500 dark:text-gray-400 mb-1">
-          {label}
-        </p>
-        <p
-          className="font-bold text-slate-900 dark:text-white text-base md:text-lg"
-          dir={href?.includes("tel:") ? "ltr" : "rtl"}
-        >
-          {value}
-        </p>
-        {subValue && (
-          <p className="text-sm text-slate-500 dark:text-gray-500 mt-1">
-            {subValue}
+        <h4 className="font-bold text-slate-900 dark:text-white mb-1">
+          {title}
+        </h4>
+        {details.map((detail, index) => (
+          <p
+            key={index}
+            className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm md:text-base"
+          >
+            {detail}
           </p>
-        )}
+        ))}
       </div>
     </div>
   );
 }
-function ContactItem({
-  icon: Icon,
-  label,
-  value,
-  subValue,
-  href,
-}: ContactItemProps) {
-  if (href) {
-    return (
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="block"
-      >
-        <Content
-          Icon={Icon}
-          label={label}
-          value={value}
-          subValue={subValue}
-          href={href}
-        />
-      </a>
-    );
-  }
-
-  return (
-    <Content Icon={Icon} label={label} value={value} subValue={subValue} />
-  );
-}
-// الاستغناء عن any باستخدام ContactItemProps المحددة مسبقاً
-// function ContactItem({
-//   icon: Icon,
-//   label,
-//   value,
-//   subValue,
-//   href,
-// }: ContactItemProps) {
-//   const Content = () => (
-//     <div className="flex items-start gap-4 group/item cursor-pointer p-3 rounded-2xl hover:bg-slate-50 dark:hover:bg-white/5 transition-colors">
-//       <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-white/5 flex items-center justify-center group-hover/item:bg-[#d4af37] group-hover/item:text-slate-900 text-[#d4af37] transition-colors duration-500 shrink-0">
-//         <Icon className="w-5 h-5" />
-//       </div>
-//       <div>
-//         <p className="text-sm font-bold text-slate-500 dark:text-gray-400 mb-1">
-//           {label}
-//         </p>
-//         <p
-//           className="font-bold text-slate-900 dark:text-white text-base md:text-lg"
-//           dir={href?.includes("tel:") ? "ltr" : "rtl"}
-//         >
-//           {value}
-//         </p>
-//         {subValue && (
-//           <p className="text-sm text-slate-500 dark:text-gray-500 mt-1">
-//             {subValue}
-//           </p>
-//         )}
-//       </div>
-//     </div>
-//   );
-
-//   if (href) {
-//     return (
-//       <a
-//         href={href}
-//         target="_blank"
-//         rel="noopener noreferrer"
-//         className="block"
-//       >
-//         <Content />
-//       </a>
-//     );
-//   }
-
-//   return <Content />;
-// }

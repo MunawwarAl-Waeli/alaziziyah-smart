@@ -34,10 +34,10 @@ export function CTASection() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             {/* زر الواتساب (أساسي) */}
-            <Link href="https://wa.me/966500000000" target="_blank">
+            <Link href="https://wa.me/966 53 098 9975" target="_blank">
               <button className="group relative px-8 py-4 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-full font-bold text-lg flex items-center gap-3 shadow-lg hover:shadow-[#25D366]/30 transition-all active:scale-95 w-full sm:w-auto justify-center">
                 <MessageCircle className="w-5 h-5" />
-                <span>محادثة واتساب</span>
+                                <span>محادثة واتساب</span>
               </button>
             </Link>
 

@@ -26,60 +26,60 @@
 
 /* ===== الوضع الفاتح ===== */
 :root {
-  /* الأساسيات - ألوان محايدة فاخرة */
-  --background: #f8fafc;
-  --foreground: #1e293b;
+  /* الأساسيات - حجري فاتح مريح للعين */
+  --background: #fafaf9; /* stone-50 */
+  --foreground: #0f172a; /* slate-900 */
 
-  /* الرئيسي - أزرق داكن أنيق (بديل للبني) */
-  --primary: #0f2b3d;
+  /* الرئيسي - النحاسي/الكهرماني (Amber) للأزرار والعناصر البارزة */
+  --primary: #f59e0b; /* amber-500 */
   --primary-foreground: #ffffff;
-  --primary-light: #1e4a6a;
-  --primary-dark: #0a1e2a;
+  --primary-light: #fbbf24; /* amber-400 */
+  --primary-dark: #d97706; /* amber-600 */
 
-  /* الثانوي - ذهبي دافئ */
-  --secondary: #b8914a;
+  /* الثانوي - أزرق حديدي داكن جداً (Slate) */
+  --secondary: #1e293b; /* slate-800 */
   --secondary-foreground: #ffffff;
-  --secondary-light: #d4b178;
-  --secondary-dark: #8e6e3c;
+  --secondary-light: #334155; /* slate-700 */
+  --secondary-dark: #0f172a; /* slate-900 */
 
   /* الألوان المساعدة */
-  --muted: #f1f5f9;
-  --muted-foreground: #64748b;
+  --muted: #f5f5f4; /* stone-100 */
+  --muted-foreground: #64748b; /* slate-500 */
 
-  --accent: #e9eef3;
-  --accent-foreground: #1e293b;
+  --accent: #fef3c7; /* amber-100 */
+  --accent-foreground: #b45309; /* amber-700 */
 
   /* خلفيات العناصر */
   --popover: #ffffff;
-  --popover-foreground: #1e293b;
+  --popover-foreground: #0f172a;
 
   --card: #ffffff;
-  --card-foreground: #1e293b;
+  --card-foreground: #0f172a;
 
   /* حدود وإطارات */
-  --border: #e2e8f0;
-  --input: #e2e8f0;
+  --border: #e7e5e4; /* stone-200 */
+  --input: #e7e5e4;
 
   --radius: 0.75rem;
 
   /* ألوان الـ Hero */
   --hero-overlay-day: linear-gradient(
     135deg,
-    rgba(15, 43, 61, 0.2) 0%,
-    rgba(15, 43, 61, 0.6) 100%
+    rgba(15, 23, 42, 0.4) 0%,
+    /* slate-900 */ rgba(15, 23, 42, 0.8) 100%
   );
   --hero-overlay-night: linear-gradient(
     135deg,
-    rgba(10, 30, 42, 0.7) 0%,
-    rgba(10, 30, 42, 0.9) 100%
+    rgba(2, 6, 23, 0.8) 0%,
+    /* slate-950 */ rgba(2, 6, 23, 0.95) 100%
   );
   --hero-text-glow: 0 2px 4px rgba(0, 0, 0, 0.3);
   --hero-text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
 
   /* Badge */
-  --badge-day-bg: rgba(184, 145, 74, 0.15);
-  --badge-night-bg: rgba(15, 43, 61, 0.2);
-  --badge-border: rgba(184, 145, 74, 0.3);
+  --badge-day-bg: rgba(245, 158, 11, 0.15); /* amber-500 */
+  --badge-night-bg: rgba(30, 41, 59, 0.2); /* slate-800 */
+  --badge-border: rgba(245, 158, 11, 0.3);
 
   /* ألوان إضافية */
   --success: #10b981;
@@ -90,57 +90,57 @@
 
 /* ===== الوضع الداكن ===== */
 .dark {
-  /* الأساسيات */
-  --background: #0f172a;
-  --foreground: #f1f5f9;
+  /* الأساسيات - أزرق حديدي عميق جداً */
+  --background: #020617; /* slate-950 */
+  --foreground: #f8fafc; /* slate-50 */
 
-  /* الرئيسي - أزرق أعمق */
-  --primary: #1e3a5f;
+  /* الرئيسي - النحاسي/الكهرماني (Amber) */
+  --primary: #f59e0b; /* amber-500 */
   --primary-foreground: #ffffff;
-  --primary-light: #2d4f7c;
-  --primary-dark: #142b44;
+  --primary-light: #fbbf24; /* amber-400 */
+  --primary-dark: #d97706; /* amber-600 */
 
-  /* الثانوي - ذهبي ناعم */
-  --secondary: #c9a45c;
-  --secondary-foreground: #0f172a;
-  --secondary-light: #e0c287;
-  --secondary-dark: #9e7d45;
+  /* الثانوي - أزرق حديدي أفتح قليلاً للتدرج */
+  --secondary: #1e293b; /* slate-800 */
+  --secondary-foreground: #f8fafc;
+  --secondary-light: #334155; /* slate-700 */
+  --secondary-dark: #0f172a; /* slate-900 */
 
   /* الألوان المساعدة */
-  --muted: #1e293b;
-  --muted-foreground: #94a3b8;
+  --muted: #0f172a; /* slate-900 */
+  --muted-foreground: #94a3b8; /* slate-400 */
 
-  --accent: #1e293b;
-  --accent-foreground: #f1f5f9;
+  --accent: #451a03; /* amber-900 */
+  --accent-foreground: #fde68a; /* amber-200 */
 
   /* خلفيات العناصر */
-  --popover: #1e293b;
-  --popover-foreground: #f1f5f9;
+  --popover: #0f172a; /* slate-900 */
+  --popover-foreground: #f8fafc;
 
-  --card: #1e293b;
-  --card-foreground: #f1f5f9;
+  --card: #0f172a; /* slate-900 */
+  --card-foreground: #f8fafc;
 
   /* حدود وإطارات */
-  --border: #334155;
-  --input: #334155;
+  --border: #1e293b; /* slate-800 */
+  --input: #1e293b;
 
   /* ألوان الـ Hero */
   --hero-overlay-day: linear-gradient(
     135deg,
-    rgba(30, 58, 95, 0.4) 0%,
-    rgba(30, 58, 95, 0.8) 100%
+    rgba(15, 23, 42, 0.6) 0%,
+    rgba(15, 23, 42, 0.9) 100%
   );
   --hero-overlay-night: linear-gradient(
     135deg,
-    rgba(15, 23, 42, 0.8) 0%,
-    rgba(15, 23, 42, 0.95) 100%
+    rgba(2, 6, 23, 0.85) 0%,
+    rgba(2, 6, 23, 0.98) 100%
   );
   --hero-text-glow: 0 2px 4px rgba(0, 0, 0, 0.5);
 
   /* Badge */
-  --badge-day-bg: rgba(201, 164, 92, 0.2);
-  --badge-night-bg: rgba(30, 58, 95, 0.3);
-  --badge-border: rgba(201, 164, 92, 0.4);
+  --badge-day-bg: rgba(245, 158, 11, 0.2); /* amber */
+  --badge-night-bg: rgba(30, 41, 59, 0.4); /* slate */
+  --badge-border: rgba(245, 158, 11, 0.4);
 
   /* ألوان إضافية */
   --success: #059669;
@@ -162,16 +162,16 @@ body {
 /* تحسينات الظلال */
 .shadow-luxury {
   box-shadow:
-    0 20px 40px -15px rgba(0, 0, 0, 0.15),
-    0 0 0 1px rgba(184, 145, 74, 0.1);
+    0 20px 40px -15px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(245, 158, 11, 0.1); /* Amber shadow */
 }
 
 .shadow-golden {
-  box-shadow: 0 10px 30px -5px rgba(184, 145, 74, 0.2);
+  box-shadow: 0 10px 30px -5px rgba(245, 158, 11, 0.25); /* Amber shadow */
 }
 
 .shadow-primary {
-  box-shadow: 0 10px 30px -5px rgba(15, 43, 61, 0.2);
+  box-shadow: 0 10px 30px -5px rgba(245, 158, 11, 0.2); /* Amber shadow */
 }
 
 /* أنيميشن محسن */
@@ -192,8 +192,8 @@ body {
   background: linear-gradient(
     45deg,
     var(--secondary-light),
-    var(--primary-light),
-    var(--secondary)
+    var(--primary-dark),
+    var(--primary)
   );
   background-size: 200% 200%;
 }
@@ -206,8 +206,8 @@ body {
 .bg-gradient-hero {
   background: linear-gradient(
     135deg,
-    rgba(15, 43, 61, 0.8) 0%,
-    rgba(184, 145, 74, 0.2) 100%
+    rgba(15, 23, 42, 0.9) 0%,
+    /* Slate */ rgba(245, 158, 11, 0.15) 100% /* Amber glow */
   );
 }
 

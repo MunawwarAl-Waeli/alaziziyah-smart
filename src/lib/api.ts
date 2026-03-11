@@ -5,7 +5,7 @@ export interface CategoryItem {
   slug: string;
 }
 
-export interface ServiceItem {
+export interface _ServiceItem {
   id: string;
   title: string;
   slug: string;
@@ -72,7 +72,7 @@ const EXCLUDED_TITLES = [
   "Home",
 ];
 
-// 2. الدالة المساعدة لتنظيف النص (Helper)
+// // 2. الدالة المساعدة لتنظيف النص (Helper)
 function cleanText(html: string, limit: number = 120): string {
   if (!html) return "خدمات هندسية متميزة بأعلى معايير الجودة والضمان الفني...";
   const plainText = html.replace(/<[^>]*>?/gm, "").trim();
@@ -84,7 +84,7 @@ function cleanText(html: string, limit: number = 120): string {
 // 3. الدالة الرئيسية لجلب البيانات
 export async function getWPData(): Promise<{
   categories: CategoryItem[];
-  services: ServiceItem[];
+  services: _ServiceItem[];
 }> {
   const query = `
     query GetWPData {
@@ -143,7 +143,7 @@ export async function getWPData(): Promise<{
     ];
 
     // ب) تجهيز الخدمات (مع فلترة الصفحات غير الخدمية)
-    const services: ServiceItem[] = json.data.pages.nodes
+    const services: _ServiceItem[] = json.data.pages.nodes
       .filter((page) => {
         const slug = page.slug.toLowerCase();
         const title = page.title.toLowerCase();
@@ -194,7 +194,7 @@ export async function getGlobalData() {
             title 
             description 
           }
-          menu(id: "primary", idType: SLUG) { 
+          menu(id: "Main Menu", idType: SLUG) { 
             menuItems(first: 100) { 
               nodes { 
                 id 
@@ -202,7 +202,7 @@ export async function getGlobalData() {
                 url 
                 path
                 parentId
-                childItems {
+                childItems(first: 100) {
                   nodes {
                     id
                     label
@@ -229,14 +229,6 @@ export async function getGlobalData() {
   return json.data;
 }
 
-// دالة لجلب صفحة محددة
-// export async function getPageBySlug(slug) {
-//   const data = await fetch(
-//     `query GetPageBySlug($id: ID!) { ... }`, // ضع الاستعلام رقم 2 هنا
-//     { variables: { id: slug } }
-//   );
-//   return data?.page;
-// }
 // دالة لجلب أحدث المشاريع من الووردبريس
 export async function getLatestProjects() {
   const WP_URL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL as string;
@@ -327,4 +319,335 @@ export async function getProjectBySlug(slug: string) {
     console.error("Fetch error:", error);
     return null;
   }
+}
+// lib/api.ts
+const API_URL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL;
+
+// ==========================================
+// 1. تعريف الأنواع (Interfaces) للخدمات
+// ==========================================
+export interface ServiceCategory {
+  name: string;
+  slug: string;
+}
+
+export interface ServiceItem {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  excerpt?: string;
+  featuredImage: {
+    node: {
+      sourceUrl: string;
+    };
+  };
+  serviceCategories: {
+    nodes: ServiceCategory[];
+  };
+  seo: {
+    title: string;
+    metaDesc: string;
+  };
+  serviceDetails: {
+    heroSubtitle: string;
+    features: Array<{ title: string; description: string }>;
+    types: Array<{
+      title: string;
+      description: string;
+      image: { sourceUrl: string };
+    }>;
+    faqs: Array<{ question: string; answer: string }>;
+    gallery: string[];
+  };
+}
+
+// ==========================================
+// 2. تعريف الأنواع (Interfaces) للمشاريع
+// ==========================================
+
+export interface GalleryImage {
+  sourceUrl: string;
+  altText: string | null;
+}
+
+export interface ProjectFields {
+  seoaftergallery: string | null;
+}
+
+export interface ProjectCategory {
+  name: string;
+  slug: string;
+}
+
+export interface ProjectData {
+  title: string;
+  slug: string;
+  content: string | null;
+  featuredImage: FeaturedImage | null;
+  galleryImages: GalleryImage[] | null;
+  projectFields: ProjectFields | null;
+  date: string;
+  projectCategorys: {
+    nodes: ProjectCategory[];
+  };
+  seo: {
+    title: string;
+    metaDesc: string;
+  } | null;
+}
+
+export interface FeaturedImage {
+  node: {
+    sourceUrl: string;
+    altText: string | null;
+  };
+}
+
+export interface ProjectSummary {
+  id: string;
+  title: string;
+  slug: string;
+  content: string | null;
+  featuredImage: FeaturedImage | null;
+  galleryImages: GalleryImage[] | null;
+  ProjectCategory: {
+    nodes: ProjectCategory[];
+  };
+  date?: string;
+}
+
+// ==========================================
+// 3. دالة الجلب الأساسية الموحدة (Base Fetch)
+// ==========================================
+async function wpFetch(query: string, variables = {}) {
+  const res = await fetch(API_URL!, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ query, variables }),
+  });
+
+  const json = await res.json();
+  if (json.errors) {
+    console.error(
+      "GraphQL Error Details:",
+      JSON.stringify(json.errors, null, 2),
+    );
+  }
+  return json.data;
+}
+
+// ==========================================
+// 4. دوال جلب الخدمات (Services Functions)
+// ==========================================
+export async function getAllServices(): Promise<ServiceItem[]> {
+  const query = `
+    query GetAllServices {
+      services(first: 100) {
+        nodes {
+          id
+          title
+          slug
+          featuredImage { node { sourceUrl } }
+          serviceCategories { nodes { name slug } }
+        }
+      }
+    }
+  `;
+  const data = await wpFetch(query);
+  return data.services.nodes;
+}
+
+export async function getServiceBySlug(slug: string): Promise<ServiceItem> {
+  const query = `
+    query GetServiceBySlug($slug: ID!) {
+      service(id: $slug, idType: SLUG) {
+        id
+        title
+        slug
+        content
+        featuredImage { node { sourceUrl } }
+        seo { title metaDesc }
+        serviceDetails {
+          heroSubtitle
+          feature1Title feature1Desc
+          feature2Title feature2Desc
+          type1Title type1Desc type1Image { node { sourceUrl } }
+          type2Title type2Desc type2Image { node { sourceUrl } }
+          type3Title type3Desc type3Image { node { sourceUrl } }
+          faq1Q faq1A
+          faq2Q faq2A
+          faq3Q faq3A
+          galleryImg1 { node { sourceUrl } }
+          galleryImg2 { node { sourceUrl } }
+          galleryImg3 { node { sourceUrl } }
+          galleryImg4 { node { sourceUrl } }
+          galleryImg5 { node { sourceUrl } }
+        }
+      }
+    }
+  `;
+
+  const data = await wpFetch(query, { slug });
+  const s = data.service;
+
+  type WpAcfImage = { node?: { sourceUrl?: string } } | null | undefined;
+  const getImgUrl = (imgField: WpAcfImage): string | null =>
+    imgField?.node?.sourceUrl || null;
+
+  return {
+    ...s,
+    serviceDetails: {
+      heroSubtitle: s.serviceDetails.heroSubtitle,
+      features: [
+        {
+          title: s.serviceDetails.feature1Title,
+          description: s.serviceDetails.feature1Desc,
+        },
+        {
+          title: s.serviceDetails.feature2Title,
+          description: s.serviceDetails.feature2Desc,
+        },
+      ].filter((f) => f.title),
+      types: [
+        {
+          title: s.serviceDetails.type1Title,
+          description: s.serviceDetails.type1Desc,
+          image: {
+            sourceUrl: getImgUrl(s.serviceDetails.type1Image) as string,
+          },
+        },
+        {
+          title: s.serviceDetails.type2Title,
+          description: s.serviceDetails.type2Desc,
+          image: {
+            sourceUrl: getImgUrl(s.serviceDetails.type2Image) as string,
+          },
+        },
+        {
+          title: s.serviceDetails.type3Title,
+          description: s.serviceDetails.type3Desc,
+          image: {
+            sourceUrl: getImgUrl(s.serviceDetails.type3Image) as string,
+          },
+        },
+      ].filter((t) => t.title),
+      faqs: [
+        { question: s.serviceDetails.faq1Q, answer: s.serviceDetails.faq1A },
+        { question: s.serviceDetails.faq2Q, answer: s.serviceDetails.faq2A },
+        { question: s.serviceDetails.faq3Q, answer: s.serviceDetails.faq3A },
+      ].filter((f) => f.question),
+      gallery: [
+        getImgUrl(s.serviceDetails.galleryImg1),
+        getImgUrl(s.serviceDetails.galleryImg2),
+        getImgUrl(s.serviceDetails.galleryImg3),
+        getImgUrl(s.serviceDetails.galleryImg4),
+        getImgUrl(s.serviceDetails.galleryImg5),
+      ].filter(Boolean) as string[],
+    },
+  };
+}
+
+export async function getAllServiceCategories(): Promise<ServiceCategory[]> {
+  const query = `
+    query GetServiceCategories {
+      serviceCategories { nodes { name slug } }
+    }
+  `;
+  const data = await wpFetch(query);
+  return data.serviceCategories.nodes;
+}
+
+// ==========================================
+// 5. دوال جلب المشاريع (Projects Functions)
+// ==========================================
+export async function getProjectGallery(
+  slug: string,
+): Promise<ProjectData | null> {
+  const query = `
+    query getProjectGallery($slug: ID!) {
+      project(id: $slug, idType: URI) {
+        title
+        slug
+        content
+        date
+        featuredImage { 
+          node { 
+            sourceUrl 
+          } 
+        }
+        galleryImages {
+          sourceUrl
+          altText
+        }
+        projectFields { 
+          seoaftergallery 
+        }
+         projectCategorys{
+        nodes{
+          name
+          slug
+        }
+      }
+        seo { 
+          title 
+          metaDesc 
+        }
+      }
+    }
+  `;
+  const rawslug = decodeURIComponent(slug);
+  try {
+    // 🔑 نجرب URI مباشر
+    const data = await wpFetch(query, {
+      slug: `/projects/${rawslug}`,
+    });
+
+    return data?.project ?? null;
+  } catch (err) {
+    console.warn("فشل استدعاء URI، نجرب SLUG مباشرة (إذا كان متاحاً مستقبلاً)");
+
+    // محاولة SLUG كخطة بديلة (في حال دعم مستقبلي)
+    try {
+      const dataSlug = await wpFetch(query, {
+        rawslug,
+      });
+      return dataSlug?.project ?? null;
+    } catch (_) {
+      return null;
+    }
+  }
+}
+
+export async function getAllProjects(): Promise<ProjectData[]> {
+  const query = `
+    query GetAllProjects {
+  projects(first: 10) {
+    nodes {
+      title
+      content
+      slug
+     featuredImage { node { sourceUrl } }
+      galleryImages {
+        sourceUrl
+        altText
+      }
+      
+      projectFields {
+        seoaftergallery # 💡 تم التعديل هنا لتطابق اسم الحقل تماماً
+      }
+      projectCategorys{
+        nodes{
+          name
+          slug
+        }
+      }
+
+    }
+  }
+}
+  `;
+  // استخدام دالة wpFetch الموحدة
+  const data = await wpFetch(query);
+  return data?.projects?.nodes || [];
 }

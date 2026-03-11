@@ -1,7 +1,7 @@
 // src/app/projects/page.tsx
-import { LatestProjects } from "@/components/features/home/LatestProjects";
-import { getLatestProjects } from "@/lib/api";
+import { getAllProjects } from "@/lib/api"; // 💡 تم التحديث هنا
 import { Metadata } from "next";
+import { ProjectsClient } from "./projects-client";
 
 export const metadata: Metadata = {
   title: "سابقة أعمالنا | العزيزية للمظلات والسواتر",
@@ -10,16 +10,16 @@ export const metadata: Metadata = {
 };
 
 export default async function ProjectsPage() {
-  // جلب المشاريع من الووردبريس
-  const recentProjects = await getLatestProjects();
+  // جلب المشاريع من الووردبريس باستخدام الدالة التي أنشأناها
+  const recentProjects = await getAllProjects();
 
   return (
     <main
       className="min-h-screen pt-24 pb-12 bg-background font-sans"
       dir="rtl"
     >
-      {/* استدعاء المكون الجاهز */}
-      <LatestProjects projects={recentProjects} />
+      {/* استدعاء المكون الجاهز وتمرير البيانات */}
+      <ProjectsClient initialProjects={recentProjects} />
     </main>
   );
 }

@@ -8,41 +8,68 @@ import {
   Trees,
   Wind,
   LucideIcon,
+  Hexagon, // أضفنا هذا الشكل الهندسي كفاصل فخم
 } from "lucide-react";
 
 interface ServiceItem {
   text: string;
   icon: LucideIcon;
+  keywords: string;
 }
 
 const services: ServiceItem[] = [
-  { text: "تركيب مظلات سيارات", icon: Sun },
-  { text: "سواتر حديد ومجدول", icon: Shield },
-  { text: "برجولات حدائق فاخرة", icon: Trees },
-  { text: "أعمال الشد الإنشائي", icon: Wind },
-  { text: "هناجر ومستودعات", icon: Warehouse },
-  { text: "ضمان شامل للجودة", icon: Star },
+  {
+    text: "مظلات سيارات حديد لكسان",
+    icon: Sun,
+    keywords:
+      "مظلات سيارات, مظلة سيارة, تظليل سيارات, مواقف سيارات, كراج سيارة",
+  },
+  {
+    text: "سواتر حديد شرائح خشب",
+    icon: Shield,
+    keywords: "سواتر حديد, سواتر خشبية, أسوار فلل, خصوصية حدائق, سواتر شرائح",
+  },
+  {
+    text: "برجولات خشب حديد حدائق",
+    icon: Trees,
+    keywords: "برجولات, برجولات خشبية, جلسات خارجية, مظلات حدائق, برجولات حديد",
+  },
+  {
+    text: "هناجر مستودعات حديد صناعية",
+    icon: Warehouse,
+    keywords: "هناجر حديد, مستودعات, صالات صناعية, مخازن, مباني حديدية",
+  },
+  {
+    text: "مظلات مدارس مسابح لكسان",
+    icon: Wind,
+    keywords:
+      "مظلات مدارس, مظلات مسابح, مظلات لكسان, تغطيات مسابح, ساحات مدرسية",
+  },
+  {
+    text: "ضمان 10 سنوات جودة أوروبية",
+    icon: Star,
+    keywords:
+      "ضمان مظلات, جودة أوروبية, تركيب معتمد, صيانة مظلات, مواد عالية الجودة",
+  },
 ];
 
 export function KeywordsMarquee() {
-  // نكرر القائمة مرة واحدة (أو أكثر) لضمان استمرارية الحركة
-  // تكرار المصفوفة 4 مرات لضمان تغطية الشاشات العريضة جداً
+  // تكرار المصفوفة 4 مرات لضمان تغطية الشاشات العريضة جداً بدون تقطيع
   const marqueeItems = [...services, ...services, ...services, ...services];
 
   return (
     <section
-      className="relative w-full overflow-hidden bg-background border-b border-secondary/10 py-6 md:py-8"
-      dir="ltr" // اتجاه القسم يسار لضمان عمل الـ Transform بشكل صحيح
+      className="relative w-full overflow-hidden bg-card border-y border-border/50 py-8 md:py-12 shadow-sm"
+      dir="ltr"
     >
-      {/* الظلال الجانبية لتلاشي العناصر */}
-      <div className="absolute inset-y-0 right-0 w-20 md:w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
-      <div className="absolute inset-y-0 left-0 w-20 md:w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+      {/* إضاءة خلفية خفيفة جداً تتماشى مع الثيم */}
+      <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-primary/5 opacity-50 pointer-events-none" />
 
-      {/* animate-marquee: تأتي من إعدادات التايلويند التي أضفناها
-         hover:[animation-play-state:paused]: كود سحري لإيقاف الحركة عند التمرير
-         min-w-max: يمنع انكماش العناصر
-      */}
-      <div className="flex min-w-max animate-marquee hover:[animation-play-state:paused]">
+      {/* الظلال الجانبية (التلاشي) بخلفية الـ Card لتندمج بسلاسة */}
+      <div className="absolute inset-y-0 right-0 w-24 md:w-40 bg-gradient-to-l from-card to-transparent z-10 pointer-events-none" />
+      <div className="absolute inset-y-0 left-0 w-24 md:w-40 bg-gradient-to-r from-card to-transparent z-10 pointer-events-none" />
+
+      <div className="flex min-w-max animate-marquee hover:[animation-play-state:paused] items-center">
         {marqueeItems.map((item, index) => (
           <MarqueeItem key={`${index}-${item.text}`} item={item} />
         ))}
@@ -54,20 +81,27 @@ export function KeywordsMarquee() {
 function MarqueeItem({ item }: { item: ServiceItem }) {
   const Icon = item.icon;
   return (
-    // نعيد الاتجاه RTL هنا ليظهر النص العربي بشكل سليم
     <div
-      className="flex items-center mx-6 md:mx-12 group cursor-default select-none flex-shrink-0"
+      className="flex items-center mx-3 md:mx-5 group cursor-default select-none flex-shrink-0"
       dir="rtl"
     >
-      <div className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-secondary/10 flex items-center justify-center border border-secondary/20 group-hover:bg-secondary group-hover:scale-110 transition-all duration-300">
-        <Icon className="w-4 h-4 md:w-5 md:h-5 text-secondary group-hover:text-white transition-colors" />
+      {/* تصميم الكبسولة (Pill) للخدمة */}
+      <div className="flex items-center gap-3 px-5 py-2.5 md:px-7 md:py-3.5 rounded-full bg-background border border-border/80 shadow-sm transition-all duration-500 group-hover:border-primary/40 group-hover:shadow-lg group-hover:shadow-primary/20 group-hover:-translate-y-1">
+        {/* الأيقونة بحركتها الجديدة */}
+        <div className="w-8 h-8 md:w-11 md:h-11 rounded-full bg-primary/10 flex items-center justify-center transition-all duration-500 group-hover:bg-primary group-hover:rotate-12">
+          <Icon className="w-4 h-4 md:w-5 md:h-5 text-primary group-hover:text-primary-foreground transition-colors" />
+        </div>
+
+        {/* النص */}
+        <span className="text-sm md:text-lg font-bold text-foreground/80 group-hover:text-primary transition-colors whitespace-nowrap">
+          {item.text}
+        </span>
       </div>
 
-      <span className="mr-3 md:mr-4 text-base md:text-xl font-bold text-foreground/80 group-hover:text-secondary transition-colors whitespace-nowrap">
-        {item.text}
-      </span>
-
-      <div className="mr-6 md:mr-12 w-1.5 h-1.5 rounded-full bg-border group-hover:bg-secondary/50 transition-colors flex-shrink-0" />
+      {/* الفاصل الهندسي (Hexagon) بدلاً من النقطة العادية */}
+      <div className="ml-3 md:ml-5 flex items-center justify-center opacity-20 group-hover:opacity-100 transition-opacity duration-500">
+        <Hexagon className="w-4 h-4 md:w-5 md:h-5 text-primary" />
+      </div>
     </div>
   );
 }

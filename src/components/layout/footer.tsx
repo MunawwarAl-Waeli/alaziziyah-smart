@@ -7,82 +7,132 @@ import {
   Phone,
   Mail,
   Facebook,
-  Twitter,
   Instagram,
-  MessageCircle, // نستخدمها كبديل لأيقونة واتساب
+  MessageCircle,
   ChevronLeft,
+  ArrowUpRight,
 } from "lucide-react";
-
+import { usePathname } from "next/navigation";
+const quickLinks = [
+  { name: "الرئيسية", href: "/", icon: "🏠" },
+  { name: "من نحن", href: "/about", icon: "👥" },
+  { name: "خدماتنا", href: "/services", icon: "⚙️" },
+  { name: "المشاريع", href: "/projects", icon: "🏗️" },
+  { name: "المدونة", href: "/blog", icon: "📝" },
+  { name: "اتصل بنا", href: "/contact", icon: "📞" },
+];
+const serviceLinks = [
+  { name: "مظلات سيارات", href: "/services/carports", icon: "🚗" },
+  { name: "برجولات", href: "/services/pergolas", icon: "🏡" },
+  { name: "سواتر", href: "/services/fences", icon: "🛡️" },
+  { name: "مظلات مدارس", href: "/services/schools", icon: "🏫" },
+  { name: "مظلات مسابح", href: "/services/pools", icon: "🏊" },
+  { name: "هناجر", href: "/services/warehouses", icon: "🏭" },
+];
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const pathname = usePathname();
 
   return (
     <footer
-      className="bg-[#0b1120] text-white border-t border-white/5 pt-16 pb-6"
+      // استخدمنا slate-950 لضمان بقاء الفوتر داكناً وفخماً دائماً
+      className="bg-slate-950 text-slate-50 border-t border-slate-800 pt-16 pb-6 relative overflow-hidden font-sans"
       dir="rtl"
     >
-      <div className="container mx-auto px-4">
-        {/* الشبكة الرئيسية - 4 أعمدة بناءً على التصميم */}
+      {/* إضاءة خلفية خافتة جداً في الزوايا */}
+      <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+
+      <div className="container mx-auto px-4 relative z-10">
+        {/* الشبكة الرئيسية */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
-          {/* العمود 1: معلومات الـ SEO ونبذة عن الشركة */}
+          {/* العمود 1: معلومات الشركة */}
           <div className="flex flex-col gap-5">
             <h3 className="text-xl font-bold text-white mb-2 relative inline-block">
               تركيب مظلات وسواتر
-              <span className="absolute -bottom-2 right-0 w-12 h-1 bg-[#d4af37] rounded-full"></span>
+              <span className="absolute -bottom-2 right-0 w-12 h-1 bg-primary rounded-full"></span>
             </h3>
-            <p className="text-gray-400 leading-relaxed text-sm text-justify">
+            <p className="text-slate-400 leading-relaxed text-sm text-justify">
               شركة العزيزية للمظلات والسواتر، هي شركة متخصصة في تركيب سواتر
               ومظلات وغيرها من الأعمال مثل: تركيب المظلات، تركيب البرجولات،
               تركيب السواتر، وصيانة المظلات والسواتر بكافة أنواعها بأعلى معايير
-              الجودة.
+              الجودة الهندسية.
             </p>
             <Link href="/contact" className="inline-flex w-fit mt-2">
-              <button className="bg-[#d4af37] hover:bg-[#c4a027] text-slate-900 font-bold py-2.5 px-6 rounded-md transition-colors shadow-lg hover:shadow-xl flex items-center gap-2">
+              <button className="bg-gradient-to-l from-primary-dark to-primary text-primary-foreground font-bold py-2.5 px-6 rounded-xl transition-all shadow-lg shadow-primary/20 hover:-translate-y-1 hover:shadow-xl flex items-center gap-2 group">
                 اطلب عرض سعر
-                <ChevronLeft className="w-4 h-4" />
+                <ChevronLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
               </button>
             </Link>
           </div>
 
           {/* العمود 2: روابط سريعة */}
           <div>
-            <h3 className="text-xl font-bold text-white mb-6 relative inline-block">
+            <h3 className="text-lg font-bold text-white mb-6 relative inline-block">
               روابط سريعة
-              <span className="absolute -bottom-2 right-0 w-12 h-1 bg-[#d4af37] rounded-full"></span>
+              <span className="absolute -bottom-2 right-0 w-8 h-0.5 bg-primary rounded-full" />
             </h3>
             <nav>
-              <ul className="space-y-4">
-                {[
-                  { name: "الرئيسية", href: "/" },
-                  { name: "من نحن", href: "/about" },
-                  { name: "خدماتنا", href: "/services" },
-                  { name: "معرض الأعمال", href: "/projects" },
-                  { name: "سياسة الخصوصية", href: "/privacy" },
-                ].map((link) => (
+              <ul className="space-y-3">
+                {quickLinks.map((link) => {
+                  const isActive = pathname === link.href;
+                  return (
+                    <li key={link.name}>
+                      <Link
+                        href={link.href}
+                        className={`
+                          flex items-center gap-2 text-sm transition-all group
+                          ${isActive ? "text-primary" : "text-slate-400 hover:text-primary hover:translate-x-[-4px]"}
+                        `}
+                      >
+                        <span className="text-base">{link.icon}</span>
+                        <span>{link.name}</span>
+                        {isActive && (
+                          <span className="w-1.5 h-1.5 bg-primary rounded-full" />
+                        )}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </nav>
+          </div>
+
+          {/* العمود 4: الخريطة */}
+          <div>
+            <h3 className="text-lg font-bold text-white mb-6 relative inline-block">
+              خدماتنا
+              <span className="absolute -bottom-2 right-0 w-8 h-0.5 bg-primary rounded-full" />
+            </h3>
+            <nav>
+              <ul className="space-y-3">
+                {serviceLinks.map((link) => (
                   <li key={link.name}>
                     <Link
                       href={link.href}
-                      className="text-gray-400 hover:text-[#d4af37] hover:translate-x-[-8px] transition-all inline-flex items-center gap-2 text-sm font-medium group"
+                      className="flex items-center gap-2 text-sm text-slate-400 hover:text-primary hover:translate-x-[-4px] transition-all group"
                     >
-                      <span className="w-1.5 h-1.5 border border-gray-400 group-hover:border-[#d4af37] group-hover:bg-[#d4af37] transition-colors rounded-sm"></span>
-                      {link.name}
+                      <span className="text-base">{link.icon}</span>
+                      <span>{link.name}</span>
+                      <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </Link>
                   </li>
                 ))}
               </ul>
             </nav>
           </div>
-
           {/* العمود 3: تواصل معنا */}
           <div>
             <h3 className="text-xl font-bold text-white mb-6 relative inline-block">
               تواصل معنا
-              <span className="absolute -bottom-2 right-0 w-12 h-1 bg-[#d4af37] rounded-full"></span>
+              <span className="absolute -bottom-2 right-0 w-12 h-1 bg-primary rounded-full"></span>
             </h3>
             <address className="not-italic space-y-6">
               <div className="flex items-start gap-4 group">
-                <MapPin className="w-5 h-5 text-[#d4af37] shrink-0 mt-1" />
-                <p className="text-gray-400 text-sm leading-relaxed">
+                <div className="p-2 bg-slate-900 rounded-lg group-hover:bg-primary/10 transition-colors mt-1">
+                  <MapPin className="w-4 h-4 text-primary shrink-0" />
+                </div>
+                <p className="text-slate-400 text-sm leading-relaxed pt-1">
                   المملكة العربية السعودية، الرياض
                   <br />
                   شارع التخصصي
@@ -90,101 +140,82 @@ export function Footer() {
               </div>
 
               <div className="flex items-center gap-4 group">
-                <Phone className="w-5 h-5 text-[#d4af37] shrink-0" />
+                <div className="p-2 bg-slate-900 rounded-lg group-hover:bg-primary/10 transition-colors">
+                  <Phone className="w-4 h-4 text-primary shrink-0" />
+                </div>
                 <a
                   href="tel:+966558181955"
-                  className="text-gray-400 hover:text-white text-sm dir-ltr transition-colors font-sans"
+                  className="text-slate-400 hover:text-white text-sm dir-ltr transition-colors font-sans"
                 >
                   +966 55 818 1955
                 </a>
               </div>
 
               <div className="flex items-center gap-4 group">
-                <Mail className="w-5 h-5 text-[#d4af37] shrink-0" />
+                <div className="p-2 bg-slate-900 rounded-lg group-hover:bg-primary/10 transition-colors">
+                  <Mail className="w-4 h-4 text-primary shrink-0" />
+                </div>
                 <a
                   href="mailto:info@alazizia.com"
-                  className="text-gray-400 hover:text-white text-sm transition-colors font-sans"
+                  className="text-slate-400 hover:text-white text-sm transition-colors font-sans"
                 >
                   info@alazizia.com
                 </a>
               </div>
             </address>
           </div>
-
-          {/* العمود 4: الخريطة */}
-          <div>
-            <h3 className="text-xl font-bold text-white mb-6 relative inline-block">
-              موقعنا على الخريطة
-              <span className="absolute -bottom-2 right-0 w-12 h-1 bg-[#d4af37] rounded-full"></span>
-            </h3>
-            <div className="w-full h-48 bg-slate-800 rounded-xl overflow-hidden border border-white/10 relative group cursor-pointer">
-              {/* هنا نضع Iframe لخريطة جوجل. استبدل الرابط برابط موقعكم الفعلي */}
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d115935.13289947932!2d46.738586!3d24.774265!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e2f03890d489399%3A0xba974d1c98e79fd5!2sRiyadh%20Saudi%20Arabia!5e0!3m2!1sen!2s!4v1700000000000!5m2!1sen!2s"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen={false}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                className="opacity-80 group-hover:opacity-100 transition-opacity"
-              ></iframe>
-            </div>
-          </div>
         </div>
 
-        {/* الشريط السفلي العلوي (أرقام التواصل السريعة والسوشيال ميديا) */}
-        <div className="border-t border-white/10 pt-6 pb-6 flex flex-col lg:flex-row justify-between items-center gap-6">
-          {/* معلومات التواصل الأفقية */}
-          <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 md:gap-8 text-sm text-gray-400 font-sans">
+        {/* الشريط السفلي العلوي */}
+        <div className="border-t border-slate-800 pt-6 pb-6 flex flex-col lg:flex-row justify-between items-center gap-6">
+          <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 md:gap-6 text-sm text-slate-400 font-sans">
             <a
               href="mailto:info@al-azizia.com"
-              className="hover:text-white transition-colors flex items-center gap-2"
+              className="hover:text-primary transition-colors flex items-center gap-2"
             >
               info@al-azizia.com
             </a>
-            <span className="hidden md:inline text-white/20">|</span>
+            <span className="hidden md:inline text-slate-700">|</span>
             <a
               href="tel:+966530989975"
-              className="hover:text-white transition-colors flex items-center gap-2 dir-ltr"
+              className="hover:text-primary transition-colors flex items-center gap-2 dir-ltr"
             >
               +966 5309 89 975
             </a>
-            <span className="hidden md:inline text-white/20">|</span>
+            <span className="hidden md:inline text-slate-700">|</span>
             <a
               href="tel:+966558181955"
-              className="hover:text-white transition-colors flex items-center gap-2 dir-ltr"
+              className="hover:text-primary transition-colors flex items-center gap-2 dir-ltr"
             >
               +966 5581 819 55
             </a>
             <a
-              href="https://wa.me/966558181955"
+              href="https://wa.me/966530989975"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-green-500 hover:text-green-400 transition-colors bg-white/5 p-2 rounded-full"
+              className="text-green-500 hover:text-white hover:bg-green-500 transition-all bg-slate-900 p-2.5 rounded-full"
             >
               <MessageCircle className="w-5 h-5" />
             </a>
           </div>
 
           {/* السوشيال ميديا */}
-          <div className="flex gap-4">
+          <div className="flex gap-3">
             <a
               href="#"
-              className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-[#d4af37] hover:text-slate-900 transition-all"
+              className="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:bg-primary hover:border-primary hover:text-primary-foreground hover:-translate-y-1 transition-all"
             >
               <Facebook className="w-4 h-4" />
             </a>
             <a
               href="#"
-              className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-[#d4af37] hover:text-slate-900 transition-all"
+              className="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:bg-primary hover:border-primary hover:text-primary-foreground hover:-translate-y-1 transition-all"
             >
               <Instagram className="w-4 h-4" />
             </a>
-            {/* أيقونة X بدلاً من تويتر القديم */}
             <a
               href="#"
-              className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-[#d4af37] hover:text-slate-900 transition-all"
+              className="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:bg-primary hover:border-primary hover:text-primary-foreground hover:-translate-y-1 transition-all"
             >
               <svg
                 viewBox="0 0 24 24"
@@ -197,25 +228,28 @@ export function Footer() {
           </div>
         </div>
 
-        {/* الشريط السفلي النهائي (الحقوق وروابط السياسة) */}
-        <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
+        {/* الشريط النهائي */}
+        <div className="border-t border-slate-800 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
           <p>
             © {currentYear} شركة العزيزية للمظلات والسواتر. جميع الحقوق محفوظة.
           </p>
           <div className="flex items-center gap-4 flex-wrap justify-center">
-            <Link href="#" className="hover:text-white transition-colors">
-              تطوير بواسطة مطوري الويب
+            <Link href="#" className="hover:text-primary transition-colors">
+              تطوير بواسطة منور الوائلي
             </Link>
-            <span className="text-white/20">|</span>
+            <span className="text-slate-800">|</span>
             <Link
               href="/privacy"
-              className="hover:text-white transition-colors"
+              className="hover:text-primary transition-colors"
             >
               سياسة الخصوصية
             </Link>
-            <span className="text-white/20">|</span>
-            <Link href="/terms" className="hover:text-white transition-colors">
-              شروط استخدام الموقع
+            <span className="text-slate-800">|</span>
+            <Link
+              href="/terms"
+              className="hover:text-primary transition-colors"
+            >
+              شروط الاستخدام
             </Link>
           </div>
         </div>

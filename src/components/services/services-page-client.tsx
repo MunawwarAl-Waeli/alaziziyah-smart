@@ -3,13 +3,13 @@
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Filter, X, LayoutGrid } from "lucide-react";
-import { ServiceItem, CategoryItem } from "@/lib/api"; // تأكد من المسارات
-import { ServiceCard } from "@/components/services/services-card"; // الكرت الذي صممناه
+import { ServiceItem, ServiceCategory } from "@/lib/api";
+import { ServiceCard } from "@/components/services/services-card";
 import { cn } from "@/lib/utils";
 
 interface Props {
   initialServices: ServiceItem[];
-  categories: CategoryItem[];
+  categories: ServiceCategory[]; // ✅ استخدام النوع الصحيح
 }
 
 export default function ServicesPageClient({
@@ -19,120 +19,152 @@ export default function ServicesPageClient({
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
 
-  // المحرك الرئيسي للبحث والفلترة
   const filteredServices = useMemo(() => {
     return initialServices.filter((service) => {
+      // البحث في العنوان والوصف (Content)
       const matchesSearch =
         service.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        service.description.toLowerCase().includes(searchQuery.toLowerCase());
+        service.content?.toLowerCase().includes(searchQuery.toLowerCase());
 
+      // الفلترة بناءً على الـ slug الموجود داخل مصفوفة التصنيفات
       const matchesFilter =
-        activeFilter === "all" || service.category === activeFilter;
+        activeFilter === "all" ||
+        service.serviceCategories?.nodes.some(
+          (cat) => cat.slug === activeFilter,
+        );
 
       return matchesSearch && matchesFilter;
     });
   }, [searchQuery, activeFilter, initialServices]);
 
   return (
-    <div className="min-h-screen bg-background pt-24 pb-16" dir="rtl">
-      {/* رأس الصفحة */}
-      <section className="container mx-auto px-4 mb-12">
-        <div className="max-w-4xl mx-auto text-center space-y-6">
-          <h1 className="text-4xl md:text-6xl font-black text-foreground">
-            كافة <span className="text-primary">خدماتنا</span>
-          </h1>
-          <p className="text-muted-foreground text-lg">
-            ابحث عن الخدمة التي تحتاجها من بين أكثر من {initialServices.length}{" "}
-            خدمة هندسية
-          </p>
+    <>
+      {/* <div className="absolute inset-0 bg-primary/10 dark:bg-primary/5" />
+      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
 
-          {/* شريط البحث */}
-          <div className="relative max-w-2xl mx-auto mt-8">
-            <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
-            <input
-              type="text"
-              placeholder="ابحث عن مظلة، سواتر، هناجر..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full h-14 pr-12 pl-4 rounded-2xl border border-border bg-card focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-lg"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery("")}
-                className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            )}
-          </div>
-        </div>
-      </section>
+      {/* دوائر خلفية جمالية */}
+      {/* <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2 pointer-events-none" /> */}
 
-      {/* الفلترة */}
-      <nav className="sticky top-20 z-30 bg-background/80 backdrop-blur-md border-b border-border mb-12">
-        <div className="container mx-auto px-4 py-4 flex items-center gap-4 overflow-x-auto no-scrollbar">
-          <div className="flex items-center gap-2 shrink-0 text-primary font-bold ml-4">
-            <Filter className="w-4 h-4" />
-            <span>تصنيف:</span>
-          </div>
-          <div className="flex gap-2">
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setActiveFilter(cat.slug)}
-                className={cn(
-                  "px-5 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all",
-                  activeFilter === cat.slug
-                    ? "bg-primary text-white shadow-md shadow-primary/20"
-                    : "bg-muted text-muted-foreground hover:bg-muted/80",
-                )}
-              >
-                {cat.name}
-              </button>
-            ))}
-          </div>
-        </div>
-      </nav>
-
-      {/* النتائج */}
-      <main className="container mx-auto px-4">
-        {filteredServices.length > 0 ? (
-          <motion.div
-            layout
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-          >
-            <AnimatePresence>
-              {filteredServices.map((service, index) => (
-                <ServiceCard
-                  key={service.id}
-                  service={service}
-                  index={index}
-                  // هنا نلغي نمط الـ Bento ونجعلها شبكة منتظمة لسهولة التصفح
-                  // layoutMode="standard"
-                />
-              ))}
-            </AnimatePresence>
-          </motion.div>
-        ) : (
-          <div className="text-center py-32 bg-card rounded-3xl border-2 border-dashed border-border">
-            <LayoutGrid className="w-16 h-16 mx-auto mb-4 opacity-10" />
-            <h3 className="text-xl font-bold">لا توجد نتائج تطابق بحثك</h3>
-            <p className="text-muted-foreground mt-2">
-              جرب البحث بكلمات أخرى أو تغيير التصنيف
-            </p>
-            <button
-              onClick={() => {
-                setSearchQuery("");
-                setActiveFilter("all");
-              }}
-              className="mt-6 text-primary font-bold hover:underline"
+      <div className="min-h-screen  pt-32 pb-16" dir="rtl">
+        {/* رأس الصفحة مع تأثير بصري خفيف */}
+        <section className="container mx-auto px-6 mb-16">
+          <div className="max-w-3xl mx-auto text-center space-y-4">
+            <motion.span
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-primary font-bold tracking-widest uppercase text-sm"
             >
-              عرض كل الخدمات
-            </button>
+              مؤسسة العزيزية
+            </motion.span>
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-4xl md:text-7xl font-black text-foreground"
+            >
+              كافة <span className="text-primary text-stroke">خدماتنا</span>
+            </motion.h1>
+
+            <div className="relative max-w-2xl mx-auto pt-8">
+              <Search className="absolute right-5 top-[70%] -translate-y-1/2 text-muted-foreground w-5 h-5" />
+              <input
+                type="text"
+                placeholder="ابحث عن مظلات، سواتر، برجولات..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full h-16 pr-14 pl-6 rounded-2xl border border-border bg-card focus:border-primary focus:ring-4 focus:ring-primary/5 outline-none transition-all text-lg shadow-sm"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute left-5 top-[70%] -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              )}
+            </div>
           </div>
-        )}
-      </main>
-    </div>
+        </section>
+
+        {/* شريط الفلترة اللزج (Sticky) */}
+        <nav className="sticky top-[72px] z-40 bg-background/80 backdrop-blur-xl border-y border-border mb-12">
+          <div className="container mx-auto px-6 py-4 flex items-center gap-4 overflow-x-auto no-scrollbar">
+            <div className="flex items-center gap-2 shrink-0 text-primary font-bold ml-4">
+              <Filter className="w-4 h-4" />
+              <span className="text-sm">تصفية:</span>
+            </div>
+            <div className="flex gap-3">
+              {categories.map((cat) => (
+                <button
+                  key={cat.slug}
+                  onClick={() => setActiveFilter(cat.slug)}
+                  className={cn(
+                    "px-6 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-all border",
+                    activeFilter === cat.slug
+                      ? "bg-primary border-primary text-white shadow-lg shadow-primary/20 scale-105"
+                      : "bg-card border-border text-muted-foreground hover:border-primary/50 hover:text-primary",
+                  )}
+                >
+                  {cat.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        </nav>
+
+        {/* شبكة عرض الخدمات */}
+        <main className="container mx-auto px-6">
+          <div className="flex items-center justify-between mb-8 text-muted-foreground">
+            <p className="text-sm font-medium">
+              عرض {filteredServices.length} نتيجة
+            </p>
+          </div>
+
+          {filteredServices.length > 0 ? (
+            <motion.div
+              layout
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+            >
+              <AnimatePresence mode="popLayout">
+                {filteredServices.map((service) => (
+                  <motion.div
+                    key={service.id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <ServiceCard service={service} />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-center py-40 bg-muted/20 rounded-[3rem] border-2 border-dashed border-border"
+            >
+              <LayoutGrid className="w-20 h-20 mx-auto mb-6 opacity-10" />
+              <h3 className="text-2xl font-bold">عذراً، لم نجد نتائج!</h3>
+              <p className="text-muted-foreground mt-2 max-w-xs mx-auto">
+                لم نجد أي خدمة تطابق {searchQuery} في هذا التصنيف.
+              </p>
+              <button
+                onClick={() => {
+                  setSearchQuery("");
+                  setActiveFilter("all");
+                }}
+                className="mt-8 px-8 py-3 bg-primary text-white rounded-full font-bold hover:scale-105 transition-transform"
+              >
+                عرض كافة الخدمات
+              </button>
+            </motion.div>
+          )}
+        </main>
+      </div>
+    </>
   );
 }
-

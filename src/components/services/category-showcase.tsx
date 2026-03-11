@@ -15,7 +15,7 @@ interface CategoryShowcaseProps {
 
 export function CategoryShowcase({
   category,
-  limit = 3,
+  limit = 3
 }: CategoryShowcaseProps) {
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const services = getServicesByCategory(category.id).slice(0, limit);
