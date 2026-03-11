@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
@@ -730,7 +729,7 @@ export function Header({ wpMenuData = [] }: HeaderProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] bg-background/95 backdrop-blur-2xl flex items-start justify-center pt-24 md:pt-32 px-4"
+            className="fixed inset-0 z-[60] bg-background/85 backdrop-blur-2xl flex items-start justify-center pt-24 md:pt-32 px-4"
           >
             {/* توهج النحاس خلف البحث */}
             <div className="absolute top-20 left-1/2 -translate-x-1/2 w-full max-w-3xl h-32 bg-primary/20 rounded-full blur-[100px] pointer-events-none" />

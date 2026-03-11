@@ -85,6 +85,7 @@ export default function ProjectDetailsClient({
   const imageY = useTransform(scrollY, [0, 500], [0, 100]);
 
   useEffect(() => {
+    console.log(project.galleryImages);
     if (project?.content) {
       const imgRegex = /<img[^>]+src="([^">]+)"/g;
       const images: string[] = [];
