@@ -77,7 +77,7 @@ const nextConfig = {
         permanent: true,
       },
       {
-        source: encodeURI("/تركيب-مظلات"),
+        source: "/تركيب-مظلات",
         destination: "/services/تركيب-مظلات-سيارات",
         permanent: true,
       },

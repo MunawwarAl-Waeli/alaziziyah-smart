@@ -93,7 +93,7 @@ const services: ServiceOption[] = [
     description: "حماية سيارتك من الشمس والأمطار بتصاميم عصرية",
     image: "/images/3.jpg",
     basePrice: 350,
-    minArea: 12,
+    minArea: 120,
     maxArea: 500,
   },
   {
@@ -103,7 +103,7 @@ const services: ServiceOption[] = [
     description: "جلسات خارجية أنيقة بتصاميم فاخرة",
     image: "/images/4.jpg",
     basePrice: 400,
-    minArea: 15,
+    minArea: 150,
     maxArea: 400,
   },
   {
@@ -113,7 +113,7 @@ const services: ServiceOption[] = [
     description: "خصوصية وأمان بتصاميم عصرية",
     image: "/images/0.jpg",
     basePrice: 300,
-    minArea: 10,
+    minArea: 100,
     maxArea: 500,
   },
   {
@@ -123,7 +123,7 @@ const services: ServiceOption[] = [
     description: "تغطية ساحات وممرات المدارس بأعلى معايير السلامة",
     image: "/images/1.jpg",
     basePrice: 380,
-    minArea: 50,
+    minArea: 500,
     maxArea: 2000,
   },
   {
@@ -133,8 +133,8 @@ const services: ServiceOption[] = [
     description: "مظلات متحركة للمسابح بتقنيات حديثة",
     image: "/images/5.jpg",
     basePrice: 450,
-    minArea: 20,
-    maxArea: 300,
+    minArea: 200,
+    maxArea: 2000,
   },
   {
     id: "warehouse",
