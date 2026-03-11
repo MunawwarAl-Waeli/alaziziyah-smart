@@ -5,13 +5,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Camera, Sparkles, ArrowLeft, ImageIcon, Folders } from "lucide-react";
-import { ProjectSummary } from "@/lib/api"; // تأكد من مسار الواجهة
+import { ProjectData } from "@/lib/api"; // تأكد من مسار الواجهة
 import { cn } from "@/lib/utils";
 
 export default function ProjectsGridClient({
   projects,
 }: {
-  projects: ProjectSummary[];
+  projects: ProjectData[];
 }) {
   // نعرض أول 6 مشاريع فقط في الصفحة الرئيسية لعدم إطالة الصفحة
   const displayProjects = projects.slice(0, 6);
@@ -76,14 +76,14 @@ export default function ProjectsGridClient({
             // التعامل مع اختلاف المسميات في الـ GraphQL (ProjectCategory vs projectCategorys)
             //   // @ts-ignore - نتجاهل خطأ التايب سكريبت المؤقت لأننا نتحقق من الكلمتين
             const categories =
-              project.ProjectCategory?.nodes ||
+              project.projectCategorys?.nodes ||
               //   project.projectCategorys?.nodes ||
               [];
             const categoryName = categories[0]?.name || "مشاريعنا";
 
             return (
               <motion.div
-                key={project.id || project.slug}
+                key={project.slug}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}

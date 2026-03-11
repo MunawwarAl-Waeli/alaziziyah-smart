@@ -67,7 +67,7 @@ export function ServiceGrid({
   return (
     <div className={gridClasses}>
       {services.map((service, index) => (
-        <ServiceCard key={service.id} service={service} index={index} />
+        <ServiceCard key={service.id} service={service}/>
       ))}
     </div>
   );
