@@ -94,7 +94,6 @@ export default function ProjectDetailsClient({
       while ((match = imgRegex.exec(project.content)) !== null) {
         if (match[1]) images.push(match[1]);
       }
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setGalleryImages(images);
 
       const cleaned = project.content
@@ -275,7 +274,7 @@ export default function ProjectDetailsClient({
                         >
                           <Image
                             src={encodeURI(img)}
-                            alt={`صورة المشروع ${index + 1}`}
+                            alt={`${project.galleryImages![index].altText}`}
                             fill
                             className="object-cover transition-transform duration-700 group-hover:scale-110"
                             sizes="(max-width: 768px) 100vw, 50vw"
