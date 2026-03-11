@@ -6,10 +6,16 @@ const nextConfig = {
     // نستخدم remotePatterns بدلاً من domains لأنها تدعم تحديد البورت (8080) بشكل صحيح
     remotePatterns: [
       {
+        protocol: "https",
+        hostname: "api.al-azizia.com",
+        pathname: "/**", // يسمح بكل المسارات
+      },
+      {
+        // النطاق المحلي (للعمل على جهازك)
         protocol: "http",
         hostname: "localhost",
-        port: "8080", // 👈 ضروري جداً لأن الووردبريس عندك يعمل على هذا المنفذ
-        pathname: "/**", // يسمح بكل المسارات
+        port: "8080", 
+        pathname: "/**",
       },
     ],
     formats: ["image/webp", "image/avif"],
