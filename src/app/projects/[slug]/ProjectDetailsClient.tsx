@@ -94,6 +94,7 @@ export default function ProjectDetailsClient({
       while ((match = imgRegex.exec(project.content)) !== null) {
         if (match[1]) images.push(match[1]);
       }
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setGalleryImages(images);
 
       const cleaned = project.content

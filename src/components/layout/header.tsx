@@ -73,7 +73,17 @@ const getIconAndDesc = (label: string) => {
 
   return { icon: Package, desc: "خدمات العزيزية المتكاملة" };
 };
-
+// دالة ذكية لاستخراج المسار الداخلي فقط (Pathname) وتجاهل الدومين الخارجي
+const getRelativePath = (fullUrl: string) => {
+  if (!fullUrl) return "/";
+  try {
+    const urlObj = new URL(fullUrl);
+    return decodeURI(urlObj.pathname); // استخراج المسار فقط مع فك تشفير الحروف العربية
+  } catch (error) {
+    // في حال كان الرابط داخلياً بالفعل، نعيده كما هو
+    return fullUrl.startsWith("/") ? fullUrl : `/${fullUrl}`;
+  }
+};
 // --- 3. مكون الهيدر ---
 export function Header({ wpMenuData = [] }: HeaderProps) {
   const [mounted, setMounted] = useState(false);
@@ -91,12 +101,7 @@ export function Header({ wpMenuData = [] }: HeaderProps) {
     return {
       id: item.id,
       name: item.label,
-      href:
-        item.url.replace(
-          process.env.NEXT_PUBLIC_WORDPRESS_URL ||
-            "http://localhost:8080/public_html",
-          "",
-        ) || "/",
+      href: getRelativePath(item.url),
       icon: icon,
       isMega: hasChildren,
       subItems: hasChildren
@@ -105,11 +110,7 @@ export function Header({ wpMenuData = [] }: HeaderProps) {
             return {
               id: subItem.id,
               title: subItem.label,
-              href: subItem.url.replace(
-                process.env.NEXT_PUBLIC_WORDPRESS_URL ||
-                  "http://localhost:8080/public_html",
-                "",
-              ),
+              href: getRelativePath(subItem.url),
               icon: subData.icon,
               desc: subData.desc,
             };
