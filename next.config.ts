@@ -1,4 +1,18 @@
 /** @type {import('next').NextConfig} */
+// إعدادات الـ PWA
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const withPWA = require("@ducanh2912/next-pwa").default({
+  dest: "public",
+  cacheOnFrontEndNav: true,
+  aggressiveFrontEndNavCaching: true,
+  reloadOnOnline: true,
+  swcMinify: true,
+  // نعطل الـ PWA في بيئة التطوير المحلية حتى لا يزعجك الكاش أثناء البرمجة
+  disable: process.env.NODE_ENV === "development",
+  workboxOptions: {
+    disableDevLogs: true,
+  },
+});
 const nextConfig = {
   images: {
     // 💡 السر هنا: إيقاف التحسين فقط في بيئة التطوير لتجاوز حظر Localhost
@@ -14,7 +28,7 @@ const nextConfig = {
         // النطاق المحلي (للعمل على جهازك)
         protocol: "http",
         hostname: "localhost",
-        port: "8080", 
+        port: "8080",
         pathname: "/**",
       },
     ],
@@ -330,5 +344,6 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === "production",
   },
 };
-
-module.exports = nextConfig;
+// تغليف الإعدادات وتصديرها
+module.exports = withPWA(nextConfig);
+// module.exports = nextConfig;

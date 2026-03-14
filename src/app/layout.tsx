@@ -5,7 +5,7 @@ import { Header } from "@/components/layout/header";
 import { ThemeProvider } from "@/components/theme/provider";
 import { Footer } from "@/components/layout/footer";
 import { FloatingChat } from "@/components/FloatingChat";
-import { GoogleAnalytics } from '@next/third-parties/google';
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 import { getGlobalData } from "@/lib/api"; // الدالة التي كتبناها مسبقاً
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -19,6 +19,8 @@ import { JsonLd } from "@/components/seo/JsonLd";
 export const metadata: Metadata = {
   title: "العزيزية للحلول الذكية",
   description: "المصنع السعودي الرائد للمظلات والأنظمة الذكية",
+  manifest: "/manifest.json",
+  themeColor: "#f59e0b", // لون شريط الجوال (نحاسي)
 };
 
 export default async function RootLayout({
@@ -38,7 +40,7 @@ export default async function RootLayout({
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       {/* 3. استخدام الخط هنا أصبح صحيحاً الآن */}
       <body
-        // className={`${ibmPlex.variable} font-sans antialiased bg-background text-foreground`}
+      // className={`${ibmPlex.variable} font-sans antialiased bg-background text-foreground`}
       >
         <ThemeProvider
           attribute="class"

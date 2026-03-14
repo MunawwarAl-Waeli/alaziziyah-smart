@@ -1,0 +1,27 @@
+{
+  "name": "العزيزية للمظلات والسواتر",
+  "short_name": "العزيزية",
+  "description": "أفضل خدمات تركيب المظلات والسواتر والبرجولات في السعودية",
+  "dir": "rtl",
+  "lang": "ar",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/",
+  "background_color": "#0f172a",
+  "theme_color": "#f59e0b",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ]
+}
