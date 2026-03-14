@@ -12,14 +12,19 @@ export const metadata: Metadata = {
   robots: "noindex, follow", // منع فهرسة صفحات البحث
 };
 
+// 💡 التحديث 1: جعل searchParams عبارة عن Promise
 interface SearchPageProps {
-  searchParams: {
+  searchParams: Promise<{
     q?: string;
     page?: string;
-  };
+  }>;
 }
 
-export default async function SearchPage({ searchParams }: SearchPageProps) {
+// 💡 التحديث 2: استلام الـ props كاملة بدلاً من تفكيكها في القوسين
+export default async function SearchPage(props: SearchPageProps) {
+  // 💡 التحديث 3: فك الـ Promise هنا أولاً
+  const searchParams = await props.searchParams;
+
   const query = searchParams.q;
   const currentPage = Number(searchParams.page) || 1;
   const postsPerPage = 6;
