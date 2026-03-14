@@ -20,9 +20,13 @@ export const metadata: Metadata = {
   title: "العزيزية للحلول الذكية",
   description: "المصنع السعودي الرائد للمظلات والأنظمة الذكية",
   manifest: "/manifest.json",
-  themeColor: "#f59e0b", // لون شريط الجوال (نحاسي)
 };
+import type { Viewport } from "next"; // تأكد من استيراد Viewport
 
+// ✅ أضف هذا البلوك الجديد تحته مباشرة
+export const viewport: Viewport = {
+  themeColor: "#f59e0b",
+};
 export default async function RootLayout({
   children,
 }: Readonly<{
