@@ -272,7 +272,7 @@ export function MainHero({ title, description }: HeroProps) {
               </Link>
 
               <a
-                href="https://wa.me/966558181955"
+                href="https://wa.me/966 5309 89 975"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 px-8 py-4 bg-emerald-600 text-white rounded-2xl font-bold text-lg hover:bg-emerald-700 transition-colors shadow-xl flex-1"

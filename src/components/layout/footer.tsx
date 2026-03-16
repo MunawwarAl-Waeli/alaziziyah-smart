@@ -183,12 +183,7 @@ export function Footer() {
               +966 5309 89 975
             </a>
             <span className="hidden md:inline text-slate-700">|</span>
-            <a
-              href="tel:+966558181955"
-              className="hover:text-primary transition-colors flex items-center gap-2 dir-ltr"
-            >
-              +966 5581 819 55
-            </a>
+           
             <a
               href="https://wa.me/966530989975"
               target="_blank"

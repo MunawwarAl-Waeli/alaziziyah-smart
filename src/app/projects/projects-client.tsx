@@ -819,7 +819,7 @@ export function ProjectsClient({ initialProjects }: Props) {
                   {/* أزرار التواصل */}
                   <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                     <a
-                      href="https://wa.me/966558181955"
+                      href="https://wa.me/966 5309 89 975"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="group relative px-8 py-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded-2xl font-bold text-lg transition-all overflow-hidden shadow-2xl flex items-center justify-center gap-3"
@@ -835,7 +835,7 @@ export function ProjectsClient({ initialProjects }: Props) {
                     </a>
 
                     <a
-                      href="tel:966558181955"
+                      href="tel:966 5309 89 975"
                       className="group relative px-8 py-4 bg-white/20 hover:bg-white/30 text-white rounded-2xl font-bold text-lg transition-all backdrop-blur border border-white/30 flex items-center justify-center gap-3"
                     >
                       <Phone className="w-5 h-5" />
@@ -920,7 +920,7 @@ export function ProjectsClient({ initialProjects }: Props) {
                       className="absolute bottom-0 left-0 w-[280px] h-[320px] rounded-3xl overflow-hidden shadow-2xl border-8 border-white/10 z-10"
                     >
                       <Image
-                        src="/images/contact-pergola.jpg"
+                        src="/images/0.jpg"
                         alt="برجولات خشبية"
                         fill
                         className="object-cover"
@@ -951,7 +951,7 @@ export function ProjectsClient({ initialProjects }: Props) {
                         </div>
                         <div>
                           <p className="text-xs text-amber-200">تواصل واتساب</p>
-                          <p className="font-bold text-white">0558 181 955</p>
+                          <p className="font-bold text-white">5309 89 975</p>
                         </div>
                       </div>
                     </motion.div>

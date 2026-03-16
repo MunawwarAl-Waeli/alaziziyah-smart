@@ -162,7 +162,7 @@ export default function ContactPage() {
                 <ContactInfoItem
                   icon={Phone}
                   title="اتصل بنا مباشرة"
-                  details={["+966 53 098 9975", "+966 55 818 1955"]}
+                  details={["+966 53 098 9975"]}
                 />
                 <ContactInfoItem
                   icon={MapPin}

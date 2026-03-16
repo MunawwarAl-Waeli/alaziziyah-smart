@@ -445,7 +445,7 @@ export function SmartCalculator() {
       `البريد: ${formData.email}`;
 
     window.open(
-      `https://wa.me/966558181955?text=${encodeURIComponent(message)}`,
+      `https://wa.me/966530989975?text=${encodeURIComponent(message)}`,
       "_blank",
     );
   };
