@@ -133,9 +133,8 @@ export function Footer() {
                   <MapPin className="w-4 h-4 text-primary shrink-0" />
                 </div>
                 <p className="text-slate-400 text-sm leading-relaxed pt-1">
-                  المملكة العربية السعودية، الرياض
+                  المملكة العربية السعودية، الموقع الرئيسي جدة
                   <br />
-                  شارع التخصصي
                 </p>
               </div>
 
@@ -144,10 +143,10 @@ export function Footer() {
                   <Phone className="w-4 h-4 text-primary shrink-0" />
                 </div>
                 <a
-                  href="tel:+966558181955"
-                  className="text-slate-400 hover:text-white text-sm dir-ltr transition-colors font-sans"
+                  href="tel:+966530989975"
+                  className="text-slate-400 hover:text-white text-sm  transition-colors font-sans"
                 >
-                  +966 55 818 1955
+                  +966 5309 89 975
                 </a>
               </div>
 
@@ -178,12 +177,12 @@ export function Footer() {
             <span className="hidden md:inline text-slate-700">|</span>
             <a
               href="tel:+966530989975"
-              className="hover:text-primary transition-colors flex items-center gap-2 dir-ltr"
+              className="hover:text-primary transition-colors flex items-center gap-2 "
             >
               +966 5309 89 975
             </a>
             <span className="hidden md:inline text-slate-700">|</span>
-           
+
             <a
               href="https://wa.me/966530989975"
               target="_blank"
