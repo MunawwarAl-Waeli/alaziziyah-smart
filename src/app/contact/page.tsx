@@ -169,7 +169,7 @@ export default function ContactPage() {
                   title="موقعنا"
                   details={[
                     "المملكة العربية السعودية",
-                    "الرياض، حي الملقا، شارع الملك فهد",
+                    "جدة",
                   ]}
                 />
                 <ContactInfoItem
