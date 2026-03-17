@@ -51,7 +51,7 @@ const quickActions = [
     id: "phone",
     label: "اتصال مباشر",
     icon: "📞",
-    href: "tel:+966558181955",
+    href: "tel:+966 5309 89 975",
     color: "from-blue-500 to-blue-600",
     description: "خدمة عملاء 24/7",
   },
@@ -149,7 +149,7 @@ export function FloatingChat() {
   // تتبع التمرير لإظهار الشات
   useEffect(() => {
     if (!mounted) return;
-    
+
     const handleScroll = () => {
       if (window.scrollY > 500 && !hasScrolled) {
         setHasScrolled(true);
@@ -162,7 +162,7 @@ export function FloatingChat() {
   // محاكاة عدد المستخدمين النشطين - باستخدام قيم ثابتة
   useEffect(() => {
     if (!mounted) return;
-    
+
     const interval = setInterval(() => {
       setActiveUsers((prev) => {
         const change = Math.floor(Math.random() * 3) - 1;
@@ -175,7 +175,7 @@ export function FloatingChat() {
   // محاكاة وقت الانتظار
   useEffect(() => {
     if (!mounted) return;
-    
+
     const interval = setInterval(() => {
       setWaitTime((prev) => {
         const change = Math.floor(Math.random() * 2) - 1;
@@ -269,37 +269,40 @@ export function FloatingChat() {
     );
   }
   return (
-    <div className="fixed bottom-6 right-6 z-50" dir="rtl">
-      {/* القائمة المنبثقة للشات */}
+    <div
+      className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end gap-3"
+      dir="rtl"
+    >
+      {/* 1. نافذة الدردشة (Chat Window) */}
       <AnimatePresence>
         {isOpen && showChat && (
           <motion.div
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-            className="absolute bottom-20 right-0 w-[380px] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-border/50 overflow-hidden mb-4"
+            className="w-[calc(100vw-2rem)] sm:w-[380px] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-border/50 overflow-hidden mb-2 flex flex-col"
+            style={{ maxHeight: "80vh" }}
           >
             {/* رأس الشات */}
-            <div className="bg-gradient-to-r from-amber-600 to-amber-500 text-white p-4">
+            <div className="bg-gradient-to-r from-amber-600 to-amber-500 text-white p-4 shrink-0">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="relative">
-                    <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur">
-                      <Headphones className="w-6 h-6" />
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur">
+                      <Headphones className="w-5 h-5 sm:w-6 sm:h-6" />
                     </div>
-                    <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white animate-pulse" />
+                    <span className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white animate-pulse" />
                   </div>
                   <div>
-                    <h3 className="font-bold">دعم العزيزية</h3>
-                    <div className="flex items-center gap-2 text-xs text-amber-100">
+                    <h3 className="font-bold text-sm sm:text-base">
+                      دعم العزيزية
+                    </h3>
+                    <div className="flex items-center gap-2 text-[10px] sm:text-xs text-amber-100">
                       <span className="flex items-center gap-1">
-                        <Users className="w-3 h-3" />
-                        {activeUsers} متصل
+                        <Users className="w-3 h-3" /> {activeUsers} متصل
                       </span>
                       <span className="flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        رد خلال {waitTime} د
+                        <Clock className="w-3 h-3" /> رد خلال {waitTime} د
                       </span>
                     </div>
                   </div>
@@ -314,7 +317,7 @@ export function FloatingChat() {
             </div>
 
             {/* منطقة الرسائل */}
-            <div className="h-96 overflow-y-auto p-4 space-y-4 bg-slate-50 dark:bg-slate-900/50">
+            <div className="flex-1 h-[45vh] sm:h-96 overflow-y-auto p-4 space-y-4 bg-slate-50 dark:bg-slate-900/50">
               {messages.map((message) => (
                 <div
                   key={message.id}
@@ -324,38 +327,22 @@ export function FloatingChat() {
                     className={`flex gap-2 max-w-[85%] ${message.type === "user" ? "flex-row-reverse" : ""}`}
                   >
                     <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-                        message.type === "user"
-                          ? "bg-slate-200 dark:bg-slate-700"
-                          : message.type === "bot"
-                            ? "bg-amber-500"
-                            : "bg-emerald-500"
-                      }`}
+                      className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shrink-0 ${message.type === "user" ? "bg-slate-200" : "bg-amber-500"}`}
                     >
                       {message.type === "user" ? (
-                        <User className="w-4 h-4" />
+                        <User className="w-4 h-4 text-slate-600" />
                       ) : (
                         <Bot className="w-4 h-4 text-white" />
                       )}
                     </div>
                     <div>
                       <div
-                        className={`p-3 rounded-2xl ${
-                          message.type === "user"
-                            ? "bg-slate-200 dark:bg-slate-700 rounded-tr-none"
-                            : "bg-amber-500 text-white rounded-tl-none"
-                        }`}
+                        className={`p-3 rounded-2xl text-sm ${message.type === "user" ? "bg-slate-200 dark:bg-slate-700 rounded-tr-none" : "bg-amber-500 text-white rounded-tl-none"}`}
                       >
-                        <p className="text-sm whitespace-pre-wrap">
-                          {message.content}
-                        </p>
+                        <p className="whitespace-pre-wrap">{message.content}</p>
                       </div>
                       <div
-                        className={`flex items-center gap-1 mt-1 text-xs text-muted-foreground ${
-                          message.type === "user"
-                            ? "justify-start"
-                            : "justify-end"
-                        }`}
+                        className={`flex items-center gap-1 mt-1 text-[10px] text-muted-foreground ${message.type === "user" ? "justify-start" : "justify-end"}`}
                       >
                         <span>
                           {message.timestamp.toLocaleTimeString("ar-SA", {
@@ -367,9 +354,9 @@ export function FloatingChat() {
                           <span>
                             {message.read ? (
                               <CheckCheck className="w-3 h-3 text-blue-500" />
-                            ) : message.delivered ? (
+                            ) : (
                               <Check className="w-3 h-3" />
-                            ) : null}
+                            )}
                           </span>
                         )}
                       </div>
@@ -377,63 +364,47 @@ export function FloatingChat() {
                   </div>
                 </div>
               ))}
-
               {isTyping && (
-                <div className="flex justify-end">
-                  <div className="flex gap-2 max-w-[85%]">
-                    <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center">
-                      <Bot className="w-4 h-4 text-white" />
-                    </div>
-                    <div className="bg-amber-100 dark:bg-amber-950/30 p-3 rounded-2xl rounded-tl-none">
-                      <div className="flex gap-1">
-                        <motion.span
-                          animate={{ y: [0, -5, 0] }}
-                          transition={{
-                            duration: 0.5,
-                            repeat: Infinity,
-                            delay: 0,
-                          }}
-                          className="w-2 h-2 bg-amber-600 rounded-full"
-                        />
-                        <motion.span
-                          animate={{ y: [0, -5, 0] }}
-                          transition={{
-                            duration: 0.5,
-                            repeat: Infinity,
-                            delay: 0.2,
-                          }}
-                          className="w-2 h-2 bg-amber-600 rounded-full"
-                        />
-                        <motion.span
-                          animate={{ y: [0, -5, 0] }}
-                          transition={{
-                            duration: 0.5,
-                            repeat: Infinity,
-                            delay: 0.4,
-                          }}
-                          className="w-2 h-2 bg-amber-600 rounded-full"
-                        />
-                      </div>
-                    </div>
+                <div className="flex justify-end gap-2">
+                  <div className="bg-amber-100 dark:bg-amber-950/30 p-3 rounded-2xl flex gap-1">
+                    <motion.span
+                      animate={{ y: [0, -5, 0] }}
+                      transition={{ repeat: Infinity, duration: 0.6 }}
+                      className="w-1.5 h-1.5 bg-amber-600 rounded-full"
+                    />
+                    <motion.span
+                      animate={{ y: [0, -5, 0] }}
+                      transition={{
+                        repeat: Infinity,
+                        duration: 0.6,
+                        delay: 0.2,
+                      }}
+                      className="w-1.5 h-1.5 bg-amber-600 rounded-full"
+                    />
+                    <motion.span
+                      animate={{ y: [0, -5, 0] }}
+                      transition={{
+                        repeat: Infinity,
+                        duration: 0.6,
+                        delay: 0.4,
+                      }}
+                      className="w-1.5 h-1.5 bg-amber-600 rounded-full"
+                    />
                   </div>
                 </div>
               )}
-
               <div ref={messagesEndRef} />
             </div>
 
             {/* ردود سريعة */}
             {showQuickReplies && (
-              <div className="p-3 bg-white dark:bg-slate-900 border-t border-border/50">
-                <p className="text-xs text-muted-foreground mb-2">
-                  ردود سريعة:
-                </p>
-                <div className="flex flex-wrap gap-2">
+              <div className="p-2 sm:p-3 bg-white dark:bg-slate-900 border-t border-border/50 overflow-x-auto no-scrollbar">
+                <div className="flex gap-2 min-w-max">
                   {quickReplies.map((reply) => (
                     <button
                       key={reply.id}
                       onClick={() => handleQuickReply(reply.text)}
-                      className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-full text-sm hover:bg-amber-500 hover:text-white transition-colors"
+                      className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-full text-xs whitespace-nowrap hover:bg-amber-500 hover:text-white transition-colors"
                     >
                       <span className="ml-1">{reply.icon}</span>
                       {reply.text}
@@ -443,16 +414,16 @@ export function FloatingChat() {
               </div>
             )}
 
-            {/* حقل الإدخال */}
-            <div className="p-3 border-t border-border/50 bg-white dark:bg-slate-900">
-              <div className="flex items-center gap-2">
+            {/* حقل الإدخال والتحكم */}
+            <div className="p-3 border-t border-border/50 bg-white dark:bg-slate-900 shrink-0">
+              <div className="flex items-center gap-1 sm:gap-2">
                 <button
                   onClick={() => setShowEmoji(!showEmoji)}
-                  className="p-2 text-muted-foreground hover:text-amber-600 transition-colors"
+                  className="p-1.5 text-muted-foreground hover:text-amber-600"
                 >
                   <Smile className="w-5 h-5" />
                 </button>
-                <button className="p-2 text-muted-foreground hover:text-amber-600 transition-colors">
+                <button className="p-1.5 text-muted-foreground hover:text-amber-600 hidden sm:block">
                   <Paperclip className="w-5 h-5" />
                 </button>
                 <input
@@ -460,57 +431,55 @@ export function FloatingChat() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyPress={(e) => e.key === "Enter" && handleSend()}
-                  placeholder="اكتب رسالتك هنا..."
-                  className="flex-1 px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  placeholder="اكتب رسالتك..."
+                  className="flex-1 px-3 py-2 text-sm bg-slate-100 dark:bg-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
                 />
                 {input.trim() ? (
                   <button
                     onClick={handleSend}
                     className="p-2 bg-amber-600 text-white rounded-xl hover:bg-amber-700 transition-colors"
                   >
-                    <Send className="w-5 h-5" />
+                    <Send className="w-4 h-4" />
                   </button>
                 ) : (
-                  <button className="p-2 text-muted-foreground hover:text-amber-600 transition-colors">
+                  <button className="p-2 text-muted-foreground hover:text-amber-600">
                     <Mic className="w-5 h-5" />
                   </button>
                 )}
               </div>
-            </div>
 
-            {/* تقييم سريع */}
-            <div className="p-2 bg-slate-50 dark:bg-slate-900/50 border-t border-border/50 flex items-center justify-between text-xs">
-              <span className="text-muted-foreground">
-                هل كانت المحادثة مفيدة؟
-              </span>
-              <div className="flex gap-1">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    onClick={() => handleRateChat(star)}
-                    className="hover:text-amber-500 transition-colors"
-                  >
-                    <Star className="w-3 h-3" />
-                  </button>
-                ))}
+              {/* التقييم السريع */}
+              <div className="mt-2 pt-2 border-t border-gray-100 flex items-center justify-between text-[10px] text-muted-foreground">
+                <span>هل الدردشة مفيدة؟</span>
+                <div className="flex gap-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      onClick={() => handleRateChat(star)}
+                      className="hover:text-amber-500"
+                    >
+                      <Star className="w-3 h-3" />
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* القائمة المنبثقة للإجراءات السريعة */}
+      {/* 2. قائمة الإجراءات السريعة (تواصل معنا) */}
       <AnimatePresence>
         {isOpen && !showChat && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="absolute bottom-20 right-0 w-72 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-border/50 overflow-hidden mb-4"
+            className="w-[280px] sm:w-72 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-border/50 overflow-hidden mb-2"
           >
             <div className="p-3 bg-gradient-to-r from-amber-600 to-amber-500 text-white">
               <h4 className="font-bold text-sm">تواصل معنا</h4>
-              <p className="text-xs text-amber-100">
+              <p className="text-[10px] text-amber-100">
                 اختر طريقة التواصل المناسبة
               </p>
             </div>
@@ -525,15 +494,15 @@ export function FloatingChat() {
                   className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
                 >
                   <div
-                    className={`w-10 h-10 rounded-xl bg-gradient-to-br ${action.color} flex items-center justify-center text-white`}
+                    className={`w-9 h-9 rounded-xl bg-gradient-to-br ${action.color} flex items-center justify-center text-white text-lg`}
                   >
-                    <span className="text-lg">{action.icon}</span>
+                    {action.icon}
                   </div>
                   <div className="flex-1">
-                    <p className="font-bold text-sm group-hover:text-amber-600 transition-colors">
+                    <p className="font-bold text-xs sm:text-sm group-hover:text-amber-600 transition-colors">
                       {action.label}
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-[10px] sm:text-xs text-muted-foreground">
                       {action.description}
                     </p>
                   </div>
@@ -544,94 +513,428 @@ export function FloatingChat() {
         )}
       </AnimatePresence>
 
-      {/* الزر الرئيسي العائم */}
-      <motion.button
-        onClick={() => {
-          setIsOpen(!isOpen);
-          if (!isOpen) {
-            setShowChat(false);
-            // trackEvent("Floating Chat", "Opened");
-          }
-        }}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        animate={
-          !isOpen && hasScrolled
-            ? {
-                y: [0, -8, 0],
-                boxShadow: [
-                  "0 20px 25px -5px rgba(245,158,11,0.1), 0 8px 10px -6px rgba(245,158,11,0.1)",
-                  "0 25px 30px -5px rgba(245,158,11,0.2), 0 10px 15px -6px rgba(245,158,11,0.2)",
-                  "0 20px 25px -5px rgba(245,158,11,0.1), 0 8px 10px -6px rgba(245,158,11,0.1)",
-                ],
-              }
-            : {}
-        }
-        transition={
-          !isOpen && hasScrolled
-            ? { duration: 2, repeat: Infinity, ease: "easeInOut" }
-            : {}
-        }
-        className={cn(
-          "relative w-16 h-16 rounded-2xl flex items-center justify-center shadow-2xl transition-all duration-300",
-          isOpen
-            ? "bg-slate-900 text-white rotate-90"
-            : "bg-gradient-to-br from-amber-600 to-amber-500 text-white shadow-amber-500/30 hover:shadow-amber-500/50",
-        )}
-      >
-        {isOpen ? (
-          <X className="w-7 h-7" />
-        ) : (
-          <MessageCircle className="w-7 h-7" />
-        )}
+      {/* 3. الزر الرئيسي العائم (FAB) وأزرار التحكم */}
+      <div className="flex flex-row-reverse items-center gap-3">
+        {/* الزر الرئيسي */}
+        <motion.button
+          onClick={() => {
+            setIsOpen(!isOpen);
+            if (!isOpen) setShowChat(false);
+          }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className={cn(
+            "relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center shadow-2xl transition-all duration-300",
+            isOpen
+              ? "bg-slate-900 text-white rotate-90"
+              : "bg-gradient-to-br from-amber-600 to-amber-500 text-white",
+          )}
+        >
+          {isOpen ? (
+            <X className="w-6 h-6 sm:w-7 sm:h-7" />
+          ) : (
+            <MessageCircle className="w-6 h-6 sm:w-7 sm:h-7" />
+          )}
 
-        {/* مؤشر عدد الرسائل غير المقروءة */}
-        {!isOpen && unreadCount > 0 && (
-          <motion.span
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            className="absolute -top-2 -right-2 min-w-[24px] h-6 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center px-1.5 border-2 border-white"
-          >
-            {unreadCount}
-          </motion.span>
+          {!isOpen && unreadCount > 0 && (
+            <span className="absolute -top-1 -right-1 min-w-[20px] h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1 border-2 border-white">
+              {unreadCount}
+            </span>
+          )}
+          {!isOpen && agentOnline && (
+            <span className="absolute -bottom-1 -left-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white animate-pulse" />
+          )}
+        </motion.button>
+
+        {/* أزرار التحكم الجانبي */}
+        {isOpen && (
+          <div className="flex flex-col gap-2">
+            <motion.button
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              onClick={() => setShowChat(true)}
+              className="w-10 h-10 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center shadow-lg hover:bg-amber-200"
+            >
+              <MessageCircle className="w-5 h-5" />
+            </motion.button>
+            <motion.button
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              className="w-10 h-10 bg-slate-100 text-slate-600 rounded-xl flex items-center justify-center shadow-lg hover:bg-slate-200"
+            >
+              <ChevronUp className="w-5 h-5" />
+            </motion.button>
+          </div>
         )}
-
-        {/* مؤشر تواجد الدعم الفني */}
-        {!isOpen && agentOnline && (
-          <span className="absolute -bottom-1 -left-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white animate-pulse" />
-        )}
-      </motion.button>
-
-      {/* خيارات إضافية (تظهر عند فتح الشات) */}
-      {isOpen && (
-        <div className="absolute bottom-20 left-0 flex flex-col gap-2">
-          <motion.button
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.1 }}
-            onClick={() => {
-              setShowChat(true);
-              //   trackEvent("Floating Chat", "Start Chat");
-            }}
-            className="w-10 h-10 bg-amber-100 dark:bg-amber-950/30 rounded-xl flex items-center justify-center text-amber-600 hover:bg-amber-200 transition-colors shadow-lg"
-          >
-            <MessageCircle className="w-5 h-5" />
-          </motion.button>
-
-          <motion.button
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-slate-600 hover:bg-amber-500 hover:text-white transition-colors shadow-lg"
-          >
-            <ChevronUp className="w-5 h-5" />
-          </motion.button>
-        </div>
-      )}
+      </div>
     </div>
   );
+  // return (
+  //   <div className="fixed bottom-6 right-6 z-50" dir="rtl">
+  //     {/* القائمة المنبثقة للشات */}
+  //     <AnimatePresence>
+  //       {isOpen && showChat && (
+  //         <motion.div
+  //           initial={{ opacity: 0, y: 20, scale: 0.95 }}
+  //           animate={{ opacity: 1, y: 0, scale: 1 }}
+  //           exit={{ opacity: 0, y: 20, scale: 0.95 }}
+  //           transition={{ duration: 0.2 }}
+  //           className="absolute bottom-20 right-0 w-[380px] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-border/50 overflow-hidden mb-4"
+  //         >
+  //           {/* رأس الشات */}
+  //           <div className="bg-gradient-to-r from-amber-600 to-amber-500 text-white p-4">
+  //             <div className="flex items-center justify-between">
+  //               <div className="flex items-center gap-3">
+  //                 <div className="relative">
+  //                   <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur">
+  //                     <Headphones className="w-6 h-6" />
+  //                   </div>
+  //                   <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white animate-pulse" />
+  //                 </div>
+  //                 <div>
+  //                   <h3 className="font-bold">دعم العزيزية</h3>
+  //                   <div className="flex items-center gap-2 text-xs text-amber-100">
+  //                     <span className="flex items-center gap-1">
+  //                       <Users className="w-3 h-3" />
+  //                       {activeUsers} متصل
+  //                     </span>
+  //                     <span className="flex items-center gap-1">
+  //                       <Clock className="w-3 h-3" />
+  //                       رد خلال {waitTime} د
+  //                     </span>
+  //                   </div>
+  //                 </div>
+  //               </div>
+  //               <button
+  //                 onClick={() => setShowChat(false)}
+  //                 className="p-1 hover:bg-white/10 rounded-lg transition-colors"
+  //               >
+  //                 <X className="w-5 h-5" />
+  //               </button>
+  //             </div>
+  //           </div>
+
+  //           {/* منطقة الرسائل */}
+  //           <div className="h-96 overflow-y-auto p-4 space-y-4 bg-slate-50 dark:bg-slate-900/50">
+  //             {messages.map((message) => (
+  //               <div
+  //                 key={message.id}
+  //                 className={`flex ${message.type === "user" ? "justify-start" : "justify-end"}`}
+  //               >
+  //                 <div
+  //                   className={`flex gap-2 max-w-[85%] ${message.type === "user" ? "flex-row-reverse" : ""}`}
+  //                 >
+  //                   <div
+  //                     className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
+  //                       message.type === "user"
+  //                         ? "bg-slate-200 dark:bg-slate-700"
+  //                         : message.type === "bot"
+  //                           ? "bg-amber-500"
+  //                           : "bg-emerald-500"
+  //                     }`}
+  //                   >
+  //                     {message.type === "user" ? (
+  //                       <User className="w-4 h-4" />
+  //                     ) : (
+  //                       <Bot className="w-4 h-4 text-white" />
+  //                     )}
+  //                   </div>
+  //                   <div>
+  //                     <div
+  //                       className={`p-3 rounded-2xl ${
+  //                         message.type === "user"
+  //                           ? "bg-slate-200 dark:bg-slate-700 rounded-tr-none"
+  //                           : "bg-amber-500 text-white rounded-tl-none"
+  //                       }`}
+  //                     >
+  //                       <p className="text-sm whitespace-pre-wrap">
+  //                         {message.content}
+  //                       </p>
+  //                     </div>
+  //                     <div
+  //                       className={`flex items-center gap-1 mt-1 text-xs text-muted-foreground ${
+  //                         message.type === "user"
+  //                           ? "justify-start"
+  //                           : "justify-end"
+  //                       }`}
+  //                     >
+  //                       <span>
+  //                         {message.timestamp.toLocaleTimeString("ar-SA", {
+  //                           hour: "2-digit",
+  //                           minute: "2-digit",
+  //                         })}
+  //                       </span>
+  //                       {message.type === "user" && (
+  //                         <span>
+  //                           {message.read ? (
+  //                             <CheckCheck className="w-3 h-3 text-blue-500" />
+  //                           ) : message.delivered ? (
+  //                             <Check className="w-3 h-3" />
+  //                           ) : null}
+  //                         </span>
+  //                       )}
+  //                     </div>
+  //                   </div>
+  //                 </div>
+  //               </div>
+  //             ))}
+
+  //             {isTyping && (
+  //               <div className="flex justify-end">
+  //                 <div className="flex gap-2 max-w-[85%]">
+  //                   <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center">
+  //                     <Bot className="w-4 h-4 text-white" />
+  //                   </div>
+  //                   <div className="bg-amber-100 dark:bg-amber-950/30 p-3 rounded-2xl rounded-tl-none">
+  //                     <div className="flex gap-1">
+  //                       <motion.span
+  //                         animate={{ y: [0, -5, 0] }}
+  //                         transition={{
+  //                           duration: 0.5,
+  //                           repeat: Infinity,
+  //                           delay: 0,
+  //                         }}
+  //                         className="w-2 h-2 bg-amber-600 rounded-full"
+  //                       />
+  //                       <motion.span
+  //                         animate={{ y: [0, -5, 0] }}
+  //                         transition={{
+  //                           duration: 0.5,
+  //                           repeat: Infinity,
+  //                           delay: 0.2,
+  //                         }}
+  //                         className="w-2 h-2 bg-amber-600 rounded-full"
+  //                       />
+  //                       <motion.span
+  //                         animate={{ y: [0, -5, 0] }}
+  //                         transition={{
+  //                           duration: 0.5,
+  //                           repeat: Infinity,
+  //                           delay: 0.4,
+  //                         }}
+  //                         className="w-2 h-2 bg-amber-600 rounded-full"
+  //                       />
+  //                     </div>
+  //                   </div>
+  //                 </div>
+  //               </div>
+  //             )}
+
+  //             <div ref={messagesEndRef} />
+  //           </div>
+
+  //           {/* ردود سريعة */}
+  //           {showQuickReplies && (
+  //             <div className="p-3 bg-white dark:bg-slate-900 border-t border-border/50">
+  //               <p className="text-xs text-muted-foreground mb-2">
+  //                 ردود سريعة:
+  //               </p>
+  //               <div className="flex flex-wrap gap-2">
+  //                 {quickReplies.map((reply) => (
+  //                   <button
+  //                     key={reply.id}
+  //                     onClick={() => handleQuickReply(reply.text)}
+  //                     className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-full text-sm hover:bg-amber-500 hover:text-white transition-colors"
+  //                   >
+  //                     <span className="ml-1">{reply.icon}</span>
+  //                     {reply.text}
+  //                   </button>
+  //                 ))}
+  //               </div>
+  //             </div>
+  //           )}
+
+  //           {/* حقل الإدخال */}
+  //           <div className="p-3 border-t border-border/50 bg-white dark:bg-slate-900">
+  //             <div className="flex items-center gap-2">
+  //               <button
+  //                 onClick={() => setShowEmoji(!showEmoji)}
+  //                 className="p-2 text-muted-foreground hover:text-amber-600 transition-colors"
+  //               >
+  //                 <Smile className="w-5 h-5" />
+  //               </button>
+  //               <button className="p-2 text-muted-foreground hover:text-amber-600 transition-colors">
+  //                 <Paperclip className="w-5 h-5" />
+  //               </button>
+  //               <input
+  //                 type="text"
+  //                 value={input}
+  //                 onChange={(e) => setInput(e.target.value)}
+  //                 onKeyPress={(e) => e.key === "Enter" && handleSend()}
+  //                 placeholder="اكتب رسالتك هنا..."
+  //                 className="flex-1 px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
+  //               />
+  //               {input.trim() ? (
+  //                 <button
+  //                   onClick={handleSend}
+  //                   className="p-2 bg-amber-600 text-white rounded-xl hover:bg-amber-700 transition-colors"
+  //                 >
+  //                   <Send className="w-5 h-5" />
+  //                 </button>
+  //               ) : (
+  //                 <button className="p-2 text-muted-foreground hover:text-amber-600 transition-colors">
+  //                   <Mic className="w-5 h-5" />
+  //                 </button>
+  //               )}
+  //             </div>
+  //           </div>
+
+  //           {/* تقييم سريع */}
+  //           <div className="p-2 bg-slate-50 dark:bg-slate-900/50 border-t border-border/50 flex items-center justify-between text-xs">
+  //             <span className="text-muted-foreground">
+  //               هل كانت المحادثة مفيدة؟
+  //             </span>
+  //             <div className="flex gap-1">
+  //               {[1, 2, 3, 4, 5].map((star) => (
+  //                 <button
+  //                   key={star}
+  //                   onClick={() => handleRateChat(star)}
+  //                   className="hover:text-amber-500 transition-colors"
+  //                 >
+  //                   <Star className="w-3 h-3" />
+  //                 </button>
+  //               ))}
+  //             </div>
+  //           </div>
+  //         </motion.div>
+  //       )}
+  //     </AnimatePresence>
+
+  //     {/* القائمة المنبثقة للإجراءات السريعة */}
+  //     <AnimatePresence>
+  //       {isOpen && !showChat && (
+  //         <motion.div
+  //           initial={{ opacity: 0, y: 20 }}
+  //           animate={{ opacity: 1, y: 0 }}
+  //           exit={{ opacity: 0, y: 20 }}
+  //           className="absolute bottom-20 right-0 w-72 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-border/50 overflow-hidden mb-4"
+  //         >
+  //           <div className="p-3 bg-gradient-to-r from-amber-600 to-amber-500 text-white">
+  //             <h4 className="font-bold text-sm">تواصل معنا</h4>
+  //             <p className="text-xs text-amber-100">
+  //               اختر طريقة التواصل المناسبة
+  //             </p>
+  //           </div>
+  //           <div className="p-2">
+  //             {quickActions.map((action) => (
+  //               <a
+  //                 key={action.id}
+  //                 href={action.href}
+  //                 target={action.href.startsWith("http") ? "_blank" : "_self"}
+  //                 rel="noopener noreferrer"
+  //                 onClick={() => handleActionClick(action)}
+  //                 className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
+  //               >
+  //                 <div
+  //                   className={`w-10 h-10 rounded-xl bg-gradient-to-br ${action.color} flex items-center justify-center text-white`}
+  //                 >
+  //                   <span className="text-lg">{action.icon}</span>
+  //                 </div>
+  //                 <div className="flex-1">
+  //                   <p className="font-bold text-sm group-hover:text-amber-600 transition-colors">
+  //                     {action.label}
+  //                   </p>
+  //                   <p className="text-xs text-muted-foreground">
+  //                     {action.description}
+  //                   </p>
+  //                 </div>
+  //               </a>
+  //             ))}
+  //           </div>
+  //         </motion.div>
+  //       )}
+  //     </AnimatePresence>
+
+  //     {/* الزر الرئيسي العائم */}
+  //     <motion.button
+  //       onClick={() => {
+  //         setIsOpen(!isOpen);
+  //         if (!isOpen) {
+  //           setShowChat(false);
+  //           // trackEvent("Floating Chat", "Opened");
+  //         }
+  //       }}
+  //       whileHover={{ scale: 1.05 }}
+  //       whileTap={{ scale: 0.95 }}
+  //       animate={
+  //         !isOpen && hasScrolled
+  //           ? {
+  //               y: [0, -8, 0],
+  //               boxShadow: [
+  //                 "0 20px 25px -5px rgba(245,158,11,0.1), 0 8px 10px -6px rgba(245,158,11,0.1)",
+  //                 "0 25px 30px -5px rgba(245,158,11,0.2), 0 10px 15px -6px rgba(245,158,11,0.2)",
+  //                 "0 20px 25px -5px rgba(245,158,11,0.1), 0 8px 10px -6px rgba(245,158,11,0.1)",
+  //               ],
+  //             }
+  //           : {}
+  //       }
+  //       transition={
+  //         !isOpen && hasScrolled
+  //           ? { duration: 2, repeat: Infinity, ease: "easeInOut" }
+  //           : {}
+  //       }
+  //       className={cn(
+  //         "relative w-16 h-16 rounded-2xl flex items-center justify-center shadow-2xl transition-all duration-300",
+  //         isOpen
+  //           ? "bg-slate-900 text-white rotate-90"
+  //           : "bg-gradient-to-br from-amber-600 to-amber-500 text-white shadow-amber-500/30 hover:shadow-amber-500/50",
+  //       )}
+  //     >
+  //       {isOpen ? (
+  //         <X className="w-7 h-7" />
+  //       ) : (
+  //         <MessageCircle className="w-7 h-7" />
+  //       )}
+
+  //       {/* مؤشر عدد الرسائل غير المقروءة */}
+  //       {!isOpen && unreadCount > 0 && (
+  //         <motion.span
+  //           initial={{ scale: 0 }}
+  //           animate={{ scale: 1 }}
+  //           className="absolute -top-2 -right-2 min-w-[24px] h-6 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center px-1.5 border-2 border-white"
+  //         >
+  //           {unreadCount}
+  //         </motion.span>
+  //       )}
+
+  //       {/* مؤشر تواجد الدعم الفني */}
+  //       {!isOpen && agentOnline && (
+  //         <span className="absolute -bottom-1 -left-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white animate-pulse" />
+  //       )}
+  //     </motion.button>
+
+  //     {/* خيارات إضافية (تظهر عند فتح الشات) */}
+  //     {isOpen && (
+  //       <div className="absolute bottom-20 left-0 flex flex-col gap-2">
+  //         <motion.button
+  //           initial={{ opacity: 0, x: -20 }}
+  //           animate={{ opacity: 1, x: 0 }}
+  //           transition={{ delay: 0.1 }}
+  //           onClick={() => {
+  //             setShowChat(true);
+  //             //   trackEvent("Floating Chat", "Start Chat");
+  //           }}
+  //           className="w-10 h-10 bg-amber-100 dark:bg-amber-950/30 rounded-xl flex items-center justify-center text-amber-600 hover:bg-amber-200 transition-colors shadow-lg"
+  //         >
+  //           <MessageCircle className="w-5 h-5" />
+  //         </motion.button>
+
+  //         <motion.button
+  //           initial={{ opacity: 0, x: -20 }}
+  //           animate={{ opacity: 1, x: 0 }}
+  //           transition={{ delay: 0.2 }}
+  //           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+  //           className="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-slate-600 hover:bg-amber-500 hover:text-white transition-colors shadow-lg"
+  //         >
+  //           <ChevronUp className="w-5 h-5" />
+  //         </motion.button>
+  //       </div>
+  //     )}
+  //   </div>
+  // );
 }
+
 // "use client";
 
 // import { useState, useEffect } from "react";
