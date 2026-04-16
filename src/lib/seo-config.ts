@@ -18,8 +18,6 @@ export const siteConfig = {
     "مظلات مدارس",
     "مظلات مسابح",
     "هناجر",
-    "الدمام",
-    "الرياض",
     "جدة",
   ],
   twitterHandle: "@alazizia",

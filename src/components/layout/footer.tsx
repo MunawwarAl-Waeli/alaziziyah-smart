@@ -98,7 +98,7 @@ export function Footer() {
             </nav>
           </div>
 
-          {/* العمود 4: الخريطة */}
+          {/* العمود 4: الخدمات */}
           <div>
             <h3 className="text-lg font-bold text-white mb-6 relative inline-block">
               خدماتنا
@@ -177,7 +177,7 @@ export function Footer() {
             <span className="hidden md:inline text-slate-700">|</span>
             <a
               href="tel:+966530989975"
-              className="hover:text-primary transition-colors flex items-center gap-2 "
+              className="hover:text-primary  transition-colors flex items-center gap-2 "
             >
               +966 5309 89 975
             </a>

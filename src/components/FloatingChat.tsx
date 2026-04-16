@@ -22,12 +22,12 @@ import {
   Bot,
   Headphones,
   Star,
-  ThumbsUp,
+  Grid3x3,
+  ChevronLeft,
 } from "lucide-react";
-// import { useAnalytics } from "@/hooks/useAnalytics";
 import { cn } from "@/lib/utils";
 
-// أنواع الرسائل
+// ==================== أنواع الرسائل ====================
 interface ChatMessage {
   id: string;
   type: "user" | "bot" | "agent";
@@ -37,7 +37,7 @@ interface ChatMessage {
   delivered: boolean;
 }
 
-// خيارات التواصل السريع
+// ==================== خيارات التواصل السريع ====================
 const quickActions = [
   {
     id: "whatsapp",
@@ -51,7 +51,7 @@ const quickActions = [
     id: "phone",
     label: "اتصال مباشر",
     icon: "📞",
-    href: "tel:+966 5309 89 975",
+    href: "tel:+966530989975",
     color: "from-blue-500 to-blue-600",
     description: "خدمة عملاء 24/7",
   },
@@ -59,9 +59,9 @@ const quickActions = [
     id: "quote",
     label: "عرض سعر",
     icon: "💰",
-    href: "/cost-calculator",
+    href: "/contact", // تم التغيير من "/cost-calculator" إلى "/contact"
     color: "from-amber-500 to-amber-600",
-    description: "احسب تكلفة مشروعك",
+    description: "أرسل استفسارك واحصل على عرض سعر",
   },
   {
     id: "contact",
@@ -73,7 +73,7 @@ const quickActions = [
   },
 ];
 
-// ردود سريعة
+// ==================== ردود سريعة للدردشة ====================
 const quickReplies = [
   { id: "1", text: "عرض سعر", icon: "💰" },
   { id: "2", text: "استفسار عن خدمة", icon: "❓" },
@@ -81,12 +81,12 @@ const quickReplies = [
   { id: "4", text: "اتصال", icon: "📞" },
 ];
 
-// رسائل البوت التلقائية
+// ==================== ردود البوت التلقائية ====================
 const botResponses = [
   {
     keywords: ["سعر", "تكلفة", "كم", "بكم"],
     response:
-      "للحصول على عرض سعر دقيق، يمكنك استخدام حاسبة التكلفة أو التواصل مع فريق المبيعات. هل تفضل:\n1️⃣ استخدام الحاسبة الآن\n2️⃣ التحدث مع فريق المبيعات",
+      "للحصول على عرض سعر دقيق، يمكنك استخدام نموذج التواصل أو التحدث مع فريق المبيعات. هل تفضل:\n1️⃣ ملء نموذج التواصل الآن\n2️⃣ التحدث مع فريق المبيعات",
   },
   {
     keywords: ["مظلة", "سيارة", "مظلات"],
@@ -115,6 +115,101 @@ const botResponses = [
   },
 ];
 
+// ==================== قائمة الخدمات الكاملة ====================
+// ... باقي الـ imports كما هي ...
+
+// ==================== قائمة الخدمات المستخرجة من JSON الحقيقي ====================
+// تم استخراجها من البيانات المقدمة وتصفية الصفحات غير الخدمية
+const rawServicesPages = [
+  { slug: "مظلات-منازل", uri: "/مظلات-منازل/" },
+  { slug: "سواتر-شرائح-حديد", uri: "/سواتر-شرائح-حديد/" },
+  { slug: "سواتر-لكسان", uri: "/سواتر-لكسان/" },
+  { slug: "مظلات-محلات", uri: "/مظلات-محلات/" },
+  { slug: "مظلات-قرميد", uri: "/مظلات-قرميد/" },
+  { slug: "مظلات-مسابح", uri: "/مظلات-مسابح/" },
+  { slug: "مظلات-مدارس", uri: "/مظلات-مدارس/" },
+  { slug: "سواتر-خشبية", uri: "/سواتر-خشبية/" },
+  { slug: "مظلات-الشد-الانشائي", uri: "/مظلات-الشد-الانشائي/" },
+  { slug: "برجولات-حدائق", uri: "/برجولات-حدائق/" },
+  { slug: "مظلات-بي-في-سي", uri: "/مظلات-بي-في-سي/" },
+  { slug: "مظلات-قماش", uri: "/مظلات-قماش/" },
+  { slug: "مظلات-سيارات-حديد", uri: "/مظلات-سيارات-حديد/" },
+  { slug: "مظلات-برجولات", uri: "/مظلات-برجولات/" },
+  { slug: "مظلات-خارجية-للمنازل", uri: "/مظلات-خارجية-للمنازل/" },
+  { slug: "مظلات-حدائق-منزلية", uri: "/مظلات-حدائق-منزلية/" },
+  { slug: "قماش-مظلات", uri: "/قماش-مظلات/" },
+  { slug: "مظلات-لكسان", uri: "/مظلات-لكسان/" },
+  { slug: "سواتر-حديد", uri: "/سواتر-حديد/" },
+  { slug: "برجولات-حديد", uri: "/برجولات-حديد/" },
+  { slug: "مظلات-حديد", uri: "/مظلات-حديد/" },
+  { slug: "مظلات-خشبية", uri: "/مظلات-خشبية/" },
+  { slug: "مظلات-جلسات", uri: "/مظلات-جلسات/" },
+  { slug: "سواتر-قماش", uri: "/سواتر-قماش/" },
+  { slug: "مظلات-سيارات-متحركة", uri: "/مظلات-سيارات-متحركة/" },
+  { slug: "مظلات-متحركة", uri: "/مظلات-متحركة/" },
+  { slug: "مظلات-حدائق", uri: "/مظلات-حدائق/" },
+  { slug: "مظلات-سيارات", uri: "/مظلات-سيارات/" },
+  { slug: "تركيب-مظلات-جدة", uri: "/تركيب-مظلات-جدة/" },
+  { slug: "تركيب-مظلات-الأحساء", uri: "/تركيب-مظلات-الأحساء/" },
+  { slug: "تركيب-سواتر-حديد", uri: "/تركيب-سواتر-حديد/" },
+  { slug: "تركيب-سندوش-بنل", uri: "/تركيب-سندوش-بنل/" },
+  { slug: "تركيب-مظلات-خارجية", uri: "/تركيب-مظلات-خارجية/" },
+  { slug: "تركيب-مظلات-متحركة", uri: "/تركيب-مظلات-متحركة/" },
+  { slug: "تركيب-سواتر-ابواب", uri: "/تركيب-سواتر-ابواب/" },
+  { slug: "تركيب-جلسات-خارجية", uri: "/تركيب-جلسات-خارجية/" },
+  { slug: "تركيب-قماش-مظلات-2", uri: "/تركيب-قماش-مظلات-2/" },
+  { slug: "تركيب-مظلات-حدائق", uri: "/تركيب-مظلات-حدائق/" },
+  { slug: "تفصيل-مظلة-للسيارة", uri: "/تفصيل-مظلة-للسيارة/" },
+  { slug: "تركيب-مظلات-مدارس", uri: "/تركيب-مظلات-مدارس/" },
+  { slug: "تركيب-قماش-مظلات", uri: "/تركيب-قماش-مظلات/" },
+  { slug: "تركيب-برجولات", uri: "/تركيب-برجولات/" },
+  { slug: "تركيب-لكسان", uri: "/تركيب-لكسان/" },
+  { slug: "تركيب-مظلات-سيارات", uri: "/تركيب-مظلات-سيارات/" },
+  { slug: "تركيب-مظلات-وسواتر", uri: "/تركيب-مظلات-وسواتر/" },
+  { slug: "تركيب-سواتر", uri: "/تركيب-سواتر/" },
+  { slug: "تركيب-مظلات", uri: "/تركيب-مظلات/" },
+  { slug: "تركيب-مظلات-الدمام", uri: "/تركيب-مظلات-الدمام/" },
+  { slug: "شركة-عمل-سواتر-ومظلات", uri: "/شركة-عمل-سواتر-ومظلات/" },
+  { slug: "شركة-تركيب-السواتر-والمظلات", uri: "/شركة-تركيب-السواتر-والمظلات/" },
+];
+
+// دالة مساعدة لتحويل slug إلى عنوان مقروء
+const formatServiceName = (slug: string): string => {
+  return slug
+    .replace(/-/g, " ")
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ")
+    .replace(/Ipc/g, "IPC"); // معالجة حالات خاصة
+};
+
+// دالة لإرجاع أيقونة مناسبة لكل خدمة بناءً على الكلمات المفتاحية
+const getServiceIcon = (slug: string): string => {
+  if (slug.includes("مظلات")) return "🏗️";
+  if (slug.includes("سواتر")) return "🔩";
+  if (slug.includes("برجولات")) return "🌿";
+  if (slug.includes("تركيب")) return "🛠️";
+  if (slug.includes("جلسات")) return "🪑";
+  if (slug.includes("خشبية")) return "🪵";
+  if (slug.includes("لكسان")) return "✨";
+  if (slug.includes("قماش")) return "🧵";
+  if (slug.includes("حديد")) return "🔗";
+  if (slug.includes("متحركة")) return "⚙️";
+  if (slug.includes("سيارات")) return "🚗";
+  if (slug.includes("مسابح")) return "🏊";
+  if (slug.includes("مدارس")) return "🏫";
+  if (slug.includes("حدائق")) return "🌳";
+  return "📐";
+};
+
+// بناء قائمة الخدمات النهائية
+const servicesList = rawServicesPages.map((page) => ({
+  id: page.slug,
+  name: formatServiceName(page.slug),
+  href: page.uri,
+  icon: getServiceIcon(page.slug),
+}));
+
 export function FloatingChat() {
   const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -138,18 +233,28 @@ export function FloatingChat() {
   const [activeUsers, setActiveUsers] = useState(5);
   const [unreadCount, setUnreadCount] = useState(1);
   const [hasScrolled, setHasScrolled] = useState(false);
+  const [showServicesMenu, setShowServicesMenu] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  //   const { trackEvent, trackConversion } = useAnalytics();
+
+  // ==================== تحجيم الشاشة ====================
+  useEffect(() => {
+    const checkScreen = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkScreen();
+    window.addEventListener("resize", checkScreen);
+    return () => window.removeEventListener("resize", checkScreen);
+  }, []);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // تتبع التمرير لإظهار الشات
+  // تتبع التمرير لإظهار الشات (اختياري)
   useEffect(() => {
     if (!mounted) return;
-
     const handleScroll = () => {
       if (window.scrollY > 500 && !hasScrolled) {
         setHasScrolled(true);
@@ -159,10 +264,9 @@ export function FloatingChat() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [hasScrolled, mounted]);
 
-  // محاكاة عدد المستخدمين النشطين - باستخدام قيم ثابتة
+  // محاكاة عدد المستخدمين النشطين
   useEffect(() => {
     if (!mounted) return;
-
     const interval = setInterval(() => {
       setActiveUsers((prev) => {
         const change = Math.floor(Math.random() * 3) - 1;
@@ -175,7 +279,6 @@ export function FloatingChat() {
   // محاكاة وقت الانتظار
   useEffect(() => {
     if (!mounted) return;
-
     const interval = setInterval(() => {
       setWaitTime((prev) => {
         const change = Math.floor(Math.random() * 2) - 1;
@@ -200,13 +303,12 @@ export function FloatingChat() {
 
   const generateMessageId = () => {
     // eslint-disable-next-line react-hooks/purity
-    return `msg-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
+    return `msg-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   };
 
   const handleSend = () => {
     if (!input.trim()) return;
 
-    // إضافة رسالة المستخدم
     const userMessage: ChatMessage = {
       id: generateMessageId(),
       type: "user",
@@ -220,11 +322,9 @@ export function FloatingChat() {
     setShowQuickReplies(false);
     setIsTyping(true);
 
-    // محاكاة رد البوت
     setTimeout(() => {
       let botResponse =
         "شكراً لتواصلك. سأقوم بتحويلك إلى أحد ممثلي خدمة العملاء للمساعدة بشكل أفضل.";
-
       const lowerInput = input.toLowerCase();
       for (const item of botResponses) {
         if (item.keywords.some((keyword) => lowerInput.includes(keyword))) {
@@ -232,7 +332,6 @@ export function FloatingChat() {
           break;
         }
       }
-
       const botMessage: ChatMessage = {
         id: generateMessageId(),
         type: "bot",
@@ -251,36 +350,292 @@ export function FloatingChat() {
     setTimeout(() => handleSend(), 100);
   };
 
-  const handleActionClick = (action: (typeof quickActions)[0]) => {
-    // tracking code here
+  const handleServiceClick = (href: string) => {
+    setShowServicesMenu(false);
+    // eslint-disable-next-line react-hooks/immutability
+    window.location.href = href;
   };
 
   const handleRateChat = (rating: number) => {
-    // tracking code here
+    console.log("تم التقييم:", rating);
   };
 
   if (!mounted) {
     return (
       <div className="fixed bottom-6 right-6 z-50">
-        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-600 to-amber-500 text-white shadow-amber-500/30 flex items-center justify-center">
-          <MessageCircle className="w-7 h-7" />
+        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-600 to-amber-500 text-white shadow-amber-500/30 flex items-center justify-center">
+          <MessageCircle className="w-6 h-6" />
         </div>
       </div>
     );
   }
+
+  // ==================== وضع الجوال (شريط سفلي + قائمة خدمات منسدلة) ====================
+  if (isMobile) {
+    return (
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-slate-900 border-t border-border/50 shadow-lg rounded-t-2xl">
+        {/* الشريط السفلي */}
+        <div className="flex items-center justify-around py-2 px-3">
+          {/* زر خدماتنا */}
+          <button
+            onClick={() => setShowServicesMenu(!showServicesMenu)}
+            className="flex flex-col items-center gap-1 text-muted-foreground hover:text-amber-600 transition-colors"
+          >
+            <Grid3x3 className="w-6 h-6" />
+            <span className="text-[10px] font-medium">خدماتنا</span>
+          </button>
+
+          {/* زر تواصل (يفتح قائمة التواصل السريع) */}
+          <button
+            onClick={() => {
+              setShowServicesMenu(false);
+              setIsOpen(true);
+              setShowChat(false);
+            }}
+            className="flex flex-col items-center gap-1 text-muted-foreground hover:text-amber-600 transition-colors"
+          >
+            <MessageCircle className="w-6 h-6" />
+            <span className="text-[10px] font-medium">تواصل</span>
+          </button>
+
+          {/* زر واتساب مباشر */}
+          <a
+            href="https://wa.me/966558181955"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-col items-center gap-1 text-muted-foreground hover:text-green-600 transition-colors"
+          >
+            <MessageCircle className="w-6 h-6" style={{ color: "#25D366" }} />
+            <span className="text-[10px] font-medium">واتساب</span>
+          </a>
+
+          {/* زر عرض سعر - تم تغيير الرابط إلى /contact */}
+          <a
+            href="/contact"
+            className="flex flex-col items-center gap-1 text-muted-foreground hover:text-amber-600 transition-colors"
+          >
+            <Calculator className="w-6 h-6" />
+            <span className="text-[10px] font-medium">عرض سعر</span>
+          </a>
+        </div>
+
+        {/* نافذة الخدمات المنبثقة (عند الضغط على خدماتنا) */}
+        <AnimatePresence>
+          {showServicesMenu && (
+            <motion.div
+              initial={{ opacity: 0, y: 100 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 100 }}
+              className="absolute bottom-full left-0 right-0 mb-2 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-border/50 max-h-[70vh] overflow-y-auto"
+              dir="rtl"
+            >
+              <div className="sticky top-0 bg-white dark:bg-slate-900 p-4 border-b border-border/50 flex justify-between items-center">
+                <h3 className="font-bold text-lg">خدماتنا</h3>
+                <button
+                  onClick={() => setShowServicesMenu(false)}
+                  className="p-1 rounded-full hover:bg-slate-100"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="p-3 grid grid-cols-1 gap-2">
+                {servicesList.map((service) => (
+                  <button
+                    key={service.id}
+                    onClick={() => handleServiceClick(service.href)}
+                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-amber-50 dark:hover:bg-amber-950/20 transition-all text-right group"
+                  >
+                    <span className="text-2xl">{service.icon}</span>
+                    <span className="flex-1 text-base font-medium group-hover:text-amber-600">
+                      {service.name}
+                    </span>
+                    <ChevronLeft className="w-4 h-4 text-muted-foreground group-hover:text-amber-600" />
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* نافذة قائمة التواصل (تواصل) */}
+        <AnimatePresence>
+          {isOpen && !showChat && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              className="absolute bottom-full left-4 right-4 mb-2 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-border/50 overflow-hidden"
+            >
+              <div className="p-3 bg-gradient-to-r from-amber-600 to-amber-500 text-white">
+                <h4 className="font-bold text-sm">تواصل معنا</h4>
+                <p className="text-[10px] text-amber-100">
+                  اختر طريقة التواصل المناسبة
+                </p>
+              </div>
+              <div className="p-2">
+                {quickActions.map((action) => (
+                  <a
+                    key={action.id}
+                    href={action.href}
+                    target={action.href.startsWith("http") ? "_blank" : "_self"}
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
+                  >
+                    <div
+                      className={`w-9 h-9 rounded-xl bg-gradient-to-br ${action.color} flex items-center justify-center text-white text-lg`}
+                    >
+                      {action.icon}
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-bold text-xs group-hover:text-amber-600 transition-colors">
+                        {action.label}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground">
+                        {action.description}
+                      </p>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* نافذة الدردشة الكاملة */}
+        <AnimatePresence>
+          {isOpen && showChat && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              className="absolute bottom-full left-4 right-4 mb-2 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-border/50 overflow-hidden"
+              style={{ maxHeight: "70vh" }}
+            >
+              {/* رأس الدردشة */}
+              <div className="bg-gradient-to-r from-amber-600 to-amber-500 text-white p-3">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-2">
+                    <div className="relative">
+                      <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                        <Headphones className="w-5 h-5" />
+                      </div>
+                      <span className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white animate-pulse" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-sm">دعم العزيزية</h3>
+                      <div className="flex gap-2 text-[10px] text-amber-100">
+                        <span>
+                          <Users className="w-3 h-3 inline ml-1" />{" "}
+                          {activeUsers} متصل
+                        </span>
+                        <span>
+                          <Clock className="w-3 h-3 inline ml-1" /> رد خلال{" "}
+                          {waitTime} د
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <button onClick={() => setShowChat(false)}>
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* منطقة الرسائل */}
+              <div className="h-80 overflow-y-auto p-3 space-y-3 bg-slate-50 dark:bg-slate-900/50">
+                {messages.map((msg) => (
+                  <div
+                    key={msg.id}
+                    className={`flex ${msg.type === "user" ? "justify-start" : "justify-end"}`}
+                  >
+                    <div
+                      className={`flex gap-2 max-w-[85%] ${
+                        msg.type === "user" ? "flex-row-reverse" : ""
+                      }`}
+                    >
+                      <div
+                        className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${
+                          msg.type === "user" ? "bg-slate-200" : "bg-amber-500"
+                        }`}
+                      >
+                        {msg.type === "user" ? (
+                          <User className="w-4 h-4 text-slate-600" />
+                        ) : (
+                          <Bot className="w-4 h-4 text-white" />
+                        )}
+                      </div>
+                      <div>
+                        <div
+                          className={`p-2 rounded-xl text-sm ${
+                            msg.type === "user"
+                              ? "bg-slate-200 dark:bg-slate-700 rounded-tr-none"
+                              : "bg-amber-500 text-white rounded-tl-none"
+                          }`}
+                        >
+                          <p className="whitespace-pre-wrap">{msg.content}</p>
+                        </div>
+                        <div className="text-[10px] text-muted-foreground mt-1">
+                          {msg.timestamp.toLocaleTimeString("ar-SA", {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {isTyping && (
+                  <div className="flex justify-end">
+                    <div className="bg-amber-100 dark:bg-amber-950/30 p-2 rounded-xl flex gap-1">
+                      <span className="w-1.5 h-1.5 bg-amber-600 rounded-full animate-bounce" />
+                      <span className="w-1.5 h-1.5 bg-amber-600 rounded-full animate-bounce delay-100" />
+                      <span className="w-1.5 h-1.5 bg-amber-600 rounded-full animate-bounce delay-200" />
+                    </div>
+                  </div>
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+
+              {/* حقل الإدخال */}
+              <div className="p-2 border-t border-border/50">
+                <div className="flex gap-1">
+                  <input
+                    type="text"
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                    onKeyPress={(e) => e.key === "Enter" && handleSend()}
+                    placeholder="اكتب رسالتك..."
+                    className="flex-1 p-2 text-sm bg-slate-100 dark:bg-slate-800 rounded-xl focus:outline-none focus:ring-1 focus:ring-amber-500"
+                  />
+                  <button
+                    onClick={handleSend}
+                    className="p-2 bg-amber-600 text-white rounded-xl hover:bg-amber-700 transition-colors"
+                  >
+                    <Send className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    );
+  }
+
+  // ==================== وضع سطح المكتب (كما كان سابقاً) ====================
   return (
     <div
       className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end gap-3"
       dir="rtl"
     >
-      {/* 1. نافذة الدردشة (Chat Window) */}
+      {/* نافذة الدردشة */}
       <AnimatePresence>
         {isOpen && showChat && (
           <motion.div
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="w-[calc(100vw-2rem)] sm:w-[380px] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-border/50 overflow-hidden mb-2 flex flex-col"
+            className="w-[380px] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-border/50 overflow-hidden mb-2 flex flex-col"
             style={{ maxHeight: "80vh" }}
           >
             {/* رأس الشات */}
@@ -288,16 +643,14 @@ export function FloatingChat() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="relative">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur">
-                      <Headphones className="w-5 h-5 sm:w-6 sm:h-6" />
+                    <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur">
+                      <Headphones className="w-6 h-6" />
                     </div>
                     <span className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white animate-pulse" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-sm sm:text-base">
-                      دعم العزيزية
-                    </h3>
-                    <div className="flex items-center gap-2 text-[10px] sm:text-xs text-amber-100">
+                    <h3 className="font-bold">دعم العزيزية</h3>
+                    <div className="flex items-center gap-2 text-xs text-amber-100">
                       <span className="flex items-center gap-1">
                         <Users className="w-3 h-3" /> {activeUsers} متصل
                       </span>
@@ -309,7 +662,7 @@ export function FloatingChat() {
                 </div>
                 <button
                   onClick={() => setShowChat(false)}
-                  className="p-1 hover:bg-white/10 rounded-lg transition-colors"
+                  className="p-1 hover:bg-white/10 rounded-lg"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -317,17 +670,23 @@ export function FloatingChat() {
             </div>
 
             {/* منطقة الرسائل */}
-            <div className="flex-1 h-[45vh] sm:h-96 overflow-y-auto p-4 space-y-4 bg-slate-50 dark:bg-slate-900/50">
+            <div className="flex-1 h-96 overflow-y-auto p-4 space-y-4 bg-slate-50 dark:bg-slate-900/50">
               {messages.map((message) => (
                 <div
                   key={message.id}
                   className={`flex ${message.type === "user" ? "justify-start" : "justify-end"}`}
                 >
                   <div
-                    className={`flex gap-2 max-w-[85%] ${message.type === "user" ? "flex-row-reverse" : ""}`}
+                    className={`flex gap-2 max-w-[85%] ${
+                      message.type === "user" ? "flex-row-reverse" : ""
+                    }`}
                   >
                     <div
-                      className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center shrink-0 ${message.type === "user" ? "bg-slate-200" : "bg-amber-500"}`}
+                      className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
+                        message.type === "user"
+                          ? "bg-slate-200"
+                          : "bg-amber-500"
+                      }`}
                     >
                       {message.type === "user" ? (
                         <User className="w-4 h-4 text-slate-600" />
@@ -337,12 +696,20 @@ export function FloatingChat() {
                     </div>
                     <div>
                       <div
-                        className={`p-3 rounded-2xl text-sm ${message.type === "user" ? "bg-slate-200 dark:bg-slate-700 rounded-tr-none" : "bg-amber-500 text-white rounded-tl-none"}`}
+                        className={`p-3 rounded-2xl text-sm ${
+                          message.type === "user"
+                            ? "bg-slate-200 dark:bg-slate-700 rounded-tr-none"
+                            : "bg-amber-500 text-white rounded-tl-none"
+                        }`}
                       >
                         <p className="whitespace-pre-wrap">{message.content}</p>
                       </div>
                       <div
-                        className={`flex items-center gap-1 mt-1 text-[10px] text-muted-foreground ${message.type === "user" ? "justify-start" : "justify-end"}`}
+                        className={`flex items-center gap-1 mt-1 text-[10px] text-muted-foreground ${
+                          message.type === "user"
+                            ? "justify-start"
+                            : "justify-end"
+                        }`}
                       >
                         <span>
                           {message.timestamp.toLocaleTimeString("ar-SA", {
@@ -365,7 +732,7 @@ export function FloatingChat() {
                 </div>
               ))}
               {isTyping && (
-                <div className="flex justify-end gap-2">
+                <div className="flex justify-end">
                   <div className="bg-amber-100 dark:bg-amber-950/30 p-3 rounded-2xl flex gap-1">
                     <motion.span
                       animate={{ y: [0, -5, 0] }}
@@ -398,7 +765,7 @@ export function FloatingChat() {
 
             {/* ردود سريعة */}
             {showQuickReplies && (
-              <div className="p-2 sm:p-3 bg-white dark:bg-slate-900 border-t border-border/50 overflow-x-auto no-scrollbar">
+              <div className="p-3 bg-white dark:bg-slate-900 border-t border-border/50 overflow-x-auto no-scrollbar">
                 <div className="flex gap-2 min-w-max">
                   {quickReplies.map((reply) => (
                     <button
@@ -414,17 +781,11 @@ export function FloatingChat() {
               </div>
             )}
 
-            {/* حقل الإدخال والتحكم */}
+            {/* حقل الإدخال */}
             <div className="p-3 border-t border-border/50 bg-white dark:bg-slate-900 shrink-0">
-              <div className="flex items-center gap-1 sm:gap-2">
-                <button
-                  onClick={() => setShowEmoji(!showEmoji)}
-                  className="p-1.5 text-muted-foreground hover:text-amber-600"
-                >
+              <div className="flex items-center gap-2">
+                <button className="p-1.5 text-muted-foreground hover:text-amber-600">
                   <Smile className="w-5 h-5" />
-                </button>
-                <button className="p-1.5 text-muted-foreground hover:text-amber-600 hidden sm:block">
-                  <Paperclip className="w-5 h-5" />
                 </button>
                 <input
                   type="text"
@@ -437,7 +798,7 @@ export function FloatingChat() {
                 {input.trim() ? (
                   <button
                     onClick={handleSend}
-                    className="p-2 bg-amber-600 text-white rounded-xl hover:bg-amber-700 transition-colors"
+                    className="p-2 bg-amber-600 text-white rounded-xl hover:bg-amber-700"
                   >
                     <Send className="w-4 h-4" />
                   </button>
@@ -447,8 +808,6 @@ export function FloatingChat() {
                   </button>
                 )}
               </div>
-
-              {/* التقييم السريع */}
               <div className="mt-2 pt-2 border-t border-gray-100 flex items-center justify-between text-[10px] text-muted-foreground">
                 <span>هل الدردشة مفيدة؟</span>
                 <div className="flex gap-1">
@@ -468,14 +827,14 @@ export function FloatingChat() {
         )}
       </AnimatePresence>
 
-      {/* 2. قائمة الإجراءات السريعة (تواصل معنا) */}
+      {/* قائمة الإجراءات السريعة */}
       <AnimatePresence>
         {isOpen && !showChat && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="w-[280px] sm:w-72 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-border/50 overflow-hidden mb-2"
+            className="w-72 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-border/50 overflow-hidden mb-2"
           >
             <div className="p-3 bg-gradient-to-r from-amber-600 to-amber-500 text-white">
               <h4 className="font-bold text-sm">تواصل معنا</h4>
@@ -490,7 +849,6 @@ export function FloatingChat() {
                   href={action.href}
                   target={action.href.startsWith("http") ? "_blank" : "_self"}
                   rel="noopener noreferrer"
-                  onClick={() => handleActionClick(action)}
                   className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
                 >
                   <div
@@ -499,10 +857,10 @@ export function FloatingChat() {
                     {action.icon}
                   </div>
                   <div className="flex-1">
-                    <p className="font-bold text-xs sm:text-sm group-hover:text-amber-600 transition-colors">
+                    <p className="font-bold text-xs group-hover:text-amber-600 transition-colors">
                       {action.label}
                     </p>
-                    <p className="text-[10px] sm:text-xs text-muted-foreground">
+                    <p className="text-[10px] text-muted-foreground">
                       {action.description}
                     </p>
                   </div>
@@ -513,9 +871,8 @@ export function FloatingChat() {
         )}
       </AnimatePresence>
 
-      {/* 3. الزر الرئيسي العائم (FAB) وأزرار التحكم */}
+      {/* الزر الرئيسي والأزرار الجانبية */}
       <div className="flex flex-row-reverse items-center gap-3">
-        {/* الزر الرئيسي */}
         <motion.button
           onClick={() => {
             setIsOpen(!isOpen);
@@ -524,18 +881,17 @@ export function FloatingChat() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           className={cn(
-            "relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center shadow-2xl transition-all duration-300",
+            "relative w-16 h-16 rounded-2xl flex items-center justify-center shadow-2xl transition-all duration-300",
             isOpen
               ? "bg-slate-900 text-white rotate-90"
               : "bg-gradient-to-br from-amber-600 to-amber-500 text-white",
           )}
         >
           {isOpen ? (
-            <X className="w-6 h-6 sm:w-7 sm:h-7" />
+            <X className="w-7 h-7" />
           ) : (
-            <MessageCircle className="w-6 h-6 sm:w-7 sm:h-7" />
+            <MessageCircle className="w-7 h-7" />
           )}
-
           {!isOpen && unreadCount > 0 && (
             <span className="absolute -top-1 -right-1 min-w-[20px] h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1 border-2 border-white">
               {unreadCount}
@@ -546,7 +902,6 @@ export function FloatingChat() {
           )}
         </motion.button>
 
-        {/* أزرار التحكم الجانبي */}
         {isOpen && (
           <div className="flex flex-col gap-2">
             <motion.button
@@ -570,756 +925,4 @@ export function FloatingChat() {
       </div>
     </div>
   );
-  // return (
-  //   <div className="fixed bottom-6 right-6 z-50" dir="rtl">
-  //     {/* القائمة المنبثقة للشات */}
-  //     <AnimatePresence>
-  //       {isOpen && showChat && (
-  //         <motion.div
-  //           initial={{ opacity: 0, y: 20, scale: 0.95 }}
-  //           animate={{ opacity: 1, y: 0, scale: 1 }}
-  //           exit={{ opacity: 0, y: 20, scale: 0.95 }}
-  //           transition={{ duration: 0.2 }}
-  //           className="absolute bottom-20 right-0 w-[380px] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-border/50 overflow-hidden mb-4"
-  //         >
-  //           {/* رأس الشات */}
-  //           <div className="bg-gradient-to-r from-amber-600 to-amber-500 text-white p-4">
-  //             <div className="flex items-center justify-between">
-  //               <div className="flex items-center gap-3">
-  //                 <div className="relative">
-  //                   <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur">
-  //                     <Headphones className="w-6 h-6" />
-  //                   </div>
-  //                   <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white animate-pulse" />
-  //                 </div>
-  //                 <div>
-  //                   <h3 className="font-bold">دعم العزيزية</h3>
-  //                   <div className="flex items-center gap-2 text-xs text-amber-100">
-  //                     <span className="flex items-center gap-1">
-  //                       <Users className="w-3 h-3" />
-  //                       {activeUsers} متصل
-  //                     </span>
-  //                     <span className="flex items-center gap-1">
-  //                       <Clock className="w-3 h-3" />
-  //                       رد خلال {waitTime} د
-  //                     </span>
-  //                   </div>
-  //                 </div>
-  //               </div>
-  //               <button
-  //                 onClick={() => setShowChat(false)}
-  //                 className="p-1 hover:bg-white/10 rounded-lg transition-colors"
-  //               >
-  //                 <X className="w-5 h-5" />
-  //               </button>
-  //             </div>
-  //           </div>
-
-  //           {/* منطقة الرسائل */}
-  //           <div className="h-96 overflow-y-auto p-4 space-y-4 bg-slate-50 dark:bg-slate-900/50">
-  //             {messages.map((message) => (
-  //               <div
-  //                 key={message.id}
-  //                 className={`flex ${message.type === "user" ? "justify-start" : "justify-end"}`}
-  //               >
-  //                 <div
-  //                   className={`flex gap-2 max-w-[85%] ${message.type === "user" ? "flex-row-reverse" : ""}`}
-  //                 >
-  //                   <div
-  //                     className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-  //                       message.type === "user"
-  //                         ? "bg-slate-200 dark:bg-slate-700"
-  //                         : message.type === "bot"
-  //                           ? "bg-amber-500"
-  //                           : "bg-emerald-500"
-  //                     }`}
-  //                   >
-  //                     {message.type === "user" ? (
-  //                       <User className="w-4 h-4" />
-  //                     ) : (
-  //                       <Bot className="w-4 h-4 text-white" />
-  //                     )}
-  //                   </div>
-  //                   <div>
-  //                     <div
-  //                       className={`p-3 rounded-2xl ${
-  //                         message.type === "user"
-  //                           ? "bg-slate-200 dark:bg-slate-700 rounded-tr-none"
-  //                           : "bg-amber-500 text-white rounded-tl-none"
-  //                       }`}
-  //                     >
-  //                       <p className="text-sm whitespace-pre-wrap">
-  //                         {message.content}
-  //                       </p>
-  //                     </div>
-  //                     <div
-  //                       className={`flex items-center gap-1 mt-1 text-xs text-muted-foreground ${
-  //                         message.type === "user"
-  //                           ? "justify-start"
-  //                           : "justify-end"
-  //                       }`}
-  //                     >
-  //                       <span>
-  //                         {message.timestamp.toLocaleTimeString("ar-SA", {
-  //                           hour: "2-digit",
-  //                           minute: "2-digit",
-  //                         })}
-  //                       </span>
-  //                       {message.type === "user" && (
-  //                         <span>
-  //                           {message.read ? (
-  //                             <CheckCheck className="w-3 h-3 text-blue-500" />
-  //                           ) : message.delivered ? (
-  //                             <Check className="w-3 h-3" />
-  //                           ) : null}
-  //                         </span>
-  //                       )}
-  //                     </div>
-  //                   </div>
-  //                 </div>
-  //               </div>
-  //             ))}
-
-  //             {isTyping && (
-  //               <div className="flex justify-end">
-  //                 <div className="flex gap-2 max-w-[85%]">
-  //                   <div className="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center">
-  //                     <Bot className="w-4 h-4 text-white" />
-  //                   </div>
-  //                   <div className="bg-amber-100 dark:bg-amber-950/30 p-3 rounded-2xl rounded-tl-none">
-  //                     <div className="flex gap-1">
-  //                       <motion.span
-  //                         animate={{ y: [0, -5, 0] }}
-  //                         transition={{
-  //                           duration: 0.5,
-  //                           repeat: Infinity,
-  //                           delay: 0,
-  //                         }}
-  //                         className="w-2 h-2 bg-amber-600 rounded-full"
-  //                       />
-  //                       <motion.span
-  //                         animate={{ y: [0, -5, 0] }}
-  //                         transition={{
-  //                           duration: 0.5,
-  //                           repeat: Infinity,
-  //                           delay: 0.2,
-  //                         }}
-  //                         className="w-2 h-2 bg-amber-600 rounded-full"
-  //                       />
-  //                       <motion.span
-  //                         animate={{ y: [0, -5, 0] }}
-  //                         transition={{
-  //                           duration: 0.5,
-  //                           repeat: Infinity,
-  //                           delay: 0.4,
-  //                         }}
-  //                         className="w-2 h-2 bg-amber-600 rounded-full"
-  //                       />
-  //                     </div>
-  //                   </div>
-  //                 </div>
-  //               </div>
-  //             )}
-
-  //             <div ref={messagesEndRef} />
-  //           </div>
-
-  //           {/* ردود سريعة */}
-  //           {showQuickReplies && (
-  //             <div className="p-3 bg-white dark:bg-slate-900 border-t border-border/50">
-  //               <p className="text-xs text-muted-foreground mb-2">
-  //                 ردود سريعة:
-  //               </p>
-  //               <div className="flex flex-wrap gap-2">
-  //                 {quickReplies.map((reply) => (
-  //                   <button
-  //                     key={reply.id}
-  //                     onClick={() => handleQuickReply(reply.text)}
-  //                     className="px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-full text-sm hover:bg-amber-500 hover:text-white transition-colors"
-  //                   >
-  //                     <span className="ml-1">{reply.icon}</span>
-  //                     {reply.text}
-  //                   </button>
-  //                 ))}
-  //               </div>
-  //             </div>
-  //           )}
-
-  //           {/* حقل الإدخال */}
-  //           <div className="p-3 border-t border-border/50 bg-white dark:bg-slate-900">
-  //             <div className="flex items-center gap-2">
-  //               <button
-  //                 onClick={() => setShowEmoji(!showEmoji)}
-  //                 className="p-2 text-muted-foreground hover:text-amber-600 transition-colors"
-  //               >
-  //                 <Smile className="w-5 h-5" />
-  //               </button>
-  //               <button className="p-2 text-muted-foreground hover:text-amber-600 transition-colors">
-  //                 <Paperclip className="w-5 h-5" />
-  //               </button>
-  //               <input
-  //                 type="text"
-  //                 value={input}
-  //                 onChange={(e) => setInput(e.target.value)}
-  //                 onKeyPress={(e) => e.key === "Enter" && handleSend()}
-  //                 placeholder="اكتب رسالتك هنا..."
-  //                 className="flex-1 px-4 py-2 bg-slate-100 dark:bg-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
-  //               />
-  //               {input.trim() ? (
-  //                 <button
-  //                   onClick={handleSend}
-  //                   className="p-2 bg-amber-600 text-white rounded-xl hover:bg-amber-700 transition-colors"
-  //                 >
-  //                   <Send className="w-5 h-5" />
-  //                 </button>
-  //               ) : (
-  //                 <button className="p-2 text-muted-foreground hover:text-amber-600 transition-colors">
-  //                   <Mic className="w-5 h-5" />
-  //                 </button>
-  //               )}
-  //             </div>
-  //           </div>
-
-  //           {/* تقييم سريع */}
-  //           <div className="p-2 bg-slate-50 dark:bg-slate-900/50 border-t border-border/50 flex items-center justify-between text-xs">
-  //             <span className="text-muted-foreground">
-  //               هل كانت المحادثة مفيدة؟
-  //             </span>
-  //             <div className="flex gap-1">
-  //               {[1, 2, 3, 4, 5].map((star) => (
-  //                 <button
-  //                   key={star}
-  //                   onClick={() => handleRateChat(star)}
-  //                   className="hover:text-amber-500 transition-colors"
-  //                 >
-  //                   <Star className="w-3 h-3" />
-  //                 </button>
-  //               ))}
-  //             </div>
-  //           </div>
-  //         </motion.div>
-  //       )}
-  //     </AnimatePresence>
-
-  //     {/* القائمة المنبثقة للإجراءات السريعة */}
-  //     <AnimatePresence>
-  //       {isOpen && !showChat && (
-  //         <motion.div
-  //           initial={{ opacity: 0, y: 20 }}
-  //           animate={{ opacity: 1, y: 0 }}
-  //           exit={{ opacity: 0, y: 20 }}
-  //           className="absolute bottom-20 right-0 w-72 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-border/50 overflow-hidden mb-4"
-  //         >
-  //           <div className="p-3 bg-gradient-to-r from-amber-600 to-amber-500 text-white">
-  //             <h4 className="font-bold text-sm">تواصل معنا</h4>
-  //             <p className="text-xs text-amber-100">
-  //               اختر طريقة التواصل المناسبة
-  //             </p>
-  //           </div>
-  //           <div className="p-2">
-  //             {quickActions.map((action) => (
-  //               <a
-  //                 key={action.id}
-  //                 href={action.href}
-  //                 target={action.href.startsWith("http") ? "_blank" : "_self"}
-  //                 rel="noopener noreferrer"
-  //                 onClick={() => handleActionClick(action)}
-  //                 className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
-  //               >
-  //                 <div
-  //                   className={`w-10 h-10 rounded-xl bg-gradient-to-br ${action.color} flex items-center justify-center text-white`}
-  //                 >
-  //                   <span className="text-lg">{action.icon}</span>
-  //                 </div>
-  //                 <div className="flex-1">
-  //                   <p className="font-bold text-sm group-hover:text-amber-600 transition-colors">
-  //                     {action.label}
-  //                   </p>
-  //                   <p className="text-xs text-muted-foreground">
-  //                     {action.description}
-  //                   </p>
-  //                 </div>
-  //               </a>
-  //             ))}
-  //           </div>
-  //         </motion.div>
-  //       )}
-  //     </AnimatePresence>
-
-  //     {/* الزر الرئيسي العائم */}
-  //     <motion.button
-  //       onClick={() => {
-  //         setIsOpen(!isOpen);
-  //         if (!isOpen) {
-  //           setShowChat(false);
-  //           // trackEvent("Floating Chat", "Opened");
-  //         }
-  //       }}
-  //       whileHover={{ scale: 1.05 }}
-  //       whileTap={{ scale: 0.95 }}
-  //       animate={
-  //         !isOpen && hasScrolled
-  //           ? {
-  //               y: [0, -8, 0],
-  //               boxShadow: [
-  //                 "0 20px 25px -5px rgba(245,158,11,0.1), 0 8px 10px -6px rgba(245,158,11,0.1)",
-  //                 "0 25px 30px -5px rgba(245,158,11,0.2), 0 10px 15px -6px rgba(245,158,11,0.2)",
-  //                 "0 20px 25px -5px rgba(245,158,11,0.1), 0 8px 10px -6px rgba(245,158,11,0.1)",
-  //               ],
-  //             }
-  //           : {}
-  //       }
-  //       transition={
-  //         !isOpen && hasScrolled
-  //           ? { duration: 2, repeat: Infinity, ease: "easeInOut" }
-  //           : {}
-  //       }
-  //       className={cn(
-  //         "relative w-16 h-16 rounded-2xl flex items-center justify-center shadow-2xl transition-all duration-300",
-  //         isOpen
-  //           ? "bg-slate-900 text-white rotate-90"
-  //           : "bg-gradient-to-br from-amber-600 to-amber-500 text-white shadow-amber-500/30 hover:shadow-amber-500/50",
-  //       )}
-  //     >
-  //       {isOpen ? (
-  //         <X className="w-7 h-7" />
-  //       ) : (
-  //         <MessageCircle className="w-7 h-7" />
-  //       )}
-
-  //       {/* مؤشر عدد الرسائل غير المقروءة */}
-  //       {!isOpen && unreadCount > 0 && (
-  //         <motion.span
-  //           initial={{ scale: 0 }}
-  //           animate={{ scale: 1 }}
-  //           className="absolute -top-2 -right-2 min-w-[24px] h-6 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center px-1.5 border-2 border-white"
-  //         >
-  //           {unreadCount}
-  //         </motion.span>
-  //       )}
-
-  //       {/* مؤشر تواجد الدعم الفني */}
-  //       {!isOpen && agentOnline && (
-  //         <span className="absolute -bottom-1 -left-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white animate-pulse" />
-  //       )}
-  //     </motion.button>
-
-  //     {/* خيارات إضافية (تظهر عند فتح الشات) */}
-  //     {isOpen && (
-  //       <div className="absolute bottom-20 left-0 flex flex-col gap-2">
-  //         <motion.button
-  //           initial={{ opacity: 0, x: -20 }}
-  //           animate={{ opacity: 1, x: 0 }}
-  //           transition={{ delay: 0.1 }}
-  //           onClick={() => {
-  //             setShowChat(true);
-  //             //   trackEvent("Floating Chat", "Start Chat");
-  //           }}
-  //           className="w-10 h-10 bg-amber-100 dark:bg-amber-950/30 rounded-xl flex items-center justify-center text-amber-600 hover:bg-amber-200 transition-colors shadow-lg"
-  //         >
-  //           <MessageCircle className="w-5 h-5" />
-  //         </motion.button>
-
-  //         <motion.button
-  //           initial={{ opacity: 0, x: -20 }}
-  //           animate={{ opacity: 1, x: 0 }}
-  //           transition={{ delay: 0.2 }}
-  //           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-  //           className="w-10 h-10 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-slate-600 hover:bg-amber-500 hover:text-white transition-colors shadow-lg"
-  //         >
-  //           <ChevronUp className="w-5 h-5" />
-  //         </motion.button>
-  //       </div>
-  //     )}
-  //   </div>
-  // );
 }
-
-// "use client";
-
-// import { useState, useEffect } from "react";
-// import { motion, AnimatePresence } from "framer-motion";
-// import {
-//   MessageCircle,
-//   Phone,
-//   X,
-//   Calculator,
-//   Mail,
-//   Sun,
-//   Umbrella,
-//   Home,
-//   School,
-//   Shield,
-//   Menu,
-//   ArrowUp,
-//   Clock,
-//   MapPin,
-// } from "lucide-react";
-// import Link from "next/link";
-// import { cn } from "@/lib/utils";
-
-// // خدمات الشركة الرئيسية
-// const mainServices = [
-//   {
-//     id: "carports",
-//     label: "مظلات سيارات",
-//     icon: <Umbrella className="w-5 h-5" />,
-//     href: "/mazallat-sayarat",
-//     color: "from-amber-600 to-orange-600",
-//     description: "مظلات سيارات حديد - لكسان",
-//   },
-//   {
-//     id: "pergolas",
-//     label: "برجولات",
-//     icon: <Home className="w-5 h-5" />,
-//     href: "/barjolat",
-//     color: "from-emerald-600 to-teal-600",
-//     description: "برجولات حديد - خشبية - حدائق",
-//   },
-//   {
-//     id: "fences",
-//     label: "سواتر",
-//     icon: <Shield className="w-5 h-5" />,
-//     href: "/sawater",
-//     color: "from-blue-600 to-indigo-600",
-//     description: "سواتر حديد - خشبية - شرائح",
-//   },
-//   {
-//     id: "schools",
-//     label: "مظلات مدارس",
-//     icon: <School className="w-5 h-5" />,
-//     href: "/mazallat-madaris",
-//     color: "from-purple-600 to-pink-600",
-//     description: "مظلات مدارس - ساحات - ممرات",
-//   },
-// ];
-
-// // طرق التواصل
-// const contactOptions = [
-//   {
-//     id: "whatsapp",
-//     label: "واتساب",
-//     value: "+966 5581 819 55",
-//     icon: (
-//       <svg viewBox="0 0 24 24" className="w-5 h-5 fill-current">
-//         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.57-.01c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.82 9.82 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z" />
-//       </svg>
-//     ),
-//     href: "https://wa.me/966558181955",
-//     bgColor: "bg-emerald-600",
-//   },
-//   {
-//     id: "phone1",
-//     label: "اتصال 1",
-//     value: "+966 5309 89 975",
-//     icon: <Phone className="w-5 h-5" />,
-//     href: "tel:+966530989975",
-//     bgColor: "bg-blue-600",
-//   },
-//   {
-//     id: "phone2",
-//     label: "اتصال 2",
-//     value: "+966 5581 819 55",
-//     icon: <Phone className="w-5 h-5" />,
-//     href: "tel:+966558181955",
-//     bgColor: "bg-blue-600",
-//   },
-//   {
-//     id: "email",
-//     label: "البريد الإلكتروني",
-//     value: "info@al-azizia.com",
-//     icon: <Mail className="w-5 h-5" />,
-//     href: "mailto:info@al-azizia.com",
-//     bgColor: "bg-purple-600",
-//   },
-// ];
-
-// // المدن التي تعملون بها
-// const cities = [
-//   { name: "الدمام", path: "/mazallat-al-dammam" },
-//   { name: "جدة", path: "/mazallat-jeddah" },
-//   { name: "الاحساء", path: "/mazallat-al-ahsa" },
-// ];
-
-// export function FloatingChat() {
-//   const [isOpen, setIsOpen] = useState(false);
-//   const [activeTab, setActiveTab] = useState<"services" | "contact" | "cities">(
-//     "services",
-//   );
-//   const [showScrollTop, setShowScrollTop] = useState(false);
-
-//   useEffect(() => {
-//     const handleScroll = () => {
-//       setShowScrollTop(window.scrollY > 400);
-//     };
-//     window.addEventListener("scroll", handleScroll);
-//     return () => window.removeEventListener("scroll", handleScroll);
-//   }, []);
-
-//   const scrollToTop = () => {
-//     window.scrollTo({ top: 0, behavior: "smooth" });
-//   };
-
-//   return (
-//     <div
-//       className="fixed bottom-4 md:bottom-6 left-4 md:left-6 z-[90] flex flex-col items-start gap-3"
-//       dir="rtl"
-//     >
-//       {/* القائمة الرئيسية */}
-//       <AnimatePresence>
-//         {isOpen && (
-//           <motion.div
-//             initial={{ opacity: 0, y: 20, x: -20 }}
-//             animate={{ opacity: 1, y: 0, x: 0 }}
-//             exit={{ opacity: 0, y: 20, x: -20 }}
-//             transition={{ duration: 0.2 }}
-//             className="mb-2 w-[320px] md:w-[360px]"
-//           >
-//             <div className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-amber-200/50 dark:border-amber-800/30 overflow-hidden">
-//               {/* الهيدر مع شعار الشركة */}
-//               <div className="bg-gradient-to-l from-amber-600 to-orange-600 p-4 text-white">
-//                 <div className="flex items-center gap-3">
-//                   <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur">
-//                     <Sun className="w-6 h-6" />
-//                   </div>
-//                   <div>
-//                     <h3 className="font-bold text-lg">العزيزية للمظلات</h3>
-//                     <p className="text-xs text-amber-100">
-//                       تركيب مظلات وسواتر بكافة أنواعها
-//                     </p>
-//                   </div>
-//                 </div>
-
-//                 {/* تبويبات التنقل */}
-//                 <div className="flex gap-2 mt-3">
-//                   {[
-//                     {
-//                       id: "services",
-//                       label: "خدماتنا",
-//                       icon: <Umbrella className="w-4 h-4" />,
-//                     },
-//                     {
-//                       id: "contact",
-//                       label: "تواصل",
-//                       icon: <Phone className="w-4 h-4" />,
-//                     },
-//                     {
-//                       id: "cities",
-//                       label: "مدن",
-//                       icon: <MapPin className="w-4 h-4" />,
-//                     },
-//                   ].map((tab) => (
-//                     <button
-//                       key={tab.id}
-//                       onClick={() => setActiveTab(tab.id as typeof activeTab)}
-//                       className={cn(
-//                         "flex-1 flex items-center justify-center gap-1 py-2 px-3 rounded-lg text-xs font-medium transition-all",
-//                         activeTab === tab.id
-//                           ? "bg-white/20 text-white"
-//                           : "bg-white/5 text-amber-100 hover:bg-white/10",
-//                       )}
-//                     >
-//                       {tab.icon}
-//                       {tab.label}
-//                     </button>
-//                   ))}
-//                 </div>
-//               </div>
-
-//               {/* المحتوى حسب التبويب المختار */}
-//               <div className="p-3 max-h-[400px] overflow-y-auto">
-//                 <AnimatePresence mode="wait">
-//                   {/* تبويب الخدمات */}
-//                   {activeTab === "services" && (
-//                     <motion.div
-//                       key="services"
-//                       initial={{ opacity: 0, x: -20 }}
-//                       animate={{ opacity: 1, x: 0 }}
-//                       exit={{ opacity: 0, x: 20 }}
-//                       className="space-y-2"
-//                     >
-//                       <p className="text-xs text-amber-600 dark:text-amber-400 mb-2 font-bold">
-//                         تصفح خدماتنا:
-//                       </p>
-//                       {mainServices.map((service) => (
-//                         <Link
-//                           key={service.id}
-//                           href={service.href}
-//                           onClick={() => setIsOpen(false)}
-//                           className="flex items-center gap-3 p-2 rounded-xl hover:bg-amber-50 dark:hover:bg-amber-950/30 transition-all group"
-//                         >
-//                           <div
-//                             className={cn(
-//                               "w-10 h-10 rounded-lg bg-gradient-to-br flex items-center justify-center text-white shadow-lg",
-//                               service.color,
-//                             )}
-//                           >
-//                             {service.icon}
-//                           </div>
-//                           <div className="flex-1">
-//                             <p className="font-bold text-sm text-slate-800 dark:text-slate-200">
-//                               {service.label}
-//                             </p>
-//                             <p className="text-xs text-slate-500 dark:text-slate-400">
-//                               {service.description}
-//                             </p>
-//                           </div>
-//                           <ArrowUp className="w-4 h-4 rotate-45 text-slate-400 group-hover:text-amber-600 transition-colors" />
-//                         </Link>
-//                       ))}
-
-//                       {/* رابط عرض جميع الخدمات */}
-//                       <Link
-//                         href="/services"
-//                         className="block text-center mt-3 p-2 text-xs text-amber-600 hover:text-amber-700 dark:text-amber-400 font-bold border-t border-amber-100 dark:border-amber-800/30 pt-3"
-//                       >
-//                         عرض جميع خدماتنا →
-//                       </Link>
-//                     </motion.div>
-//                   )}
-
-//                   {/* تبويب التواصل */}
-//                   {activeTab === "contact" && (
-//                     <motion.div
-//                       key="contact"
-//                       initial={{ opacity: 0, x: -20 }}
-//                       animate={{ opacity: 1, x: 0 }}
-//                       exit={{ opacity: 0, x: 20 }}
-//                       className="space-y-2"
-//                     >
-//                       <p className="text-xs text-amber-600 dark:text-amber-400 mb-2 font-bold">
-//                         تواصل معنا مباشرة:
-//                       </p>
-//                       {contactOptions.map((option) => (
-//                         <a
-//                           key={option.id}
-//                           href={option.href}
-//                           target="_blank"
-//                           rel="noopener noreferrer"
-//                           className="flex items-center gap-3 p-2 rounded-xl hover:bg-amber-50 dark:hover:bg-amber-950/30 transition-all group"
-//                         >
-//                           <div
-//                             className={cn(
-//                               "w-10 h-10 rounded-lg flex items-center justify-center text-white shadow-lg",
-//                               option.bgColor,
-//                             )}
-//                           >
-//                             {option.icon}
-//                           </div>
-//                           <div className="flex-1">
-//                             <p className="font-bold text-sm text-slate-800 dark:text-slate-200">
-//                               {option.label}
-//                             </p>
-//                             <p className="text-xs text-slate-500 dark:text-slate-400">
-//                               {option.value}
-//                             </p>
-//                           </div>
-//                           <Clock className="w-4 h-4 text-slate-400" />
-//                         </a>
-//                       ))}
-//                     </motion.div>
-//                   )}
-
-//                   {/* تبويب المدن */}
-//                   {activeTab === "cities" && (
-//                     <motion.div
-//                       key="cities"
-//                       initial={{ opacity: 0, x: -20 }}
-//                       animate={{ opacity: 1, x: 0 }}
-//                       exit={{ opacity: 0, x: 20 }}
-//                       className="space-y-2"
-//                     >
-//                       <p className="text-xs text-amber-600 dark:text-amber-400 mb-2 font-bold">
-//                         فروعنا وخدماتنا في:
-//                       </p>
-//                       {cities.map((city) => (
-//                         <Link
-//                           key={city.name}
-//                           href={city.path}
-//                           onClick={() => setIsOpen(false)}
-//                           className="flex items-center gap-3 p-3 rounded-xl hover:bg-amber-50 dark:hover:bg-amber-950/30 transition-all group"
-//                         >
-//                           <MapPin className="w-5 h-5 text-amber-600" />
-//                           <span className="font-bold text-slate-800 dark:text-slate-200">
-//                             {city.name}
-//                           </span>
-//                         </Link>
-//                       ))}
-//                     </motion.div>
-//                   )}
-//                 </AnimatePresence>
-//               </div>
-
-//               {/* الفوتر */}
-//               <div className="p-3 bg-amber-50/50 dark:bg-amber-950/20 border-t border-amber-100 dark:border-amber-800/30">
-//                 <p className="text-xs text-center text-slate-600 dark:text-slate-400">
-//                   🏆 شركة العزيزية - خبرة وجودة في تركيب المظلات والسواتر
-//                 </p>
-//               </div>
-//             </div>
-//           </motion.div>
-//         )}
-//       </AnimatePresence>
-
-//       {/* الأزرار الرئيسية */}
-//       <div className="flex flex-col gap-3 items-start">
-//         {/* زر العودة للأعلى - يظهر عند التمرير */}
-//         {showScrollTop && (
-//           <motion.button
-//             initial={{ opacity: 0, scale: 0.5 }}
-//             animate={{ opacity: 1, scale: 1 }}
-//             exit={{ opacity: 0, scale: 0.5 }}
-//             onClick={scrollToTop}
-//             className="w-12 h-12 rounded-full bg-slate-800/90 dark:bg-slate-700/90 backdrop-blur text-white flex items-center justify-center shadow-lg hover:bg-amber-600 transition-all border border-white/20"
-//           >
-//             <ArrowUp className="w-5 h-5" />
-//           </motion.button>
-//         )}
-
-//         {/* الزر الرئيسي */}
-//         <motion.button
-//           onClick={() => setIsOpen(!isOpen)}
-//           whileHover={{ scale: 1.05 }}
-//           whileTap={{ scale: 0.95 }}
-//           className={cn(
-//             "relative w-16 h-16 rounded-2xl",
-//             "bg-gradient-to-br from-amber-600 to-orange-600",
-//             "flex items-center justify-center",
-//             "shadow-2xl shadow-amber-600/30",
-//             "border-2 border-white/30",
-//             "transition-all duration-300",
-//             isOpen && "rotate-90",
-//           )}
-//         >
-//           {/* مؤشر الخدمات الجديدة */}
-//           <span className="absolute -top-1 -right-1 w-3 h-3">
-//             <span className="absolute inset-0 rounded-full bg-emerald-500 animate-ping opacity-75" />
-//             <span className="absolute inset-0 rounded-full bg-emerald-500" />
-//           </span>
-
-//           <AnimatePresence mode="wait">
-//             {isOpen ? (
-//               <motion.div
-//                 key="close"
-//                 initial={{ rotate: -90, opacity: 0 }}
-//                 animate={{ rotate: 0, opacity: 1 }}
-//                 exit={{ rotate: 90, opacity: 0 }}
-//               >
-//                 <X className="w-7 h-7 text-white" />
-//               </motion.div>
-//             ) : (
-//               <motion.div
-//                 key="menu"
-//                 initial={{ rotate: 90, opacity: 0 }}
-//                 animate={{ rotate: 0, opacity: 1 }}
-//                 exit={{ rotate: -90, opacity: 0 }}
-//               >
-//                 <Menu className="w-7 h-7 text-white" />
-//               </motion.div>
-//             )}
-//           </AnimatePresence>
-//         </motion.button>
-//       </div>
-//     </div>
-//   );
-// }

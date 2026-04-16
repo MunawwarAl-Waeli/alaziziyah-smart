@@ -4,6 +4,7 @@ export default function PrivacyPolicy() {
       dir="rtl"
       className="max-w-4xl mx-auto px-6 py-16 leading-8 text-right"
     >
+      <h2>سياسة الخصوصية</h2>
       <p>
         <strong>تاريخ السريان:</strong> 2024-07-03
       </p>
@@ -128,13 +129,13 @@ export default function PrivacyPolicy() {
         في حال هناك أي مشكلة يمكنكم التواصل مع مطور مواقع عربي
         <strong> منور الوائلي</strong>
         من خلال الموقع التالي:
-        <a
+         <a
           href="https://Munawwaer.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-600 hover:underline mx-1"
+          className="bg-gray-100 px-4 py-2 rounded-full text-blue-600 font-semibold hover:bg-blue-50 transition-colors inline-block mt-2 mr-2"
         >
-          [اضغط هنا]
+          زيارة الموقع الرسمي
         </a>
       </p>
     </section>

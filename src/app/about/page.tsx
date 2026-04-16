@@ -1,6 +1,10 @@
-// app/about/page.tsx
 import { Metadata } from "next";
-import { AboutClient } from "./about-client";
+import dynamic from "next/dynamic"; // هذا هو السطر الذي يحل المشكلة!
+
+// الاستدعاء الديناميكي يحل المشكلة من جذورها ويتوافق مع التوثيق
+const AboutClient = dynamic(
+  () => import("./about-client"),
+);
 
 export const metadata: Metadata = {
   title: "عن الشركة - العزيزية للمظلات والسواتر",
@@ -11,7 +15,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "عن شركة العزيزية للمظلات والسواتر",
     description: "نحو 15 عاماً من التميز والابتكار في عالم المظلات والسواتر",
-    images: ["/images/0.jpg"],
+    images: ["/images/0.png"],
   },
 };
 
