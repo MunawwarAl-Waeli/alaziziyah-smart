@@ -24,6 +24,7 @@ import {
   Star,
   Grid3x3,
   ChevronLeft,
+  Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -237,7 +238,12 @@ export function FloatingChat() {
   const [isMobile, setIsMobile] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
+  // تصفية الخدمات بناءً على البحث
+  const filteredServices = servicesList.filter((service) =>
+    service.name.includes(searchTerm),
+  );
   // ==================== تحجيم الشاشة ====================
   useEffect(() => {
     const checkScreen = () => {
@@ -373,7 +379,7 @@ export function FloatingChat() {
   // ==================== وضع الجوال (شريط سفلي + قائمة خدمات منسدلة) ====================
   if (isMobile) {
     return (
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-slate-900 border-t border-border/50 shadow-lg rounded-t-2xl">
+      <div className="fixed bottom-0 left-0 right-0 z-[100] bg-white dark:bg-slate-900 border-t border-border/50 shadow-lg rounded-t-2xl">
         {/* الشريط السفلي */}
         <div className="flex items-center justify-around py-2 px-3">
           {/* زر خدماتنا */}
@@ -419,41 +425,82 @@ export function FloatingChat() {
           </a>
         </div>
 
-        {/* نافذة الخدمات المنبثقة (عند الضغط على خدماتنا) */}
+        {/* نافذة الخدمات المحسنة (Bottom Sheet مع Grid) */}
         <AnimatePresence>
           {showServicesMenu && (
-            <motion.div
-              initial={{ opacity: 0, y: 100 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 100 }}
-              className="absolute bottom-full left-0 right-0 mb-2 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-border/50 max-h-[70vh] overflow-y-auto"
-              dir="rtl"
-            >
-              <div className="sticky top-0 bg-white dark:bg-slate-900 p-4 border-b border-border/50 flex justify-between items-center">
-                <h3 className="font-bold text-lg">خدماتنا</h3>
-                <button
-                  onClick={() => setShowServicesMenu(false)}
-                  className="p-1 rounded-full hover:bg-slate-100"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-              <div className="p-3 grid grid-cols-1 gap-2">
-                {servicesList.map((service) => (
+            <>
+              {/* خلفية مظلمة */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setShowServicesMenu(false)}
+                className="fixed inset-0 bg-black/60 z-50"
+              />
+              {/* اللوح المنزلق من الأسفل */}
+              <motion.div
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                exit={{ y: "100%" }}
+                transition={{ type: "spring", damping: 30, stiffness: 300 }}
+                className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-slate-900 rounded-t-3xl shadow-xl max-h-[85vh] overflow-hidden flex flex-col"
+                dir="rtl"
+              >
+                {/* مقبض السحب */}
+                <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mt-3" />
+
+                {/* رأس القائمة */}
+                <div className="flex justify-between items-center p-4 border-b border-border/50">
+                  <h3 className="text-xl font-bold">جميع الخدمات</h3>
                   <button
-                    key={service.id}
-                    onClick={() => handleServiceClick(service.href)}
-                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-amber-50 dark:hover:bg-amber-950/20 transition-all text-right group"
+                    onClick={() => setShowServicesMenu(false)}
+                    className="p-2 rounded-full hover:bg-slate-100"
                   >
-                    <span className="text-2xl">{service.icon}</span>
-                    <span className="flex-1 text-base font-medium group-hover:text-amber-600">
-                      {service.name}
-                    </span>
-                    <ChevronLeft className="w-4 h-4 text-muted-foreground group-hover:text-amber-600" />
+                    <X className="w-6 h-6" />
                   </button>
-                ))}
-              </div>
-            </motion.div>
+                </div>
+
+                {/* حقل البحث */}
+                <div className="p-4 pb-2">
+                  <div className="relative">
+                    <Search className="absolute right-3 top-3 w-5 h-5 text-muted-foreground" />
+                    <input
+                      type="text"
+                      placeholder="ابحث عن خدمة..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full p-3 pr-10 rounded-xl bg-slate-100 dark:bg-slate-800 border-none focus:ring-2 focus:ring-amber-500"
+                    />
+                  </div>
+                </div>
+
+                {/* شبكة الخدمات (عمودين) */}
+                <div className="flex-1 overflow-y-auto p-4 pt-2">
+                  <div className="grid grid-cols-2 gap-3">
+                    {filteredServices.map((service) => (
+                      <button
+                        key={service.id}
+                        onClick={() => {
+                          setShowServicesMenu(false);
+                          window.location.href = service.href;
+                        }}
+                        className="flex flex-col items-center gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-amber-50 transition-all text-center group"
+                      >
+                        <span className="text-3xl">{service.icon}</span>
+                        <span className="text-sm font-medium group-hover:text-amber-600 line-clamp-2">
+                          {service.name}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                  {filteredServices.length === 0 && (
+                    <div className="text-center py-8 text-muted-foreground">
+                      لا توجد خدمات مطابقة
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            </>
           )}
         </AnimatePresence>
 
