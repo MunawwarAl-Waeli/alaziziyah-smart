@@ -187,7 +187,7 @@ export function Footer() {
             </a>
             <span className="hidden md:inline text-slate-700">|</span>
             <a
-              href="https://wa.me/966530989975"
+              href="https://wa.me/967770323857"
               target="_blank"
               rel="noopener noreferrer"
               className="text-green-500 hover:text-white hover:bg-green-500 transition-all bg-slate-900 p-2 rounded-full"
