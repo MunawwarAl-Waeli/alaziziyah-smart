@@ -8,7 +8,7 @@ import { FloatingChat } from "@/components/FloatingChat";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { getGlobalData } from "@/lib/api";
 import { JsonLd } from "@/components/seo/JsonLd";
-
+import { Analytics } from "@vercel/analytics/next";
 // ✅ تعريف الخط (تم إلغاء التعليق ليعمل بشكل صحيح)
 const ibmPlex = IBM_Plex_Sans_Arabic({
   subsets: ["arabic"],
@@ -36,13 +36,15 @@ export default async function RootLayout({
   const allMenuItems = data?.menu?.menuItems?.nodes || [];
   const topLevelMenuItems = allMenuItems.filter(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (item: any) => !item.parentId
+    (item: any) => !item.parentId,
   );
 
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       {/* ✅ تم تفعيل الخط هنا */}
-      <body className={`${ibmPlex.variable} font-sans antialiased bg-background text-foreground`}>
+      <body
+        className={`${ibmPlex.variable} font-sans antialiased bg-background text-foreground`}
+      >
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
@@ -61,6 +63,7 @@ export default async function RootLayout({
         <FloatingChat />
       </body>
       <GoogleAnalytics gaId="G-RVTGES597T" />
+      <Analytics />
     </html>
   );
 }
