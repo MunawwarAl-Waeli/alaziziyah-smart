@@ -10,11 +10,10 @@ import { getGlobalData } from "@/lib/api";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Analytics } from "@vercel/analytics/next";
 import Script from "next/script";
-
-const ibmPlex = IBM_Plex_Sans_Arabic({
+import { Cairo } from "next/font/google";
+const cairo = Cairo({
   subsets: ["arabic"],
-  weight: ["100", "200", "300", "400", "500", "600", "700"],
-  variable: "--font-ibm",
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
@@ -44,7 +43,12 @@ export default async function RootLayout({
   );
 
   return (
-    <html lang="ar" dir="rtl" suppressHydrationWarning>
+    <html
+      lang="ar"
+      dir="rtl"
+      className={cairo.className}
+      suppressHydrationWarning
+    >
       <head>
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=G-RVTGES597T`}
@@ -60,9 +64,7 @@ export default async function RootLayout({
         </Script>
       </head>
       {/* ✅ تم تفعيل الخط هنا */}
-      <body
-        className={`${ibmPlex.variable} font-sans antialiased bg-background text-foreground`}
-      >
+      <body className={"font-sans antialiased bg-background text-foreground"}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"

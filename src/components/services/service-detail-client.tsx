@@ -153,18 +153,14 @@ export default function ServiceDetailClient({
                 عن الخدمة
               </h2>
             </div>
-
+              
             {/* محتوى ووردبريس مع تحسين الهوامش للجوال */}
             <WordPressContent
               content={service.content}
-              className="prose prose-sm md:prose-lg max-w-none 
-             text-right dir-rtl text-slate-700
-             /* فك اشتباك التغميق الزائد */
-             prose-strong:font-medium prose-strong:text-slate-900
-             /* تنسيق العناوين */
+              className="w-full prose prose-sm md:prose-lg max-w-none text-right text-slate-700 
+             prose-strong:font-medium prose-strong:text-slate-900 
              prose-headings:font-black prose-headings:text-slate-900 
-             prose-h2:border-r-4 prose-h2:border-amber-500 prose-h2:pr-4 prose-h2:mt-12
-             /* المسافات بين الفقرات */
+             prose-h2:border-r-4 prose-h2:border-amber-500 prose-h2:pr-4 prose-h2:mt-12 
              prose-p:leading-[1.8] prose-p:mb-6 prose-p:text-justify"
             />
 

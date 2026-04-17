@@ -118,7 +118,7 @@ export function organizationSchema() {
     address: {
       "@type": "PostalAddress",
       streetAddress: "حي النخيل",
-      addressLocality: "الدمام",
+      addressLocality: "جدة",
       addressRegion: "المنطقة الشرقية",
       postalCode: "32415",
       addressCountry: "SA",

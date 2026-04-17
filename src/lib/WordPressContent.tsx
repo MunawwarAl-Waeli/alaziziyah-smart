@@ -1,10 +1,6 @@
-import parse, {
-  domToReact,
-  HTMLReactParserOptions,
-  Element,
-  DOMNode,
-} from "html-react-parser";
-import Link from "next/link";
+"use client";
+import { useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 
 interface WordPressContentProps {
   content: string;
@@ -15,57 +11,31 @@ const WordPressContent = ({
   content,
   className = "",
 }: WordPressContentProps) => {
-  const options: HTMLReactParserOptions = {
-    replace: (domNode) => {
-      if (domNode instanceof Element && domNode.name === "a") {
-        const href = domNode.attribs?.href;
+  const containerRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
-        if (!href) return;
-
-        const frontendDomain = "api.al-azizia.com";
-        // أضف دومين الووردبريس الخاص بك هنا
-
-        const isInternal =
-          href.startsWith("/") || href.includes(frontendDomain);
-
-        if (isInternal) {
-          // تنظيف الرابط الداخلي من أي من الدومينين
-          let relativePath = href
-            .replace(new RegExp(`^https?://(www\\.)?${frontendDomain}`), "")
-
-          // التأكد من أن المسار يبدأ بـ /
-          if (!relativePath.startsWith("/")) {
-            relativePath = "/" + relativePath;
-          }
-
-          return (
-            <Link
-              href={relativePath}
-              className="text-primary hover:text-primary/80 transition-colors no-underline font-medium"
-            >
-              {domToReact(domNode.children as DOMNode[], options)}
-            </Link>
-          );
-        }
-
-        // معالجة الروابط الخارجية (مثل ويكيبيديا أو واتساب)
-        return (
-          <a
-            href={href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-primary hover:underline"
-          >
-            {domToReact(domNode.children as DOMNode[], options)}
-          </a>
-        );
-      }
-    },
-  };
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const links = containerRef.current.querySelectorAll("a[href^='/']");
+    const handleClick = (e: Event) => {
+      e.preventDefault();
+      const href = (e.currentTarget as HTMLAnchorElement).getAttribute("href");
+      if (href) router.push(href);
+    };
+    links.forEach((link) => link.addEventListener("click", handleClick));
+    return () =>
+      links.forEach((link) => link.removeEventListener("click", handleClick));
+  }, [router, content]);
 
   if (!content) return null;
 
-  return <div className={`w-full ${className}`}>{parse(content, options)}</div>;
+  return (
+    <div
+      ref={containerRef}
+      className={`prose prose-base sm:prose-lg lg:prose-xl max-w-none text-right ${className}`}
+      dangerouslySetInnerHTML={{ __html: content }}
+    />
+  );
 };
 
 export default WordPressContent;

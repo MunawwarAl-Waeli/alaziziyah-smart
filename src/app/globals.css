@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @plugin "tailwindcss-animate";
+@plugin "@tailwindcss/typography";
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
@@ -223,4 +224,86 @@ body {
 
 .animate-marquee {
   animation: marquee 40s linear infinite;
+}
+/* دعم أفضل للغة العربية داخل prose */
+/* ===== تحسينات إضافية للمحتوى (تكميلية) ===== */
+
+/* تحسينات prose للغة العربية والوضع الليلي والتجاوب */
+/* ===== تحسينات prose للغة العربية والتجاوب ===== */
+.prose {
+  direction: rtl;
+  max-width: 85ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.prose p {
+  text-align: justify;
+  line-height: 1.8;
+  margin-bottom: 1.5rem;
+}
+
+.prose h2,
+.prose h3,
+.prose h4 {
+  border-right: 4px solid var(--primary, #f59e0b);
+  padding-right: 1rem;
+  margin-top: 2rem;
+  font-weight: 800;
+}
+
+.prose h2 {
+  font-size: 1.75rem;
+}
+.prose h3 {
+  font-size: 1.5rem;
+}
+.prose h4 {
+  font-size: 1.25rem;
+}
+
+.prose a {
+  color: var(--primary, #f59e0b);
+  text-decoration: none;
+}
+.prose a:hover {
+  text-decoration: underline;
+}
+
+/* دعم الوضع المظلم عبر class "dark" على html */
+.dark .prose {
+  color: var(--foreground, #f8fafc);
+}
+.dark .prose a {
+  color: var(--primary-light, #fbbf24);
+}
+.dark .prose h2,
+.dark .prose h3,
+.dark .prose h4 {
+  border-right-color: var(--primary-light, #fbbf24);
+}
+
+/* تجاوب مع الجوال */
+@media (max-width: 640px) {
+  .prose {
+    font-size: 1rem;
+  }
+  .prose h2 {
+    font-size: 1.5rem;
+  }
+  .prose h3 {
+    font-size: 1.3rem;
+  }
+  .prose h4 {
+    font-size: 1.1rem;
+  }
+}
+
+/* صور متجاوبة */
+.prose img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+  margin: 1.5rem auto;
+  display: block;
 }

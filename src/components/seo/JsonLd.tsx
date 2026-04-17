@@ -11,13 +11,13 @@ export function JsonLd() {
     "@type": "HomeAndConstructionBusiness",
     name: "العزيزية للمظلات والسواتر",
     url: "https://al-azizia.com",
-    logo: "https://al-azizia.com/logo.png",
+    logo: "https://al-azizia.com/icon.jpg",
     description:
       "شركة رائدة في تركيب المظلات والسواتر والبرجولات في المملكة العربية السعودية",
     address: {
       "@type": "PostalAddress",
       streetAddress: "حي النخيل",
-      addressLocality: "الدمام",
+      addressLocality: "جدة",
       addressRegion: "المنطقة الشرقية",
       postalCode: "32415",
       addressCountry: "SA",
