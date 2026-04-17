@@ -9,7 +9,7 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import { getGlobalData } from "@/lib/api";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Analytics } from "@vercel/analytics/next";
-// ✅ تعريف الخط (تم إلغاء التعليق ليعمل بشكل صحيح)
+
 const ibmPlex = IBM_Plex_Sans_Arabic({
   subsets: ["arabic"],
   weight: ["100", "200", "300", "400", "500", "600", "700"],
@@ -21,6 +21,9 @@ export const metadata: Metadata = {
   title: "العزيزية للحلول الذكية",
   description: "المصنع السعودي الرائد للمظلات والأنظمة الذكية",
   manifest: "/manifest.json",
+  verification: {
+    google: "bNOlDODG6YCLIKLCc8Ho2UBEmoI_z49zJUbs5rDM44c",
+  },
 };
 
 export const viewport: Viewport = {
