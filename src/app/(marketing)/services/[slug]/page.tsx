@@ -7,7 +7,7 @@ import ServiceDetailClient from "@/components/services/service-detail-client";
 interface Props {
   params: Promise<{ slug: string }>;
 }
-export async function generateMetadate({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const SlugDcode = decodeURIComponent(slug);
   const servecs = await getServiceBySlug(SlugDcode);
@@ -18,7 +18,6 @@ export async function generateMetadate({ params }: Props): Promise<Metadata> {
     description: servecs.seo?.metaDesc,
   };
 }
-
 
 export default async function ServiceDetailPage({ params }: Props) {
   const { slug } = await params;
