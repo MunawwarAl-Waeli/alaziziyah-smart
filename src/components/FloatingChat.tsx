@@ -406,7 +406,7 @@ export function FloatingChat() {
 
           {/* زر واتساب مباشر */}
           <a
-            href="https://wa.me/966558181955"
+            href="https://wa.me/966 5309 89 975"
             target="_blank"
             rel="noopener noreferrer"
             className="flex flex-col items-center gap-1 text-muted-foreground hover:text-green-600 transition-colors"
