@@ -302,33 +302,6 @@ export function ProjectsClient({ initialProjects }: Props) {
               </Link>
             </motion.div>
 
-            {/* إحصائيات سريعة في الهيدر */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.7 }}
-              className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-2xl mx-auto mt-16 md:mt-20"
-            >
-              {[
-                { value: "500+", label: "مشروع", icon: Briefcase },
-                { value: "15+", label: "سنوات", icon: Clock },
-                { value: "100%", label: "رضا", icon: ThumbsUp },
-              ].map((stat, i) => (
-                <motion.div
-                  key={i}
-                  whileHover={{ y: -5 }}
-                  className="text-center p-4 rounded-2xl bg-card/30 border border-border/50 backdrop-blur-sm sm:border-none sm:bg-transparent sm:p-0"
-                >
-                  <div className="text-3xl md:text-4xl font-black text-primary mb-1">
-                    {stat.value}
-                  </div>
-                  <div className="text-sm md:text-base text-muted-foreground flex items-center justify-center gap-1.5">
-                    <stat.icon className="w-4 h-4" />
-                    {stat.label}
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
           </motion.div>
 
           {/* مؤشر التمرير */}
