@@ -25,6 +25,7 @@ import {
   Download,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { trackGAEvent } from "@/lib/analytics";
 
 // ==========================================
 // 1. تعريف الأنواع والبيانات
@@ -443,7 +444,11 @@ export function SmartCalculator() {
       `الاسم: ${formData.name}\n` +
       `الجوال: ${formData.phone}\n` +
       `البريد: ${formData.email}`;
-
+    trackGAEvent("contact_whatsapp", {
+      event_category: "Lead Generation",
+      event_label: "Main Floating Button",
+      location: "Fixed Bottom",
+    });
     window.open(
       `https://wa.me/966530989975?text=${encodeURIComponent(message)}`,
       "_blank",

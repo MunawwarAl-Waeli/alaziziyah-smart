@@ -9,6 +9,7 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import { getGlobalData } from "@/lib/api";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Analytics } from "@vercel/analytics/next";
+import Script from "next/script";
 
 const ibmPlex = IBM_Plex_Sans_Arabic({
   subsets: ["arabic"],
@@ -44,6 +45,20 @@ export default async function RootLayout({
 
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
+      <head>
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=G-RVTGES597T`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-RVTGES597T');
+          `}
+        </Script>
+      </head>
       {/* ✅ تم تفعيل الخط هنا */}
       <body
         className={`${ibmPlex.variable} font-sans antialiased bg-background text-foreground`}

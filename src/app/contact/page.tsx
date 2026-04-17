@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   Hammer,
 } from "lucide-react";
+import { trackGAEvent } from "@/lib/analytics";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -71,6 +72,10 @@ export default function ContactPage() {
       const result = responseData?.data?.submitContactForm;
 
       if (result?.success) {
+        trackGAEvent("submit_quote_request", {
+          service_type: "مظلات سيارات",
+          city: "جدة",
+        });
         setStatus("success");
         setResponseMessage(result.message);
         setFormData({ name: "", phone: "", service: "", details: "" });

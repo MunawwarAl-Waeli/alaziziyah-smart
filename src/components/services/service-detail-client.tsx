@@ -157,7 +157,15 @@ export default function ServiceDetailClient({
             {/* محتوى ووردبريس مع تحسين الهوامش للجوال */}
             <WordPressContent
               content={service.content}
-              className="prose prose-sm md:prose-lg max-w-none text-muted-foreground leading-relaxed prose-headings:text-foreground prose-headings:font-bold prose-a:text-primary prose-strong:text-foreground prose-img:rounded-xl md:prose-img:rounded-2xl"
+              className="prose prose-sm md:prose-lg max-w-none 
+             text-right dir-rtl text-slate-700
+             /* فك اشتباك التغميق الزائد */
+             prose-strong:font-medium prose-strong:text-slate-900
+             /* تنسيق العناوين */
+             prose-headings:font-black prose-headings:text-slate-900 
+             prose-h2:border-r-4 prose-h2:border-amber-500 prose-h2:pr-4 prose-h2:mt-12
+             /* المسافات بين الفقرات */
+             prose-p:leading-[1.8] prose-p:mb-6 prose-p:text-justify"
             />
 
             {/* كروت المميزات - شبكة متجاوبة */}

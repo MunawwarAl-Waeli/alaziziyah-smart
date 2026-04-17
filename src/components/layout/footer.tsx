@@ -230,12 +230,12 @@ export function Footer() {
             © {currentYear} شركة العزيزية للمظلات والسواتر. جميع الحقوق محفوظة.
           </p>
           <div className="flex items-center gap-3 flex-wrap justify-center">
-            <Link
+            <a
               href="https://lucent-toffee-64037a.netlify.app/"
               className="hover:text-amber-500 transition-colors"
             >
               تطوير بواسطة منور الوائلي
-            </Link>
+            </a>
             <span className="text-slate-800">|</span>
             <Link
               href="/privacy"
