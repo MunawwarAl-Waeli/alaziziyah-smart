@@ -21,6 +21,7 @@ import {
   Check,
 } from "lucide-react";
 import { ServiceItem } from "@/lib/api";
+import WordPressContent from "@/lib/WordPressContent";
 
 interface Props {
   service: ServiceItem;
@@ -40,7 +41,7 @@ export default function ServiceDetailClient({
     const currentUrl = window.location.href;
     const shareText = `${service.title}\n${service.serviceDetails?.heroSubtitle || ""}\n\nرابط الخدمة: ${currentUrl}`;
     const coverImageUrl =
-      service.featuredImage?.node.sourceUrl || "/images/placeholder.jpg";
+      service.featuredImage?.node.sourceUrl || "/icons/icon-512x512.png";
 
     // محاولة استخدام Web Share API إذا كان متاحاً (يدعم الصور والروابط)
     if (navigator.share && navigator.canShare) {
@@ -48,7 +49,9 @@ export default function ServiceDetailClient({
         // تحميل الصورة وتحويلها إلى ملف لمشاركتها (اختياري)
         const response = await fetch(coverImageUrl);
         const blob = await response.blob();
-        const file = new File([blob], "service-cover.jpg", { type: blob.type });
+        const file = new File([blob], "/icons/icon-512x512.png", {
+          type: blob.type,
+        });
         const shareData = {
           title: service.title,
           text: shareText,
@@ -152,9 +155,9 @@ export default function ServiceDetailClient({
             </div>
 
             {/* محتوى ووردبريس مع تحسين الهوامش للجوال */}
-            <div
+            <WordPressContent
+              content={service.content}
               className="prose prose-sm md:prose-lg max-w-none text-muted-foreground leading-relaxed prose-headings:text-foreground prose-headings:font-bold prose-a:text-primary prose-strong:text-foreground prose-img:rounded-xl md:prose-img:rounded-2xl"
-              dangerouslySetInnerHTML={{ __html: service.content }}
             />
 
             {/* كروت المميزات - شبكة متجاوبة */}
@@ -164,8 +167,10 @@ export default function ServiceDetailClient({
                   {service.serviceDetails.features.map((feature, idx) => (
                     <div
                       key={idx}
-                      className="bg-background p-5 md:p-6 rounded-xl md:rounded-2xl border border-border/50 flex flex-col gap-3 hover:border-primary/30 transition-colors group"
+                      // أضفنا هنا: items-center (لتوسيط العناصر أفقياً) و text-center (لتوسيط النصوص)
+                      className="bg-background p-5 md:p-6 rounded-xl md:rounded-2xl border border-border/50 flex flex-col items-center text-center gap-3 hover:border-primary/30 transition-colors group"
                     >
+                      {/* حذفنا mx-auto لأن العنصر الأب سيتكفل بتوسيط هذه الأيقونة الآن */}
                       <div className="w-10 h-10 md:w-12 md:h-12 bg-primary/10 text-primary rounded-lg flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors shadow-sm">
                         {idx === 0 ? (
                           <ShieldCheck className="w-5 h-5 md:w-6 md:h-6" />
