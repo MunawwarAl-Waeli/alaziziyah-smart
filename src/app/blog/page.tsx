@@ -120,13 +120,13 @@ export default async function BlogPage({ searchParams }: BlogPageProps) {
                   جاهزون للرد على استفساراتك
                 </p>
                 <Link
-                  href="tel:+966558181955"
+                  href="tel:+966 53 098 9975"
                   className="block w-full bg-white text-amber-600 text-center py-3 rounded-xl font-bold hover:bg-amber-50 transition-colors shadow-lg"
                 >
-                  اتصل الآن: 0558181955
+                  53 098 9975
                 </Link>
                 <Link
-                  href="https://wa.me/966558181955"
+                  href="https://wa.me/966 53 098 9975"
                   target="_blank"
                   // rel="noopener noreferrer"
                   className="block w-full bg-emerald-600 text-white text-center py-3 rounded-xl font-bold hover:bg-emerald-700 transition-colors shadow-lg mt-3"
