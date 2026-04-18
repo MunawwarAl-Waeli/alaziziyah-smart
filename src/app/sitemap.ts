@@ -22,7 +22,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/services",
     "/projects",
     "/blog",
-    "/faq",
     "/privacy",
     "/terms",
   ].map((route) => ({
@@ -49,21 +48,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  // 5. صفحات التصنيفات الثابتة
-  const categoryPages = [
-    "/services/carports",
-    "/services/pergolas",
-    "/services/fences",
-    "/services/schools",
-    "/services/pools",
-    "/services/warehouses",
-  ].map((route) => ({
-    url: `${baseUrl}${route}`,
-    lastModified: new Date(),
-    changeFrequency: "weekly" as const,
-    priority: 0.6,
-  }));
+
 
   // دمج كل الصفحات في خريطة واحدة وإرجاعها لجوجل
-  return [...staticPages, ...servicePages, ...projectPages, ...categoryPages];
+  return [...staticPages, ...servicePages, ...projectPages];
 }

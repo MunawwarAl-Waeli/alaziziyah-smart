@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { _ServiceItem } from "@/lib/api";
 // --- 1. تعريف الأنواع ---
 type WPMenuItem = {
   id: string;
@@ -39,6 +40,9 @@ type WPMenuItem = {
 
 interface HeaderProps {
   wpMenuData: WPMenuItem[];
+  fetchedServices?: _ServiceItem[]; // أضف هذا الـ Prop
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  fetchedProjects?: any[]; // أضفنا هذا السطر لاستقبال المشاريع
 }
 
 type Product = {
@@ -84,8 +88,12 @@ const getRelativePath = (fullUrl: string) => {
     return fullUrl.startsWith("/") ? fullUrl : `/${fullUrl}`;
   }
 };
-// --- 3. مكون الهيدر ---
-export function Header({ wpMenuData = [] }: HeaderProps) {
+
+export function Header({
+  wpMenuData = [],
+  fetchedServices = [],
+  fetchedProjects = [],
+}: HeaderProps) {
   const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
   const router = useRouter();
@@ -96,6 +104,11 @@ export function Header({ wpMenuData = [] }: HeaderProps) {
 
   const dynamicNavLinks = rootMenuNodes.map((item) => {
     const { icon } = getIconAndDesc(item.label);
+
+    // تحديد نوع القسم بناءً على اسمه
+    const isServicesMenu = item.label.includes("خدمات");
+    const isProjectsMenu =
+      item.label.includes("مشاريع") || item.label.includes("أعمال");
     const hasChildren = item.childItems && item.childItems.nodes.length > 0;
 
     return {
@@ -103,19 +116,42 @@ export function Header({ wpMenuData = [] }: HeaderProps) {
       name: item.label,
       href: getRelativePath(item.url),
       icon: icon,
-      isMega: hasChildren,
-      subItems: hasChildren
-        ? item.childItems!.nodes.map((subItem) => {
-            const subData = getIconAndDesc(subItem.label);
-            return {
-              id: subItem.id,
-              title: subItem.label,
-              href: getRelativePath(subItem.url),
-              icon: subData.icon,
-              desc: subData.desc,
-            };
-          })
-        : undefined,
+      // الميجا منيو تفتح للخدمات والمشاريع وأي قسم له أبناء
+      isMega: isServicesMenu || isProjectsMenu || hasChildren,
+
+      subItems: isServicesMenu
+        ? // 1. إذا كان قسم الخدمات:
+          fetchedServices.map((s) => ({
+            id: s.id,
+            title: s.title,
+            href: s.href,
+            icon: getIconAndDesc(s.title).icon,
+            desc: s.categoryName,
+          }))
+        : // 2. إذا كان قسم المشاريع/معرض الأعمال:
+          isProjectsMenu
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          ? fetchedProjects.slice(0, 12).map((p: any) => ({
+              // نحدد أول 12 مشروع فقط لجمالية القائمة
+              id: p.id,
+              title: p.title,
+              href: `/projects/${p.slug}`, // تأكد أن هذا هو المسار الصحيح للمشاريع في Next.js
+              icon: Briefcase, // نستخدم أيقونة موحدة للمشاريع أو getIconAndDesc(p.title).icon
+              desc: p.projectCategorys?.nodes?.[0]?.name || "معرض الأعمال",
+            }))
+          : // 3. الأقسام العادية (من القائمة الثابتة):
+            hasChildren
+            ? item.childItems!.nodes.map((subItem) => {
+                const subData = getIconAndDesc(subItem.label);
+                return {
+                  id: subItem.id,
+                  title: subItem.label,
+                  href: getRelativePath(subItem.url),
+                  icon: subData.icon,
+                  desc: subData.desc,
+                };
+              })
+            : undefined,
     };
   });
 

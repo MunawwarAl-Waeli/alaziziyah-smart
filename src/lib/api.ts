@@ -81,21 +81,22 @@ function cleanText(html: string, limit: number = 120): string {
     : plainText;
 }
 
-// 3. الدالة الرئيسية لجلب البيانات
+// 2. الدالة المحدثة لجلب الخدمات بدلاً من الصفحات
 export async function getWPData(): Promise<{
   categories: CategoryItem[];
   services: _ServiceItem[];
 }> {
+  // الاستعلام يستهدف الآن 'services' كـ CPT
   const query = `
-    query GetWPData {
-      categories(where: { hideEmpty: true }) {
+    query GetServicesData {
+      serviceCategories { # جلب تصنيفات الخدمات
         nodes {
           id
           name
           slug
         }
       }
-      pages(first: 100) {
+      services(first: 100) { # جلب منشورات الخدمات
         nodes {
           id
           title
@@ -106,7 +107,7 @@ export async function getWPData(): Promise<{
               sourceUrl
             }
           }
-          categories {
+          serviceCategories {
             nodes {
               name
               slug
@@ -128,51 +129,49 @@ export async function getWPData(): Promise<{
       },
     );
 
-    const json = (await res.json()) as WPGraphQLResponse;
-
+    const json = await res.json();
     if (!json.data) return { categories: [], services: [] };
 
     // أ) تجهيز التصنيفات
     const categories: CategoryItem[] = [
       { id: "all", name: "الكل", slug: "all" },
-      ...json.data.categories.nodes.map((cat) => ({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ...(json.data.serviceCategories?.nodes || []).map((cat: any) => ({
         id: cat.id,
         name: cat.name,
         slug: cat.slug,
       })),
     ];
 
-    // ب) تجهيز الخدمات (مع فلترة الصفحات غير الخدمية)
-    const services: _ServiceItem[] = json.data.pages.nodes
-      .filter((page) => {
-        const slug = page.slug.toLowerCase();
-        const title = page.title.toLowerCase();
+    // ب) تجهيز الخدمات مع منطق (العنوان vs الـ Slug)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const services: _ServiceItem[] = json.data.services.nodes.map(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (service: any) => {
+        // منطق اختيار العنوان: إذا كان العنوان أطول من 25 حرف، استخدم الـ Slug
+        // نقوم باستبدال الشرطات في الـ slug بمسافات ليظهر كعنوان نظيف
+        const displayTitle =
+          service.title.length > 25
+            ? service.slug.replace(/-/g, " ")
+            : service.title;
 
-        // 2. الفلتر الذكي:
-        // - يجب أن تحتوي الصفحة على صورة بارزة
-        // - يجب ألا يكون الرابط (Slug) ضمن القائمة المحظورة
-        // - يجب ألا يكون العنوان ضمن القائمة المحظورة
-        const isExcluded =
-          EXCLUDED_SLUGS.some((s) => slug.includes(s)) ||
-          EXCLUDED_TITLES.some((t) => title.includes(t.toLowerCase()));
-
-        return page.featuredImage && !isExcluded;
-      })
-      .map((page) => ({
-        id: page.id,
-        title: page.title,
-        slug: page.slug,
-        href: `/services/${page.slug}`,
-        image: page.featuredImage?.node.sourceUrl || "/images/0.jpg",
-        category: page.categories.nodes[0]?.slug || "general",
-        categoryName: page.categories.nodes[0]?.name || "أعمالنا",
-        description: cleanText(page.content),
-        fullContent: page.content,
-      }));
+        return {
+          id: service.id,
+          title: displayTitle, // العنوان الذكي
+          slug: service.slug,
+          href: `/services/${service.slug}`,
+          image: service.featuredImage?.node.sourceUrl || "/images/0.jpg",
+          category: service.serviceCategories.nodes[0]?.slug || "general",
+          categoryName: service.serviceCategories.nodes[0]?.name || "خدماتنا",
+          description: cleanText(service.content),
+          fullContent: service.content,
+        };
+      },
+    );
 
     return { categories, services };
   } catch (error) {
-    console.error("Critical Error fetching WP data:", error);
+    console.error("Error fetching services:", error);
     return { categories: [], services: [] };
   }
 }

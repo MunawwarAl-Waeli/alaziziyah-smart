@@ -17,7 +17,8 @@ export default function CategoryPageClient({ category, services }: Props) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // setLoading(false);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLoading(false);
   }, []);
 
   // حساب الإحصائيات بناءً على البيانات المتوفرة من ووردبريس

@@ -339,13 +339,13 @@ export default function ServiceDetailClient({
 
             <div className="flex flex-col gap-3 relative z-10">
               <a
-                href="tel:0500000000"
+                href="tel:53 098 9975"
                 className="w-full bg-gradient-to-l from-primary-dark to-primary hover:from-primary hover:to-primary-light text-primary-foreground font-black py-3 md:py-4 px-5 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-primary/25 hover:-translate-y-1 text-sm md:text-base"
               >
                 <Phone className="w-4 h-4 md:w-5 md:h-5" /> اتصل بنا الآن
               </a>
               <a
-                href="https://wa.me/966500000000"
+                href="https://wa.me/966 53 098 9975"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold py-3 md:py-4 px-5 rounded-xl flex items-center justify-center gap-2 transition-all hover:-translate-y-1 text-sm md:text-base"
@@ -459,7 +459,7 @@ export default function ServiceDetailClient({
             </div>
             <p className="text-[10px] md:text-xs text-muted-foreground flex items-start justify-center gap-1 leading-relaxed px-1">
               <MapPin className="w-3 h-3 shrink-0 text-primary mt-0.5" />
-              المملكة العربية السعودية، جدة، حي البوادي، شارع المكرونة
+              المملكة العربية السعودية، جدة
             </p>
           </div>
         </aside>

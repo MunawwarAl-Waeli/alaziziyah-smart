@@ -4,32 +4,52 @@ import React from "react";
 import Link from "next/link";
 import {
   MapPin,
-  Phone,
   Mail,
   Facebook,
   Instagram,
   MessageCircle,
   ChevronLeft,
   ArrowUpRight,
+  Home,
+  Users,
+  Package,
+  Briefcase,
+  FileText,
+  Phone,
+  Umbrella,
+  Leaf,
+  Shield,
+  Tent,
+  Sparkles,
+  Warehouse,
 } from "lucide-react";
+
 import { usePathname } from "next/navigation";
 
 const quickLinks = [
-  { name: "الرئيسية", href: "/", icon: "🏠" },
-  { name: "من نحن", href: "/about", icon: "👥" },
-  { name: "خدماتنا", href: "/services", icon: "⚙️" },
-  { name: "المشاريع", href: "/projects", icon: "🏗️" },
-  { name: "المدونة", href: "/blog", icon: "📝" },
-  { name: "اتصل بنا", href: "/contact", icon: "📞" },
+  { name: "الرئيسية", href: "/", icon: Home },
+  { name: "من نحن", href: "/about", icon: Users }, // أيقونة مجموعة أشخاص
+  { name: "خدماتنا", href: "/services", icon: Package }, // أيقونة حزمة/خدمات
+  { name: "المشاريع", href: "/projects", icon: Briefcase }, // أيقونة حقيبة أعمال
+  { name: "المدونة", href: "/blog", icon: FileText }, // أيقونة مقال/نص
+  { name: "اتصل بنا", href: "/contact", icon: Phone },
 ];
 
 const serviceLinks = [
-  { name: "مظلات سيارات", href: "/services/carports", icon: "🚗" },
-  { name: "برجولات", href: "/services/pergolas", icon: "🏡" },
-  { name: "سواتر", href: "/services/fences", icon: "🛡️" },
-  { name: "مظلات مدارس", href: "/services/schools", icon: "🏫" },
-  { name: "مظلات مسابح", href: "/services/pools", icon: "🏊" },
-  { name: "هناجر", href: "/services/warehouses", icon: "🏭" },
+  {
+    name: "مظلات سيارات",
+    href: "/services/تركيب-مظلات-سيارات",
+    icon: Umbrella,
+  }, // أيقونة مظلة
+  { name: "برجولات", href: "/services/تركيب-برجولات", icon: Leaf }, // أيقونة ورقة شجر (تناسب الحدائق والبرجولات)
+  { name: "سواتر", href: "/services/تركيب-سواتر", icon: Shield }, // أيقونة درع (تعبر عن الحماية والخصوصية)
+  { name: "مظلات مدارس", href: "/services/مظلات_مدارس", icon: Tent }, // أيقونة خيمة/شد إنشائي
+  {
+    name: "مظلات مسابح",
+    href: "/services/تركيب-مظلات-مسابح-لكسان-ضد-الكسر",
+    icon: Sparkles,
+  }, // أيقونة لمعان/نقاء للماء
+  { name: "هناجر", href: "/services/هناجر", icon: Warehouse }, // أيقونة مستودع/هنجر
 ];
 
 export function Footer() {
@@ -131,7 +151,7 @@ export function Footer() {
                           ${isActive ? "text-amber-500" : "text-slate-400 hover:text-amber-500 hover:translate-x-[-4px]"}
                         `}
                       >
-                        <span className="text-base">{link.icon}</span>
+                        <link.icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
                         <span>{link.name}</span>
                         {isActive && (
                           <span className="w-1.5 h-1.5 bg-amber-500 rounded-full" />
@@ -158,7 +178,7 @@ export function Footer() {
                       href={link.href}
                       className="flex items-center justify-center md:justify-start gap-2 text-sm text-slate-400 hover:text-amber-500 hover:translate-x-[-4px] transition-all group"
                     >
-                      <span className="text-base">{link.icon}</span>
+                      <link.icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
                       <span>{link.name}</span>
                       <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </Link>

@@ -752,7 +752,7 @@ export function ProjectsClient({ initialProjects }: Props) {
                         <div>
                           <p className="text-xs text-amber-200">تواصل واتساب</p>
                           <p className="font-bold text-white text-sm">
-                            5309 89 975
+                           +966 53 098 9975
                           </p>
                         </div>
                       </div>
@@ -781,23 +781,19 @@ export function ProjectsClient({ initialProjects }: Props) {
               </div>
 
               {/* شريط المدن في الأسفل */}
-              <div className="relative z-10 mt-10 md:mt-12 pt-6 md:pt-8 border-t border-white/10">
+              {/* <div className="relative z-10 mt-10 md:mt-12 pt-6 md:pt-8 border-t border-white/10">
                 <div className="flex flex-wrap items-center justify-center gap-2 md:gap-4 text-white/60">
                   <div className="flex items-center gap-1 w-full justify-center sm:w-auto mb-2 sm:mb-0">
                     <MapPin className="w-4 h-4 md:w-5 md:h-5 text-amber-400" />
                     <span className="text-xs md:text-sm font-medium">
-                      نغطي جميع مدن المملكة:
+                      نغطي  مدن :
                     </span>
                   </div>
                   <div className="flex flex-wrap justify-center gap-2">
                     {[
-                      "الرياض",
+                    
                       "جدة",
-                      "الدمام",
-                      "الأحساء",
-                      "المدينة",
-                      "مكة",
-                      "القصيم",
+                     
                     ].map((city, i) => (
                       <span
                         key={city}
@@ -808,7 +804,7 @@ export function ProjectsClient({ initialProjects }: Props) {
                     ))}
                   </div>
                 </div>
-              </div>
+              </div> */}
             </motion.div>
           </div>
         </section>

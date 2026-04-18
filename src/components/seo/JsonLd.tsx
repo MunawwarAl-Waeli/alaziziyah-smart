@@ -25,7 +25,7 @@ export function JsonLd() {
     contactPoint: [
       {
         "@type": "ContactPoint",
-        telephone: "+966-55-818-1955",
+        telephone: "+966 53 098 9975",
         contactType: "customer service",
         availableLanguage: ["Arabic", "English"],
       },

@@ -6,7 +6,12 @@ import { ThemeProvider } from "@/components/theme/provider";
 import { Footer } from "@/components/layout/footer";
 import { FloatingChat } from "@/components/FloatingChat";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import { getGlobalData } from "@/lib/api";
+import {
+  getAllProjects,
+  getGlobalData,
+  getLatestProjects,
+  getWPData,
+} from "@/lib/api";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Analytics } from "@vercel/analytics/next";
 import Script from "next/script";
@@ -41,6 +46,9 @@ export default async function RootLayout({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (item: any) => !item.parentId,
   );
+  const wpData = await getWPData(); // جلب الخدمات
+  const globalData = await getGlobalData(); // جلب المنيو
+  const latestProjects = await getAllProjects(); // يجلب أحدث المشاريع
 
   return (
     <html
@@ -72,7 +80,12 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <JsonLd />
-          <Header wpMenuData={topLevelMenuItems} />
+
+          <Header
+            wpMenuData={globalData.menu.menuItems.nodes}
+            fetchedServices={wpData.services}
+            fetchedProjects={latestProjects} // تمرير المشاريع هنا
+          />
 
           {/* ✅ الحاوية الرئيسية: دفعت الفوتر للأسفل وجعلت المحتوى يأخذ المساحة المتبقية */}
           <div className="flex flex-col min-h-screen">
