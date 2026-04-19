@@ -130,8 +130,8 @@ export function Header({
           }))
         : // 2. إذا كان قسم المشاريع/معرض الأعمال:
           isProjectsMenu
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          ? fetchedProjects.slice(0, 12).map((p: any) => ({
+          ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            fetchedProjects.slice(0, 12).map((p: any) => ({
               // نحدد أول 12 مشروع فقط لجمالية القائمة
               id: p.id,
               title: p.title,
@@ -177,55 +177,57 @@ export function Header({
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // دالة البحث
+  // دالة البحث المحدثة (تعتمد على البيانات المحلية)
   useEffect(() => {
-    const delayDebounceFn = setTimeout(async () => {
-      if (query.trim().length > 1) {
+    // استخدمنا setTimeout بسيط لإعطاء تأثير سلس للبحث
+    const timer = setTimeout(() => {
+      const searchTerm = query.trim().toLowerCase();
+
+      if (searchTerm.length > 1) {
         setIsSearching(true);
-        try {
-          const res = await fetch(
-            process.env.NEXT_PUBLIC_WORDPRESS_API_URL as string,
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                query: `
-                query SearchContent($search: String!) {
-                  posts(where: { search: $search }, first: 5) { nodes { id title slug } }
-                  pages(where: { search: $search }, first: 5) { nodes { id title slug } }
-                }
-              `,
-                variables: { search: query },
-              }),
-            },
-          );
-          const json = await res.json();
-          const foundPosts = json.data.posts.nodes.map((item: Product) => ({
-            id: item.id,
-            title: item.title,
-            category: "مقالات/أخبار",
-            price: "تصفح للمزيد",
-          }));
-          const foundPages = json.data.pages.nodes.map((item: Product) => ({
+
+        // 1. فلترة الخدمات
+        const foundServices = fetchedServices
+          .filter(
+            (service) =>
+              service.title.toLowerCase().includes(searchTerm) ||
+              (service.description &&
+                service.description.toLowerCase().includes(searchTerm)),
+          )
+          .slice(0, 5) // نكتفي بأول 5 نتائج
+          .map((item) => ({
             id: item.id,
             title: item.title,
             category: "خدمات",
-            price: "خدمة",
+            price: "عرض الخدمة",
+            slug: item.slug,
+            href: item.href || `/services/${item.slug}`, // المسار الصحيح
           }));
-          setResults([...foundPosts, ...foundPages]);
-        } catch (error) {
-          console.error("خطأ في البحث:", error);
-          setResults([]);
-        } finally {
-          setIsSearching(false);
-        }
+
+        // 2. فلترة المشاريع
+        const foundProjects = fetchedProjects
+          .filter((project) => project.title.toLowerCase().includes(searchTerm))
+          .slice(0, 5) // نكتفي بأول 5 نتائج
+          .map((item) => ({
+            id: item.id,
+            title: item.title,
+            category: "معرض الأعمال",
+            price: "عرض المشروع",
+            slug: item.slug,
+            href: `/projects/${item.slug}`, // المسار الصحيح
+          }));
+
+        // دمج النتائج
+        setResults([...foundServices, ...foundProjects]);
+        setIsSearching(false);
       } else {
         setResults([]);
         setIsSearching(false);
       }
-    }, 500);
-    return () => clearTimeout(delayDebounceFn);
-  }, [query]);
+    }, 300); // 300 ملي ثانية كافية جداً للبحث المحلي
+
+    return () => clearTimeout(timer);
+  }, [query, fetchedServices, fetchedProjects]); // أضفنا البيانات كمراقبات (Dependencies)
 
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -532,7 +534,9 @@ export function Header({
             initial="closed"
             animate="open"
             exit="closed"
-            className="fixed inset-0 z-50 bg-background/95 backdrop-blur-3xl border-r border-border md:hidden flex flex-col overflow-hidden text-foreground"
+            // تم تغيير inset-0 إلى:
+            // top-0 left-0 right-0 bottom-[70px]
+            className="fixed top-0 left-0 right-0 bottom-[70px] z-40 bg-background/95 backdrop-blur-3xl border-r border-border md:hidden flex flex-col overflow-hidden text-foreground shadow-[0_-10px_30px_rgba(0,0,0,0.1)]"
           >
             {/* إضاءة خلفية هندسية */}
             <div className="absolute top-[-5%] left-[-5%] w-72 h-72 bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
