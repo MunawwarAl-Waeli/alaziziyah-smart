@@ -48,6 +48,7 @@ interface HeaderProps {
 type Product = {
   id: string;
   title: string;
+  href: string;
   category: string;
   price: string;
 };
@@ -536,7 +537,7 @@ export function Header({
             exit="closed"
             // تم تغيير inset-0 إلى:
             // top-0 left-0 right-0 bottom-[70px]
-            className="fixed top-0 left-0 right-0 bottom-[70px] z-40 bg-background/95 backdrop-blur-3xl border-r border-border md:hidden flex flex-col overflow-hidden text-foreground shadow-[0_-10px_30px_rgba(0,0,0,0.1)]"
+            className="fixed top-0 left-0 right-0 bottom-[50px] z-40 bg-background/95 backdrop-blur-3xl border-r border-border md:hidden flex flex-col overflow-hidden text-foreground shadow-[0_-10px_30px_rgba(0,0,0,0.1)]"
           >
             {/* إضاءة خلفية هندسية */}
             <div className="absolute top-[-5%] left-[-5%] w-72 h-72 bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
@@ -598,7 +599,7 @@ export function Header({
                           {results.map((product) => (
                             <Link
                               key={product.id}
-                              href={`/products/${product.id}`}
+                              href={product.href} // تأكد أن هذا هو المسار الصحيح للنتائج
                               onClick={() => setIsMobileMenuOpen(false)}
                               className="flex items-center gap-3 p-3 hover:bg-muted transition-colors group"
                             >
@@ -815,7 +816,7 @@ export function Header({
                   {results.map((result) => (
                     <Link
                       key={result.id}
-                      href={`/services/${result.id}`}
+                      href={result.href} // تأكد أن هذا هو المسار الصحيح للنتائج
                       onClick={() => setIsSearchOpen(false)}
                       className="flex items-center gap-4 p-5 hover:bg-muted transition-colors border-b border-border last:border-0 group"
                     >

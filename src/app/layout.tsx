@@ -29,9 +29,9 @@ export const metadata: Metadata = {
     google: "bNOlDODG6YCLIKLCc8Ho2UBEmoI_z49zJUbs5rDM44c",
   },
   icons: {
-    icon: "/icon.jpg",
-    shortcut: "/icon.jpg",
-    apple: "/icon.jpg", // مهم جداً لأجهزة آيفون
+    icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/icon.png", // مهم جداً لأجهزة آيفون
   },
 };
 

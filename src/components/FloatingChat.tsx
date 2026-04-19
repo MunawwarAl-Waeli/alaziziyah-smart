@@ -26,6 +26,18 @@ import {
   Grid3x3,
   ChevronLeft,
   Search,
+  CarFront,
+  Waves,
+  Building2,
+  Leaf,
+  Trees,
+  Tent,
+  Settings,
+  Shield,
+  Warehouse,
+  Umbrella,
+  PenTool,
+  LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getAllServices } from "@/lib/api";
@@ -111,30 +123,36 @@ const botResponses = [
 ];
 
 // ==================== أيقونة الخدمة ====================
-const getServiceIcon = (text: string): string => {
+// نحدد نوع الإرجاع كـ LucideIcon بدلاً من string
+export const getServiceIcon = (text: string): LucideIcon => {
   const lowerText = text.toLowerCase();
-  if (lowerText.includes("سيارات")) return "🚗";
-  if (lowerText.includes("مسابح")) return "🏊";
-  if (lowerText.includes("مدارس") || lowerText.includes("محلات")) return "🏢";
+
+  if (lowerText.includes("سيارات")) return CarFront;
+  if (lowerText.includes("مسابح")) return Waves;
+  if (lowerText.includes("مدارس") || lowerText.includes("محلات"))
+    return Building2;
   if (
     lowerText.includes("حدائق") ||
     lowerText.includes("برجولات") ||
     lowerText.includes("جلسات")
   )
-    return "🌳";
-  if (lowerText.includes("خشب")) return "🪵";
+    return Leaf;
+  if (lowerText.includes("خشب")) return Trees;
   if (
     lowerText.includes("قماش") ||
     lowerText.includes("بي في سي") ||
     lowerText.includes("pvc")
   )
-    return "🧵";
-  if (lowerText.includes("متحركة")) return "⚙️";
-  if (lowerText.includes("لكسان")) return "✨";
-  if (lowerText.includes("سواتر")) return "🚧";
-  if (lowerText.includes("حديد") || lowerText.includes("ساندوتش")) return "🏭";
-  if (lowerText.includes("مظلات")) return "🏗️";
-  return "📐";
+    return Tent;
+  if (lowerText.includes("متحركة")) return Settings;
+  if (lowerText.includes("لكسان")) return Sparkles;
+  if (lowerText.includes("سواتر")) return Shield;
+  if (lowerText.includes("حديد") || lowerText.includes("ساندوتش"))
+    return Warehouse;
+  if (lowerText.includes("مظلات")) return Umbrella;
+
+  // الأيقونة الافتراضية لأي خدمة غير مصنفة أعلاه
+  return PenTool;
 };
 
 // ==================== جلب الخدمات ديناميكياً ====================
@@ -437,25 +455,35 @@ export function FloatingChat() {
                   </div>
                   <div className="flex-1 overflow-y-auto p-4 pt-2">
                     <div className="grid grid-cols-2 gap-3">
-                      {filteredServices.map((service) => (
-                        <button
-                          key={service.id}
-                          onClick={() => {
-                            setShowServicesMenu(false);
-                            window.location.href = service.href;
-                          }}
-                          className="flex flex-col items-center gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-amber-50 transition-all text-center group"
-                        >
-                          <span className="text-3xl">{service.icon}</span>
-                          <span className="text-sm font-medium group-hover:text-amber-600 line-clamp-2">
-                            {service.name}
-                          </span>
-                        </button>
-                      ))}
+                      {filteredServices.map((service) => {
+                        // 1. تحويل مرجع الأيقونة إلى مكون يمكن لـ React قراءته
+                        const IconComponent = service.icon;
+
+                        return (
+                          <button
+                            key={service.id}
+                            onClick={() => {
+                              setShowServicesMenu(false);
+                              window.location.href = service.href;
+                            }}
+                            className="flex flex-col items-center gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-transparent hover:border-amber-200 hover:bg-amber-50 dark:hover:bg-slate-800/80 transition-all text-center group shadow-sm"
+                          >
+                            {/* 2. تصميم الدائرة المحيطة بالأيقونة */}
+                            <div className="w-12 h-12 rounded-full bg-white dark:bg-slate-700 flex items-center justify-center shadow-sm border border-slate-100 dark:border-slate-600 group-hover:bg-amber-100 dark:group-hover:bg-amber-500/20 group-hover:border-amber-200 transition-colors duration-300">
+                              {/* 3. استدعاء الأيقونة مع إعطائها ألوان تتغير عند التمرير */}
+                              <IconComponent className="w-6 h-6 text-slate-500 dark:text-slate-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors" />
+                            </div>
+                            <span className="text-sm font-bold text-slate-700 dark:text-slate-300 group-hover:text-amber-600 dark:group-hover:text-amber-400 line-clamp-2 transition-colors">
+                              {service.name}
+                            </span>
+                          </button>
+                        );
+                      })}
                     </div>
                     {filteredServices.length === 0 && (
-                      <div className="text-center py-8 text-muted-foreground">
-                        لا توجد خدمات مطابقة
+                      <div className="text-center py-10 text-muted-foreground flex flex-col items-center gap-3">
+                        <Search className="w-8 h-8 text-slate-300 dark:text-slate-600" />
+                        <span>لا توجد خدمات مطابقة</span>
                       </div>
                     )}
                   </div>
