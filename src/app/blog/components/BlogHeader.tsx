@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { COMPANY_INFO, SOCIAL_LINKS } from "@/lib/config";
 import {
   Umbrella,
   ArrowLeft,
@@ -91,7 +92,7 @@ export function BlogHero() {
                 <ArrowLeft className="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" />
               </Link>
               <Link
-                href="https://wa.me/966558181955"
+                href={SOCIAL_LINKS.consultationWhatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="تواصل مع مؤسسة العزيزية عبر الواتساب"

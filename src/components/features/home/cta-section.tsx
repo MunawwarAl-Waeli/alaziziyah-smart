@@ -2,11 +2,15 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { COMPANY_INFO, SOCIAL_LINKS } from "@/lib/config";
 import { ArrowLeft, MessageCircle, PhoneCall } from "lucide-react";
+import { ElegantCurveDivider } from "@/components/ui/ElegantCurveDivider";
 
 export function CTASection() {
   return (
-    <section className="relative py-24 px-4 overflow-hidden">
+    <section className="relative py-16 md:py-24 px-4 overflow-hidden">
+      <ElegantCurveDivider />
+
       {/* خلفية مع تدرج لوني جذاب */}
       <div className="absolute inset-0 bg-primary/10 dark:bg-primary/5" />
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
@@ -34,10 +38,10 @@ export function CTASection() {
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             {/* زر الواتساب (أساسي) */}
-            <Link href="https://wa.me/966 53 098 9975" target="_blank">
+            <Link href={SOCIAL_LINKS.whatsapp} target="_blank">
               <button className="group relative px-8 py-4 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-full font-bold text-lg flex items-center gap-3 shadow-lg hover:shadow-[#25D366]/30 transition-all active:scale-95 w-full sm:w-auto justify-center">
                 <MessageCircle className="w-5 h-5" />
-                                <span>محادثة واتساب</span>
+                <span>محادثة واتساب</span>
               </button>
             </Link>
 
@@ -56,6 +60,11 @@ export function CTASection() {
           </p>
         </motion.div>
       </div>
+
+      {/* تدرج لوني ناعم في الأسفل (Gradient Fade) 
+        يقوم بتذويب نهاية هذا المكون مع لون الخلفية الأساسية للموقع لمنع القطع الحاد
+      */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-background pointer-events-none" />
     </section>
   );
 }

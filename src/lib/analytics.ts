@@ -6,6 +6,7 @@ export const trackGAEvent = (
   params: Record<string, any> = {},
 ) => {
   if (typeof window !== "undefined" && (window as any).gtag) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (window as any).gtag("event", eventName, params);
   }
 };

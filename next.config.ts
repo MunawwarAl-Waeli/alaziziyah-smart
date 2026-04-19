@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
 // إعدادات الـ PWA
+
+import { hostname } from "os";
+
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const withPWA = require("@ducanh2912/next-pwa").default({
   dest: "public",
@@ -19,6 +22,11 @@ const nextConfig = {
     unoptimized: process.env.NODE_ENV === "development",
     // نستخدم remotePatterns بدلاً من domains لأنها تدعم تحديد البورت (8080) بشكل صحيح
     remotePatterns: [
+      {
+        protocol: "https",
+        hostname:'i.ytimg.com',
+        pathname: "/VI/**", // يسمح بكل المسارات تحت /VI/
+      },
       {
         protocol: "https",
         hostname: "api.al-azizia.com",

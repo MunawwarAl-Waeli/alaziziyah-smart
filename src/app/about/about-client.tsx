@@ -3,6 +3,7 @@ import React, { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
+import { COMPANY_INFO, SOCIAL_LINKS } from "@/lib/config";
 import {
   Users,
   Clock,
@@ -796,7 +797,7 @@ export default function AboutClient() {
                   </p>
                   <div className="flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
                     <a
-                      href="https://wa.me/966558181955"
+                      href={SOCIAL_LINKS.consultationWhatsapp}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="group relative px-5 py-2.5 md:px-7 md:py-3 bg-emerald-500 hover:bg-emerald-600 rounded-xl font-bold text-sm md:text-base transition-all overflow-hidden flex items-center justify-center gap-2"
@@ -811,7 +812,7 @@ export default function AboutClient() {
                       />
                     </a>
                     <a
-                      href="tel:966558181955"
+                      href={SOCIAL_LINKS.consultationPhone}
                       className="px-5 py-2.5 md:px-7 md:py-3 bg-white/20 hover:bg-white/30 rounded-xl font-bold text-sm md:text-base backdrop-blur border border-white/30 flex items-center justify-center gap-2"
                     >
                       <Phone className="w-4 h-4" />

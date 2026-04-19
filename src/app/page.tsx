@@ -1,19 +1,16 @@
 /* eslint-disable react/jsx-no-undef */
-import { BlogSection } from "@/components/features/home/BlogSection";
-import { CTASection } from "@/components/features/home/cta-section";
-import {  MainHero } from "@/components/features/home/hero";
 
-import { SmartCalculator } from "@/components/features/home/SmartCalculator";
-import { VideoGallery } from "@/components/features/home/video-section";
-import { KeywordsMarquee } from "@/components/layout/KeywordsMarquee";
-import { ProjectsSection } from "@/components/sections/projects-section";
+import { MainHero } from "@/components/features/home/hero";
 import { ServicesSection } from "@/components/sections/services-section";
-
-
-
+import { ProjectsSection } from "@/components/sections/projects-section";
+import { KeywordsMarquee } from "@/components/layout/KeywordsMarquee";
+import { HomeSections } from "@/components/HomeSections";
+// 1. أزلنا استيراد framer-motion واستوردنا الغلاف الجديد
+import { SectionWrapper } from "@/components/layout/SectionWrapper";
 import { Metadata } from "next";
+import { SoftWavesDivider } from "@/components/ui/SoftWavesDivider";
+import { ElegantCurveDivider } from "@/components/ui/ElegantCurveDivider";
 
-// 1. تحديث الواجهة (Interface) لتعريف الحقل الجديد
 interface HomePageData {
   generalSettings: {
     title: string;
@@ -22,7 +19,6 @@ interface HomePageData {
   nodeByUri: {
     title: string;
     content: string;
-    // إضافة الحقول المخصصة هنا
     homeCustomFields?: {
       heroMotivationText?: string;
     };
@@ -41,7 +37,6 @@ function cleanContent(html: string | null | undefined): string {
   return text;
 }
 
-// 2. تحديث دالة جلب البيانات لإضافة الحقل للاستعلام
 async function getData(): Promise<HomePageData> {
   const query = `
     query GetHomePageContent {
@@ -53,8 +48,6 @@ async function getData(): Promise<HomePageData> {
         ... on Page {
           title
           content(format: RENDERED)
-          
-          # استدعاء مجموعة حقول ACF التي أنشأناها
           homeCustomFields {
             heroMotivationText
           }
@@ -70,15 +63,11 @@ async function getData(): Promise<HomePageData> {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query }),
-        next: { revalidate: 10 }, // يمكنك جعلها 10 ثواني للتجربة الآن ثم رفعها لاحقاً
+        next: { revalidate: 10 },
       },
     );
 
     const json = await res.json();
-
-    // سطر لمساعدتك على رؤية البيانات القادمة في التيرمنال
-    console.log("ACF Data:", json?.data?.nodeByUri?.homeCustomFields);
-
     return (
       json?.data || {
         generalSettings: { title: "العزيزية", description: "" },
@@ -114,23 +103,45 @@ export default async function Home() {
       "نحول المساحات الخارجية إلى مناطق حيوية مستدامة بتقنيات هندسية متطورة وتصاميم عصرية تناسب ذوقك الرفيع.";
   }
 
-  // سحب النص الذي كتبناه في الووردبريس (ACF)
   const acfHeroText = data?.nodeByUri?.homeCustomFields?.heroMotivationText;
 
   return (
     <main className="min-h-screen bg-background font-sans" dir="rtl">
-  
+     
       <MainHero
-         title={data?.generalSettings?.title || "العزيزية للمظلات"}
-        description={acfHeroText || heroDescription}/>
+        title={data?.generalSettings?.title || "العزيزية للمظلات"}
+        description={acfHeroText || heroDescription}
+      />
+      <section
+        id="services"
+        className="relative bg-slate-50 dark:bg-slate-900/50 pt-20 pb-16"
+      >
+        {/* 1. الفاصل المموج (يجب أن يكون خارج الغلاف ليبقى ثابتاً في الأعلى) */}
+        <SoftWavesDivider />
 
-      <KeywordsMarquee />
-      <ServicesSection />
-      <ProjectsSection />
-      <VideoGallery />
-      <BlogSection/>
-      <SmartCalculator />
-      <CTASection />
+        {/* 2. محتوى القسم مع غلاف الحركة الخاص بك */}
+        <div className="relative z-10">
+          <SectionWrapper delay={0}>
+            <KeywordsMarquee />
+            <ServicesSection />
+          </SectionWrapper>
+        </div>
+      </section>
+      {/* قسم المشاريع */}
+      <section id="projects" className="relative bg-background pt-20 pb-16">
+        {/* 1. فاصل المنحنى الأنيق */}
+        <div className="[&>svg>path]:fill-slate-50 dark:[&>svg>path]:fill-slate-900/50">
+          <ElegantCurveDivider />
+        </div>
+
+        {/* 2. محتوى القسم مع غلاف الحركة الخاص بك */}
+        <div className="relative z-10">
+          <SectionWrapper delay={0.2}>
+            <ProjectsSection />
+          </SectionWrapper>
+        </div>
+      </section>
+      <HomeSections />
     </main>
   );
 }

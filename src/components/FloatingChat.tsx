@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { COMPANY_INFO, SOCIAL_LINKS } from "@/lib/config";
 import {
   MessageCircle,
   X,
@@ -27,6 +28,7 @@ import {
   Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getAllServices } from "@/lib/api";
 
 // ==================== أنواع الرسائل ====================
 interface ChatMessage {
@@ -44,7 +46,7 @@ const quickActions = [
     id: "whatsapp",
     label: "واتساب",
     icon: "💬",
-    href: "https://wa.me/966558181955",
+    href: SOCIAL_LINKS.whatsapp,
     color: "from-emerald-500 to-emerald-600",
     description: "رد فوري خلال دقائق",
   },
@@ -52,7 +54,7 @@ const quickActions = [
     id: "phone",
     label: "اتصال مباشر",
     icon: "📞",
-    href: "tel:+966530989975",
+    href: SOCIAL_LINKS.phone,
     color: "from-blue-500 to-blue-600",
     description: "خدمة عملاء 24/7",
   },
@@ -60,17 +62,9 @@ const quickActions = [
     id: "quote",
     label: "عرض سعر",
     icon: "💰",
-    href: "/contact", // تم التغيير من "/cost-calculator" إلى "/contact"
+    href: "/contact",
     color: "from-amber-500 to-amber-600",
     description: "أرسل استفسارك واحصل على عرض سعر",
-  },
-  {
-    id: "contact",
-    label: "نموذج تواصل",
-    icon: "📝",
-    href: "/contact",
-    color: "from-purple-500 to-purple-600",
-    description: "أرسل استفسارك",
   },
 ];
 
@@ -116,14 +110,7 @@ const botResponses = [
   },
 ];
 
-// ==================== قائمة الخدمات الكاملة ====================
-// ... باقي الـ imports كما هي ...
-
-// قم باستيراد دالة جلب الخدمات من ملف الـ API الخاص بك
-// تأكد من مسار الاستيراد حسب مجلدات مشروعك (مثلاً: '@/lib/api')
-import { getAllServices } from "@/lib/api";
-
-// دالة لإرجاع أيقونة مناسبة بناءً على اسم الخدمة
+// ==================== أيقونة الخدمة ====================
 const getServiceIcon = (text: string): string => {
   const lowerText = text.toLowerCase();
   if (lowerText.includes("سيارات")) return "🚗";
@@ -147,29 +134,23 @@ const getServiceIcon = (text: string): string => {
   if (lowerText.includes("سواتر")) return "🚧";
   if (lowerText.includes("حديد") || lowerText.includes("ساندوتش")) return "🏭";
   if (lowerText.includes("مظلات")) return "🏗️";
-  return "📐"; // أيقونة افتراضية
+  return "📐";
 };
 
-// الدالة الرئيسية لجلب وبناء قائمة الخدمات ديناميكياً
+// ==================== جلب الخدمات ديناميكياً ====================
 export async function getDynamicServicesList() {
   try {
-    // 1. جلب الخدمات الحقيقية من الووردبريس
     const services = await getAllServices();
-
-    // 2. تحويل البيانات لتطابق الشكل الذي تحتاجه واجهة المستخدم (Menu / Sidebar)
-    const servicesList = services.map((service) => {
-      return {
-        id: service.id || service.slug,
-        name: service.title, // استخدام العنوان الحقيقي من الووردبريس (ممتاز للـ SEO)
-        href: `/services/${service.slug}`, // توجيه الرابط للقسم الجديد
-        icon: getServiceIcon(service.title + " " + service.slug), // تمرير العنوان للحصول على الأيقونة
-      };
-    });
-
+    const servicesList = services.map((service) => ({
+      id: service.id || service.slug,
+      name: service.title,
+      href: `/services/${service.slug}`,
+      icon: getServiceIcon(service.title + " " + service.slug),
+    }));
     return servicesList;
   } catch (error) {
     console.error("Error fetching services for list:", error);
-    return []; // إرجاع مصفوفة فارغة كي لا يتعطل الموقع في حال توقف الـ API
+    return [];
   }
 }
 
@@ -198,16 +179,15 @@ export function FloatingChat() {
   const [hasScrolled, setHasScrolled] = useState(false);
   const [showServicesMenu, setShowServicesMenu] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [searchTerm, setSearchTerm] = useState("");
-
-  // 1. إنشاء State لتخزين قائمة الخدمات الديناميكية
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [servicesList, setServicesList] = useState<any[]>([]);
   const [isLoadingServices, setIsLoadingServices] = useState(true);
 
-  // 2. جلب البيانات عند تحميل المكون
+  // تحميل الخدمات
   useEffect(() => {
     async function fetchServices() {
       try {
@@ -222,11 +202,11 @@ export function FloatingChat() {
     fetchServices();
   }, []);
 
-  // 3. تصفية الخدمات (الآن لن تسبب خطأ لأن servicesList موجودة)
   const filteredServices = servicesList.filter((service) =>
     service.name.includes(searchTerm),
   );
-  // ==================== تحجيم الشاشة ====================
+
+  // التحقق من حجم الشاشة
   useEffect(() => {
     const checkScreen = () => {
       setIsMobile(window.innerWidth < 768);
@@ -240,19 +220,17 @@ export function FloatingChat() {
     setMounted(true);
   }, []);
 
-  // تتبع التمرير لإظهار الشات (اختياري)
+  // مراقبة التمرير لزر الرجوع للأعلى
   useEffect(() => {
     if (!mounted) return;
     const handleScroll = () => {
-      if (window.scrollY > 500 && !hasScrolled) {
-        setHasScrolled(true);
-      }
+      setShowScrollTop(window.scrollY > 300);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [hasScrolled, mounted]);
+  }, [mounted]);
 
-  // محاكاة عدد المستخدمين النشطين
+  // محاكاة المستخدمين النشطين
   useEffect(() => {
     if (!mounted) return;
     const interval = setInterval(() => {
@@ -281,7 +259,7 @@ export function FloatingChat() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // تقليل عدد الرسائل غير المقروءة عند فتح الشات
+  // تصفير غير المقروءة عند الفتح
   useEffect(() => {
     if (isOpen) {
       setUnreadCount(0);
@@ -290,7 +268,6 @@ export function FloatingChat() {
   }, [isOpen]);
 
   const generateMessageId = () => {
-    // eslint-disable-next-line react-hooks/purity
     return `msg-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   };
 
@@ -338,14 +315,12 @@ export function FloatingChat() {
     setTimeout(() => handleSend(), 100);
   };
 
-  const handleServiceClick = (href: string) => {
-    setShowServicesMenu(false);
-    // eslint-disable-next-line react-hooks/immutability
-    window.location.href = href;
-  };
-
   const handleRateChat = (rating: number) => {
     console.log("تم التقييم:", rating);
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   if (!mounted) {
@@ -358,300 +333,257 @@ export function FloatingChat() {
     );
   }
 
-  // ==================== وضع الجوال (شريط سفلي + قائمة خدمات منسدلة) ====================
+  // ==================== وضع الجوال ====================
   if (isMobile) {
     return (
-      <div className="fixed bottom-0 left-0 right-0 z-[100] bg-white dark:bg-slate-900 border-t border-border/50 shadow-lg rounded-t-2xl">
-        {/* الشريط السفلي */}
-        <div className="flex items-center justify-around py-2 px-3">
-          {/* زر خدماتنا */}
-          <button
-            onClick={() => setShowServicesMenu(!showServicesMenu)}
-            className="flex flex-col items-center gap-1 text-muted-foreground hover:text-amber-600 transition-colors"
-          >
-            <Grid3x3 className="w-6 h-6" />
-            <span className="text-[10px] font-medium">خدماتنا</span>
-          </button>
-
-          {/* زر تواصل (يفتح قائمة التواصل السريع) */}
-          <button
-            onClick={() => {
-              setShowServicesMenu(false);
-              setIsOpen(true);
-              setShowChat(false);
-            }}
-            className="flex flex-col items-center gap-1 text-muted-foreground hover:text-amber-600 transition-colors"
-          >
-            <MessageCircle className="w-6 h-6" />
-            <span className="text-[10px] font-medium">تواصل</span>
-          </button>
-
-          {/* زر واتساب مباشر */}
-          <a
-            href="https://wa.me/966 5309 89 975"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex flex-col items-center gap-1 text-muted-foreground hover:text-green-600 transition-colors"
-          >
-            <MessageCircle className="w-6 h-6" style={{ color: "#25D366" }} />
-            <span className="text-[10px] font-medium">واتساب</span>
-          </a>
-
-          {/* زر عرض سعر - تم تغيير الرابط إلى /contact */}
-          <a
-            href="/contact"
-            className="flex flex-col items-center gap-1 text-muted-foreground hover:text-amber-600 transition-colors"
-          >
-            <Calculator className="w-6 h-6" />
-            <span className="text-[10px] font-medium">عرض سعر</span>
-          </a>
-        </div>
-
-        {/* نافذة الخدمات المحسنة (Bottom Sheet مع Grid) */}
+      <>
+        {/* زر الرجوع للأعلى (يظهر بعد التمرير) */}
         <AnimatePresence>
-          {showServicesMenu && (
-            <>
-              {/* خلفية مظلمة */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={() => setShowServicesMenu(false)}
-                className="fixed inset-0 bg-black/60 z-50"
-              />
-              {/* اللوح المنزلق من الأسفل */}
-              <motion.div
-                initial={{ y: "100%" }}
-                animate={{ y: 0 }}
-                exit={{ y: "100%" }}
-                transition={{ type: "spring", damping: 30, stiffness: 300 }}
-                className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-slate-900 rounded-t-3xl shadow-xl max-h-[85vh] overflow-hidden flex flex-col"
-                dir="rtl"
-              >
-                {/* مقبض السحب */}
-                <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mt-3" />
-
-                {/* رأس القائمة */}
-                <div className="flex justify-between items-center p-4 border-b border-border/50">
-                  <h3 className="text-xl font-bold">جميع الخدمات</h3>
-                  <button
-                    onClick={() => setShowServicesMenu(false)}
-                    className="p-2 rounded-full hover:bg-slate-100"
-                  >
-                    <X className="w-6 h-6" />
-                  </button>
-                </div>
-
-                {/* حقل البحث */}
-                <div className="p-4 pb-2">
-                  <div className="relative">
-                    <Search className="absolute right-3 top-3 w-5 h-5 text-muted-foreground" />
-                    <input
-                      type="text"
-                      placeholder="ابحث عن خدمة..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full p-3 pr-10 rounded-xl bg-slate-100 dark:bg-slate-800 border-none focus:ring-2 focus:ring-amber-500"
-                    />
-                  </div>
-                </div>
-
-                {/* شبكة الخدمات (عمودين) */}
-                <div className="flex-1 overflow-y-auto p-4 pt-2">
-                  <div className="grid grid-cols-2 gap-3">
-                    {filteredServices.map((service) => (
-                      <button
-                        key={service.id}
-                        onClick={() => {
-                          setShowServicesMenu(false);
-                          window.location.href = service.href;
-                        }}
-                        className="flex flex-col items-center gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-amber-50 transition-all text-center group"
-                      >
-                        <span className="text-3xl">{service.icon}</span>
-                        <span className="text-sm font-medium group-hover:text-amber-600 line-clamp-2">
-                          {service.name}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                  {filteredServices.length === 0 && (
-                    <div className="text-center py-8 text-muted-foreground">
-                      لا توجد خدمات مطابقة
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            </>
+          {showScrollTop && (
+            <motion.button
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              onClick={scrollToTop}
+              className="fixed bottom-24 right-4 z-[100] w-10 h-10 bg-amber-600 text-white rounded-full shadow-lg flex items-center justify-center"
+            >
+              <ChevronUp className="w-5 h-5" />
+            </motion.button>
           )}
         </AnimatePresence>
 
-        {/* نافذة قائمة التواصل (تواصل) */}
-        <AnimatePresence>
-          {isOpen && !showChat && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              className="absolute bottom-full left-4 right-4 mb-2 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-border/50 overflow-hidden"
+        <div className="fixed bottom-0 left-0 right-0 z-[100] bg-white dark:bg-slate-900 border-t border-border/50 shadow-lg rounded-t-2xl">
+          {/* الشريط السفلي */}
+          <div className="flex items-center justify-around py-2 px-3">
+            <button
+              onClick={() => setShowServicesMenu(!showServicesMenu)}
+              className="flex flex-col items-center gap-1 text-muted-foreground hover:text-amber-600 transition-colors"
             >
-              <div className="p-3 bg-gradient-to-r from-amber-600 to-amber-500 text-white">
-                <h4 className="font-bold text-sm">تواصل معنا</h4>
-                <p className="text-[10px] text-amber-100">
-                  اختر طريقة التواصل المناسبة
-                </p>
-              </div>
-              <div className="p-2">
-                {quickActions.map((action) => (
-                  <a
-                    key={action.id}
-                    href={action.href}
-                    target={action.href.startsWith("http") ? "_blank" : "_self"}
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group"
-                  >
-                    <div
-                      className={`w-9 h-9 rounded-xl bg-gradient-to-br ${action.color} flex items-center justify-center text-white text-lg`}
+              <Grid3x3 className="w-6 h-6" />
+              <span className="text-[10px] font-medium">خدماتنا</span>
+            </button>
+
+            {/* زر تواصل → اتصال مباشر */}
+            <button
+              onClick={() => {
+                setShowServicesMenu(false);
+                window.location.href = SOCIAL_LINKS.phone;
+              }}
+              className="flex flex-col items-center gap-1 text-muted-foreground hover:text-amber-600 transition-colors"
+            >
+              <Phone className="w-6 h-6" />
+              <span className="text-[10px] font-medium">اتصال</span>
+            </button>
+
+            <a
+              href={SOCIAL_LINKS.whatsapp}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-col items-center gap-1 text-muted-foreground hover:text-green-600 transition-colors"
+            >
+              <MessageCircle className="w-6 h-6" style={{ color: "#25D366" }} />
+              <span className="text-[10px] font-medium">واتساب</span>
+            </a>
+
+            <a
+              href="/contact"
+              className="flex flex-col items-center gap-1 text-muted-foreground hover:text-amber-600 transition-colors"
+            >
+              <Calculator className="w-6 h-6" />
+              <span className="text-[10px] font-medium">عرض سعر</span>
+            </a>
+          </div>
+
+          {/* قائمة الخدمات (Bottom Sheet) */}
+          <AnimatePresence>
+            {showServicesMenu && (
+              <>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  onClick={() => setShowServicesMenu(false)}
+                  className="fixed inset-0 bg-black/60 z-50"
+                />
+                <motion.div
+                  initial={{ y: "100%" }}
+                  animate={{ y: 0 }}
+                  exit={{ y: "100%" }}
+                  transition={{ type: "spring", damping: 30, stiffness: 300 }}
+                  className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-slate-900 rounded-t-3xl shadow-xl max-h-[85vh] overflow-hidden flex flex-col"
+                  dir="rtl"
+                >
+                  <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mt-3" />
+                  <div className="flex justify-between items-center p-4 border-b border-border/50">
+                    <h3 className="text-xl font-bold">جميع الخدمات</h3>
+                    <button
+                      onClick={() => setShowServicesMenu(false)}
+                      className="p-2 rounded-full hover:bg-slate-100"
                     >
-                      {action.icon}
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-bold text-xs group-hover:text-amber-600 transition-colors">
-                        {action.label}
-                      </p>
-                      <p className="text-[10px] text-muted-foreground">
-                        {action.description}
-                      </p>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* نافذة الدردشة الكاملة */}
-        <AnimatePresence>
-          {isOpen && showChat && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              className="absolute bottom-full left-4 right-4 mb-2 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-border/50 overflow-hidden"
-              style={{ maxHeight: "70vh" }}
-            >
-              {/* رأس الدردشة */}
-              <div className="bg-gradient-to-r from-amber-600 to-amber-500 text-white p-3">
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
+                      <X className="w-6 h-6" />
+                    </button>
+                  </div>
+                  <div className="p-4 pb-2">
                     <div className="relative">
-                      <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-                        <Headphones className="w-5 h-5" />
-                      </div>
-                      <span className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white animate-pulse" />
-                    </div>
-                    <div>
-                      <h3 className="font-bold text-sm">دعم العزيزية</h3>
-                      <div className="flex gap-2 text-[10px] text-amber-100">
-                        <span>
-                          <Users className="w-3 h-3 inline ml-1" />{" "}
-                          {activeUsers} متصل
-                        </span>
-                        <span>
-                          <Clock className="w-3 h-3 inline ml-1" /> رد خلال{" "}
-                          {waitTime} د
-                        </span>
-                      </div>
+                      <Search className="absolute right-3 top-3 w-5 h-5 text-muted-foreground" />
+                      <input
+                        type="text"
+                        placeholder="ابحث عن خدمة..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full p-3 pr-10 rounded-xl bg-slate-100 dark:bg-slate-800 border-none focus:ring-2 focus:ring-amber-500"
+                      />
                     </div>
                   </div>
-                  <button onClick={() => setShowChat(false)}>
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
+                  <div className="flex-1 overflow-y-auto p-4 pt-2">
+                    <div className="grid grid-cols-2 gap-3">
+                      {filteredServices.map((service) => (
+                        <button
+                          key={service.id}
+                          onClick={() => {
+                            setShowServicesMenu(false);
+                            window.location.href = service.href;
+                          }}
+                          className="flex flex-col items-center gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-800 hover:bg-amber-50 transition-all text-center group"
+                        >
+                          <span className="text-3xl">{service.icon}</span>
+                          <span className="text-sm font-medium group-hover:text-amber-600 line-clamp-2">
+                            {service.name}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                    {filteredServices.length === 0 && (
+                      <div className="text-center py-8 text-muted-foreground">
+                        لا توجد خدمات مطابقة
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
 
-              {/* منطقة الرسائل */}
-              <div className="h-80 overflow-y-auto p-3 space-y-3 bg-slate-50 dark:bg-slate-900/50">
-                {messages.map((msg) => (
-                  <div
-                    key={msg.id}
-                    className={`flex ${msg.type === "user" ? "justify-start" : "justify-end"}`}
-                  >
-                    <div
-                      className={`flex gap-2 max-w-[85%] ${
-                        msg.type === "user" ? "flex-row-reverse" : ""
-                      }`}
-                    >
-                      <div
-                        className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${
-                          msg.type === "user" ? "bg-slate-200" : "bg-amber-500"
-                        }`}
-                      >
-                        {msg.type === "user" ? (
-                          <User className="w-4 h-4 text-slate-600" />
-                        ) : (
-                          <Bot className="w-4 h-4 text-white" />
-                        )}
+          {/* نافذة الدردشة (اختياري، تظهر عند تفعيل الدردشة من مكان آخر) */}
+          <AnimatePresence>
+            {isOpen && showChat && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                className="absolute bottom-full left-4 right-4 mb-2 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-border/50 overflow-hidden"
+                style={{ maxHeight: "70vh" }}
+              >
+                <div className="bg-gradient-to-r from-amber-600 to-amber-500 text-white p-3">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <div className="relative">
+                        <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                          <Headphones className="w-5 h-5" />
+                        </div>
+                        <span className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white animate-pulse" />
                       </div>
                       <div>
-                        <div
-                          className={`p-2 rounded-xl text-sm ${
-                            msg.type === "user"
-                              ? "bg-slate-200 dark:bg-slate-700 rounded-tr-none"
-                              : "bg-amber-500 text-white rounded-tl-none"
-                          }`}
-                        >
-                          <p className="whitespace-pre-wrap">{msg.content}</p>
-                        </div>
-                        <div className="text-[10px] text-muted-foreground mt-1">
-                          {msg.timestamp.toLocaleTimeString("ar-SA", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
+                        <h3 className="font-bold text-sm">دعم العزيزية</h3>
+                        <div className="flex gap-2 text-[10px] text-amber-100">
+                          <span>
+                            <Users className="w-3 h-3 inline ml-1" />{" "}
+                            {activeUsers} متصل
+                          </span>
+                          <span>
+                            <Clock className="w-3 h-3 inline ml-1" /> رد خلال{" "}
+                            {waitTime} د
+                          </span>
                         </div>
                       </div>
                     </div>
+                    <button onClick={() => setShowChat(false)}>
+                      <X className="w-5 h-5" />
+                    </button>
                   </div>
-                ))}
-                {isTyping && (
-                  <div className="flex justify-end">
-                    <div className="bg-amber-100 dark:bg-amber-950/30 p-2 rounded-xl flex gap-1">
-                      <span className="w-1.5 h-1.5 bg-amber-600 rounded-full animate-bounce" />
-                      <span className="w-1.5 h-1.5 bg-amber-600 rounded-full animate-bounce delay-100" />
-                      <span className="w-1.5 h-1.5 bg-amber-600 rounded-full animate-bounce delay-200" />
-                    </div>
-                  </div>
-                )}
-                <div ref={messagesEndRef} />
-              </div>
-
-              {/* حقل الإدخال */}
-              <div className="p-2 border-t border-border/50">
-                <div className="flex gap-1">
-                  <input
-                    type="text"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onKeyPress={(e) => e.key === "Enter" && handleSend()}
-                    placeholder="اكتب رسالتك..."
-                    className="flex-1 p-2 text-sm bg-slate-100 dark:bg-slate-800 rounded-xl focus:outline-none focus:ring-1 focus:ring-amber-500"
-                  />
-                  <button
-                    onClick={handleSend}
-                    className="p-2 bg-amber-600 text-white rounded-xl hover:bg-amber-700 transition-colors"
-                  >
-                    <Send className="w-4 h-4" />
-                  </button>
                 </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+                <div className="h-80 overflow-y-auto p-3 space-y-3 bg-slate-50 dark:bg-slate-900/50">
+                  {messages.map((msg) => (
+                    <div
+                      key={msg.id}
+                      className={`flex ${msg.type === "user" ? "justify-start" : "justify-end"}`}
+                    >
+                      <div
+                        className={`flex gap-2 max-w-[85%] ${
+                          msg.type === "user" ? "flex-row-reverse" : ""
+                        }`}
+                      >
+                        <div
+                          className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${
+                            msg.type === "user"
+                              ? "bg-slate-200"
+                              : "bg-amber-500"
+                          }`}
+                        >
+                          {msg.type === "user" ? (
+                            <User className="w-4 h-4 text-slate-600" />
+                          ) : (
+                            <Bot className="w-4 h-4 text-white" />
+                          )}
+                        </div>
+                        <div>
+                          <div
+                            className={`p-2 rounded-xl text-sm ${
+                              msg.type === "user"
+                                ? "bg-slate-200 dark:bg-slate-700 rounded-tr-none"
+                                : "bg-amber-500 text-white rounded-tl-none"
+                            }`}
+                          >
+                            <p className="whitespace-pre-wrap">{msg.content}</p>
+                          </div>
+                          <div className="text-[10px] text-muted-foreground mt-1">
+                            {msg.timestamp.toLocaleTimeString("ar-SA", {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {isTyping && (
+                    <div className="flex justify-end">
+                      <div className="bg-amber-100 dark:bg-amber-950/30 p-2 rounded-xl flex gap-1">
+                        <span className="w-1.5 h-1.5 bg-amber-600 rounded-full animate-bounce" />
+                        <span className="w-1.5 h-1.5 bg-amber-600 rounded-full animate-bounce delay-100" />
+                        <span className="w-1.5 h-1.5 bg-amber-600 rounded-full animate-bounce delay-200" />
+                      </div>
+                    </div>
+                  )}
+                  <div ref={messagesEndRef} />
+                </div>
+                <div className="p-2 border-t border-border/50">
+                  <div className="flex gap-1">
+                    <input
+                      type="text"
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyPress={(e) => e.key === "Enter" && handleSend()}
+                      placeholder="اكتب رسالتك..."
+                      className="flex-1 p-2 text-sm bg-slate-100 dark:bg-slate-800 rounded-xl focus:outline-none focus:ring-1 focus:ring-amber-500"
+                    />
+                    <button
+                      onClick={handleSend}
+                      className="p-2 bg-amber-600 text-white rounded-xl hover:bg-amber-700 transition-colors"
+                    >
+                      <Send className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </>
     );
   }
 
-  // ==================== وضع سطح المكتب (كما كان سابقاً) ====================
+  // ==================== وضع سطح المكتب ====================
   return (
     <div
       className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end gap-3"
@@ -667,7 +599,7 @@ export function FloatingChat() {
             className="w-[380px] bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-border/50 overflow-hidden mb-2 flex flex-col"
             style={{ maxHeight: "80vh" }}
           >
-            {/* رأس الشات */}
+            {/* رأس الدردشة مع زر إغلاق */}
             <div className="bg-gradient-to-r from-amber-600 to-amber-500 text-white p-4 shrink-0">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
@@ -698,7 +630,6 @@ export function FloatingChat() {
               </div>
             </div>
 
-            {/* منطقة الرسائل */}
             <div className="flex-1 h-96 overflow-y-auto p-4 space-y-4 bg-slate-50 dark:bg-slate-900/50">
               {messages.map((message) => (
                 <div
@@ -792,7 +723,6 @@ export function FloatingChat() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* ردود سريعة */}
             {showQuickReplies && (
               <div className="p-3 bg-white dark:bg-slate-900 border-t border-border/50 overflow-x-auto no-scrollbar">
                 <div className="flex gap-2 min-w-max">
@@ -810,7 +740,6 @@ export function FloatingChat() {
               </div>
             )}
 
-            {/* حقل الإدخال */}
             <div className="p-3 border-t border-border/50 bg-white dark:bg-slate-900 shrink-0">
               <div className="flex items-center gap-2">
                 <button className="p-1.5 text-muted-foreground hover:text-amber-600">
@@ -856,7 +785,7 @@ export function FloatingChat() {
         )}
       </AnimatePresence>
 
-      {/* قائمة الإجراءات السريعة */}
+      {/* قائمة الإجراءات السريعة (مع زر إغلاق مضاف) */}
       <AnimatePresence>
         {isOpen && !showChat && (
           <motion.div
@@ -865,11 +794,19 @@ export function FloatingChat() {
             exit={{ opacity: 0, y: 20 }}
             className="w-72 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-border/50 overflow-hidden mb-2"
           >
-            <div className="p-3 bg-gradient-to-r from-amber-600 to-amber-500 text-white">
-              <h4 className="font-bold text-sm">تواصل معنا</h4>
-              <p className="text-[10px] text-amber-100">
-                اختر طريقة التواصل المناسبة
-              </p>
+            <div className="p-3 bg-gradient-to-r from-amber-600 to-amber-500 text-white flex items-center justify-between">
+              <div>
+                <h4 className="font-bold text-sm">تواصل معنا</h4>
+                <p className="text-[10px] text-amber-100">
+                  اختر طريقة التواصل المناسبة
+                </p>
+              </div>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="p-1 hover:bg-white/10 rounded-lg"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
             <div className="p-2">
               {quickActions.map((action) => (
@@ -944,7 +881,7 @@ export function FloatingChat() {
             <motion.button
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              onClick={scrollToTop}
               className="w-10 h-10 bg-slate-100 text-slate-600 rounded-xl flex items-center justify-center shadow-lg hover:bg-slate-200"
             >
               <ChevronUp className="w-5 h-5" />

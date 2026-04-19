@@ -19,6 +19,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.35.1",
+    "googleapis": "^171.4.0",
     "html-react-parser": "^6.0.1",
     "lucide-react": "^0.562.0",
     "next": "16.1.1",
@@ -29,6 +30,8 @@
     "react-use-measure": "^2.1.7",
     "tailwind-merge": "^3.4.0",
     "tailwindcss-animate": "^1.0.7",
+    "yt-getvideos": "^2.1.3",
+    "ytcog": "^2.5.5",
     "zustand": "^5.0.9"
   },
   "devDependencies": {

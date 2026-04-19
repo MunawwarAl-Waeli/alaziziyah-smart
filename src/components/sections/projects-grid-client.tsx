@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { Camera, Sparkles, ArrowLeft, ImageIcon, Folders } from "lucide-react";
 import { ProjectData } from "@/lib/api"; // تأكد من مسار الواجهة
 import { cn } from "@/lib/utils";
+import { ElegantCurveDivider } from "../ui/ElegantCurveDivider";
 
 export default function ProjectsGridClient({
   projects,
@@ -21,6 +22,8 @@ export default function ProjectsGridClient({
       className="py-20 md:py-32 bg-background relative overflow-hidden"
       dir="rtl"
     >
+      <ElegantCurveDivider />
+
       {/* إضاءة خلفية فخمة لكسر جمود اللون الداكن */}
       <div className="absolute top-0 right-0 w-[40rem] h-[40rem] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[30rem] h-[30rem] bg-primary/5 rounded-full blur-[100px] pointer-events-none" />

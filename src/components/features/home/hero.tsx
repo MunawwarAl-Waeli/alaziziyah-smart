@@ -310,7 +310,7 @@ export function MainHero({ title, description }: HeroProps) {
             >
               <MapPin className="w-4 h-4" />
               <span>
-                نغطي جميع مدن المملكة: الرياض - جدة - الدمام - الأحساء - المدينة
+                نغطي جميع مدن المملكة - جدة
               </span>
             </motion.div>
           </div>

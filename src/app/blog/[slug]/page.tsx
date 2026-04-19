@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
+import { COMPANY_INFO, SOCIAL_LINKS } from "@/lib/config";
 import {
   Calendar,
   Clock,
@@ -78,14 +79,14 @@ export default async function PostPage({ params }: PostPageProps) {
       <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-amber-200 dark:border-amber-800 z-50 md:hidden">
         <div className="flex justify-around p-2">
           <a
-            href="tel:+966558181955"
+            href={SOCIAL_LINKS.consultationPhone}
             className="flex flex-col items-center p-2 text-green-600"
           >
             <Phone className="w-5 h-5" />
             <span className="text-xs">اتصال</span>
           </a>
           <a
-            href="https://wa.me/966558181955"
+            href={SOCIAL_LINKS.consultationWhatsapp}
             className="flex flex-col items-center p-2 text-emerald-600"
           >
             <MessageCircle className="w-5 h-5" />
@@ -299,7 +300,7 @@ export default async function PostPage({ params }: PostPageProps) {
                 </p>
                 <div className="space-y-3">
                   <a
-                    href="tel:+966558181955"
+                    href={SOCIAL_LINKS.consultationPhone}
                     className="flex items-center gap-3 p-3 bg-white/10 rounded-xl hover:bg-white/20 transition-colors"
                   >
                     <Phone className="w-5 h-5" />
@@ -309,7 +310,7 @@ export default async function PostPage({ params }: PostPageProps) {
                     </div>
                   </a>
                   <a
-                    href="https://wa.me/966558181955"
+                    href={SOCIAL_LINKS.consultationWhatsapp}
                     className="flex items-center gap-3 p-3 bg-white/10 rounded-xl hover:bg-white/20 transition-colors"
                   >
                     <MessageCircle className="w-5 h-5" />

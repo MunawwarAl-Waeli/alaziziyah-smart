@@ -16,6 +16,7 @@ import {
   MapPin,
 } from "lucide-react";
 import { authors, blogPosts, cities } from "@/app/blog/data/posts"; // ✅ استيراد البيانات الموجودة
+import { ElegantCurveDivider } from "@/components/ui/ElegantCurveDivider";
 
 export function BlogSection() {
   // أخذ أحدث 3 مقالات (مرتبة حسب التاريخ)
@@ -34,9 +35,11 @@ export function BlogSection() {
 
   return (
     <section
-      className="py-24 relative overflow-hidden bg-gradient-to-b from-background to-slate-50 dark:to-slate-950"
+      className="py-16 md:py-24 relative overflow-hidden bg-gradient-to-b from-background to-slate-50 dark:to-slate-950"
       dir="rtl"
     >
+      <ElegantCurveDivider />
+
       {/* خلفية متحركة */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
