@@ -119,97 +119,59 @@ const botResponses = [
 // ==================== قائمة الخدمات الكاملة ====================
 // ... باقي الـ imports كما هي ...
 
-// ==================== قائمة الخدمات المستخرجة من JSON الحقيقي ====================
-// تم استخراجها من البيانات المقدمة وتصفية الصفحات غير الخدمية
-const rawServicesPages = [
-  { slug: "مظلات-منازل", uri: "/مظلات-منازل/" },
-  { slug: "سواتر-شرائح-حديد", uri: "/سواتر-شرائح-حديد/" },
-  { slug: "سواتر-لكسان", uri: "/سواتر-لكسان/" },
-  { slug: "مظلات-محلات", uri: "/مظلات-محلات/" },
-  { slug: "مظلات-قرميد", uri: "/مظلات-قرميد/" },
-  { slug: "مظلات-مسابح", uri: "/مظلات-مسابح/" },
-  { slug: "مظلات-مدارس", uri: "/مظلات-مدارس/" },
-  { slug: "سواتر-خشبية", uri: "/سواتر-خشبية/" },
-  { slug: "مظلات-الشد-الانشائي", uri: "/مظلات-الشد-الانشائي/" },
-  { slug: "برجولات-حدائق", uri: "/برجولات-حدائق/" },
-  { slug: "مظلات-بي-في-سي", uri: "/مظلات-بي-في-سي/" },
-  { slug: "مظلات-قماش", uri: "/مظلات-قماش/" },
-  { slug: "مظلات-سيارات-حديد", uri: "/مظلات-سيارات-حديد/" },
-  { slug: "مظلات-برجولات", uri: "/مظلات-برجولات/" },
-  { slug: "مظلات-خارجية-للمنازل", uri: "/مظلات-خارجية-للمنازل/" },
-  { slug: "مظلات-حدائق-منزلية", uri: "/مظلات-حدائق-منزلية/" },
-  { slug: "قماش-مظلات", uri: "/قماش-مظلات/" },
-  { slug: "مظلات-لكسان", uri: "/مظلات-لكسان/" },
-  { slug: "سواتر-حديد", uri: "/سواتر-حديد/" },
-  { slug: "برجولات-حديد", uri: "/برجولات-حديد/" },
-  { slug: "مظلات-حديد", uri: "/مظلات-حديد/" },
-  { slug: "مظلات-خشبية", uri: "/مظلات-خشبية/" },
-  { slug: "مظلات-جلسات", uri: "/مظلات-جلسات/" },
-  { slug: "سواتر-قماش", uri: "/سواتر-قماش/" },
-  { slug: "مظلات-سيارات-متحركة", uri: "/مظلات-سيارات-متحركة/" },
-  { slug: "مظلات-متحركة", uri: "/مظلات-متحركة/" },
-  { slug: "مظلات-حدائق", uri: "/مظلات-حدائق/" },
-  { slug: "مظلات-سيارات", uri: "/مظلات-سيارات/" },
-  { slug: "تركيب-مظلات-جدة", uri: "/تركيب-مظلات-جدة/" },
-  { slug: "تركيب-مظلات-الأحساء", uri: "/تركيب-مظلات-الأحساء/" },
-  { slug: "تركيب-سواتر-حديد", uri: "/تركيب-سواتر-حديد/" },
-  { slug: "تركيب-سندوش-بنل", uri: "/تركيب-سندوش-بنل/" },
-  { slug: "تركيب-مظلات-خارجية", uri: "/تركيب-مظلات-خارجية/" },
-  { slug: "تركيب-مظلات-متحركة", uri: "/تركيب-مظلات-متحركة/" },
-  { slug: "تركيب-سواتر-ابواب", uri: "/تركيب-سواتر-ابواب/" },
-  { slug: "تركيب-جلسات-خارجية", uri: "/تركيب-جلسات-خارجية/" },
-  { slug: "تركيب-قماش-مظلات-2", uri: "/تركيب-قماش-مظلات-2/" },
-  { slug: "تركيب-مظلات-حدائق", uri: "/تركيب-مظلات-حدائق/" },
-  { slug: "تفصيل-مظلة-للسيارة", uri: "/تفصيل-مظلة-للسيارة/" },
-  { slug: "تركيب-مظلات-مدارس", uri: "/تركيب-مظلات-مدارس/" },
-  { slug: "تركيب-قماش-مظلات", uri: "/تركيب-قماش-مظلات/" },
-  { slug: "تركيب-برجولات", uri: "/تركيب-برجولات/" },
-  { slug: "تركيب-لكسان", uri: "/تركيب-لكسان/" },
-  { slug: "تركيب-مظلات-سيارات", uri: "/تركيب-مظلات-سيارات/" },
-  { slug: "تركيب-مظلات-وسواتر", uri: "/تركيب-مظلات-وسواتر/" },
-  { slug: "تركيب-سواتر", uri: "/تركيب-سواتر/" },
-  { slug: "تركيب-مظلات", uri: "/تركيب-مظلات/" },
-  { slug: "تركيب-مظلات-الدمام", uri: "/تركيب-مظلات-الدمام/" },
-  { slug: "شركة-عمل-سواتر-ومظلات", uri: "/شركة-عمل-سواتر-ومظلات/" },
-  { slug: "شركة-تركيب-السواتر-والمظلات", uri: "/شركة-تركيب-السواتر-والمظلات/" },
-];
+// قم باستيراد دالة جلب الخدمات من ملف الـ API الخاص بك
+// تأكد من مسار الاستيراد حسب مجلدات مشروعك (مثلاً: '@/lib/api')
+import { getAllServices } from "@/lib/api";
 
-// دالة مساعدة لتحويل slug إلى عنوان مقروء
-const formatServiceName = (slug: string): string => {
-  return slug
-    .replace(/-/g, " ")
-    .split(" ")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ")
-    .replace(/Ipc/g, "IPC"); // معالجة حالات خاصة
+// دالة لإرجاع أيقونة مناسبة بناءً على اسم الخدمة
+const getServiceIcon = (text: string): string => {
+  const lowerText = text.toLowerCase();
+  if (lowerText.includes("سيارات")) return "🚗";
+  if (lowerText.includes("مسابح")) return "🏊";
+  if (lowerText.includes("مدارس") || lowerText.includes("محلات")) return "🏢";
+  if (
+    lowerText.includes("حدائق") ||
+    lowerText.includes("برجولات") ||
+    lowerText.includes("جلسات")
+  )
+    return "🌳";
+  if (lowerText.includes("خشب")) return "🪵";
+  if (
+    lowerText.includes("قماش") ||
+    lowerText.includes("بي في سي") ||
+    lowerText.includes("pvc")
+  )
+    return "🧵";
+  if (lowerText.includes("متحركة")) return "⚙️";
+  if (lowerText.includes("لكسان")) return "✨";
+  if (lowerText.includes("سواتر")) return "🚧";
+  if (lowerText.includes("حديد") || lowerText.includes("ساندوتش")) return "🏭";
+  if (lowerText.includes("مظلات")) return "🏗️";
+  return "📐"; // أيقونة افتراضية
 };
 
-// دالة لإرجاع أيقونة مناسبة لكل خدمة بناءً على الكلمات المفتاحية
-const getServiceIcon = (slug: string): string => {
-  if (slug.includes("مظلات")) return "🏗️";
-  if (slug.includes("سواتر")) return "🔩";
-  if (slug.includes("برجولات")) return "🌿";
-  if (slug.includes("تركيب")) return "🛠️";
-  if (slug.includes("جلسات")) return "🪑";
-  if (slug.includes("خشبية")) return "🪵";
-  if (slug.includes("لكسان")) return "✨";
-  if (slug.includes("قماش")) return "🧵";
-  if (slug.includes("حديد")) return "🔗";
-  if (slug.includes("متحركة")) return "⚙️";
-  if (slug.includes("سيارات")) return "🚗";
-  if (slug.includes("مسابح")) return "🏊";
-  if (slug.includes("مدارس")) return "🏫";
-  if (slug.includes("حدائق")) return "🌳";
-  return "📐";
-};
+// الدالة الرئيسية لجلب وبناء قائمة الخدمات ديناميكياً
+export async function getDynamicServicesList() {
+  try {
+    // 1. جلب الخدمات الحقيقية من الووردبريس
+    const services = await getAllServices();
 
-// بناء قائمة الخدمات النهائية
-const servicesList = rawServicesPages.map((page) => ({
-  id: page.slug,
-  name: formatServiceName(page.slug),
-  href: page.uri,
-  icon: getServiceIcon(page.slug),
-}));
+    // 2. تحويل البيانات لتطابق الشكل الذي تحتاجه واجهة المستخدم (Menu / Sidebar)
+    const servicesList = services.map((service) => {
+      return {
+        id: service.id || service.slug,
+        name: service.title, // استخدام العنوان الحقيقي من الووردبريس (ممتاز للـ SEO)
+        href: `/services/${service.slug}`, // توجيه الرابط للقسم الجديد
+        icon: getServiceIcon(service.title + " " + service.slug), // تمرير العنوان للحصول على الأيقونة
+      };
+    });
+
+    return servicesList;
+  } catch (error) {
+    console.error("Error fetching services for list:", error);
+    return []; // إرجاع مصفوفة فارغة كي لا يتعطل الموقع في حال توقف الـ API
+  }
+}
 
 export function FloatingChat() {
   const [mounted, setMounted] = useState(false);
@@ -240,7 +202,27 @@ export function FloatingChat() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // تصفية الخدمات بناءً على البحث
+  // 1. إنشاء State لتخزين قائمة الخدمات الديناميكية
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [servicesList, setServicesList] = useState<any[]>([]);
+  const [isLoadingServices, setIsLoadingServices] = useState(true);
+
+  // 2. جلب البيانات عند تحميل المكون
+  useEffect(() => {
+    async function fetchServices() {
+      try {
+        const data = await getDynamicServicesList();
+        setServicesList(data);
+      } catch (error) {
+        console.error("Failed to load services:", error);
+      } finally {
+        setIsLoadingServices(false);
+      }
+    }
+    fetchServices();
+  }, []);
+
+  // 3. تصفية الخدمات (الآن لن تسبب خطأ لأن servicesList موجودة)
   const filteredServices = servicesList.filter((service) =>
     service.name.includes(searchTerm),
   );

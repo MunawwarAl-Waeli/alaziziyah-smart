@@ -29,6 +29,11 @@ export const metadata: Metadata = {
   verification: {
     google: "bNOlDODG6YCLIKLCc8Ho2UBEmoI_z49zJUbs5rDM44c",
   },
+  icons: {
+    icon: '/icon.jpg',
+    shortcut: '/favicon-16x16.png',
+    apple: '/apple-touch-icon.png', // مهم جداً لأجهزة آيفون
+  },
 };
 
 export const viewport: Viewport = {
