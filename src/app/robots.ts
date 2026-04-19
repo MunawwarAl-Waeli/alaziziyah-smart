@@ -14,7 +14,6 @@ export default function robots(): MetadataRoute.Robots {
         "/projects/*",
         "/about",
         "/contact",
-        // "/cost-calculator",
       ],
       disallow: [
         "/admin",

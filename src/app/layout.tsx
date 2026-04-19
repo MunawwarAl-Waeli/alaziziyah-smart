@@ -23,16 +23,16 @@ const cairo = Cairo({
 });
 
 export const metadata: Metadata = {
-  title: "العزيزية للحلول الذكية",
+  title: "العزيزية للمظلات والسواتر",
   description: "المصنع السعودي الرائد للمظلات والأنظمة الذكية",
   manifest: "/manifest.json",
   verification: {
     google: "bNOlDODG6YCLIKLCc8Ho2UBEmoI_z49zJUbs5rDM44c",
   },
   icons: {
-    icon: '/icon.jpg',
-    shortcut: '/favicon-16x16.png',
-    apple: '/apple-touch-icon.png', // مهم جداً لأجهزة آيفون
+    icon: "/icon.jpg",
+    shortcut: "/icon.jpg",
+    apple: "/icon.jpg", // مهم جداً لأجهزة آيفون
   },
 };
 

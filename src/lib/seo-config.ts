@@ -4,7 +4,7 @@ import { Metadata } from "next";
 export const siteConfig = {
   name: "العزيزية للمظلات والسواتر",
   url: "https://al-azizia.com",
-  ogImage: "https://al-azizia.com/og-image.jpg",
+  ogImage: "https://al-azizia.com/icon.jpg",
   description:
     "شركة رائدة في تركيب المظلات والسواتر والبرجولات في المملكة العربية السعودية",
   keywords: [
@@ -113,7 +113,7 @@ export function organizationSchema() {
     "@type": "Organization",
     name: siteConfig.name,
     url: siteConfig.url,
-    logo: `${siteConfig.url}/logo.png`,
+    logo: `${siteConfig.url}/icon.jpg`,
     description: siteConfig.description,
     address: {
       "@type": "PostalAddress",
@@ -197,7 +197,7 @@ export function articleSchema({
       name: siteConfig.name,
       logo: {
         "@type": "ImageObject",
-        url: `${siteConfig.url}/logo.png`,
+        url: `${siteConfig.url}/icon.jpg`,
       },
     },
     mainEntityOfPage: {
