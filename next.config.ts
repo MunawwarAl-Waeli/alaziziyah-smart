@@ -24,7 +24,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname:'i.ytimg.com',
+        hostname: "i.ytimg.com",
         pathname: "/VI/**", // يسمح بكل المسارات تحت /VI/
       },
       {
@@ -158,7 +158,7 @@ const nextConfig = {
       // مشاريع المظلات
       {
         source: encodeURI("/مظلات-منازل"),
-        destination: "/projects",
+        destination: "/projects/مظلات-حدائق",
         permanent: true,
       },
       {
@@ -198,22 +198,22 @@ const nextConfig = {
       },
       {
         source: encodeURI("/مظلات-سيارات-حديد"),
-        destination: "/projects",
+        destination: "/projects/مظلات-سيارات",
         permanent: true,
       },
       {
         source: encodeURI("/مظلات-برجولات"),
-        destination: "/projects",
+        destination: "/projects/معرض_برجولات_حديد",
         permanent: true,
       },
       {
         source: encodeURI("/مظلات-خارجية-للمنازل"),
-        destination: "/projects",
+        destination: "/projects/مظلات-حدائق",
         permanent: true,
       },
       {
         source: encodeURI("/مظلات-حدائق-منزلية"),
-        destination: "/projects",
+        destination: "/projects/مظلات-حدائق",
         permanent: true,
       },
       {
@@ -228,17 +228,17 @@ const nextConfig = {
       },
       {
         source: encodeURI("/مظلات-حديد"),
-        destination: "/projects",
+        destination: "/projects/معرض_برجولات_حديد",
         permanent: true,
       },
       {
         source: encodeURI("/مظلات-خشبية"),
-        destination: "/projects",
+        destination: "/projects/معرض_برجولات_حديد",
         permanent: true,
       },
       {
         source: encodeURI("/مظلات-جلسات"),
-        destination: "/projects",
+        destination: "/projects/مظلات-حدائق",
         permanent: true,
       },
       {
@@ -253,7 +253,7 @@ const nextConfig = {
       },
       {
         source: encodeURI("/مظلات-حدائق"),
-        destination: "/projects",
+        destination: "/projects/مظلات-حدائق",
         permanent: true,
       },
       {
@@ -302,19 +302,19 @@ const nextConfig = {
       },
       {
         source: encodeURI("/برجولات-حديد"),
-        destination: "/projects/تركيب-برجولات",
+        destination: "/projects//معرض_برجولات_حديد",
         permanent: true,
       },
 
       // روابط عامة كأنها مشاريع أو نبذة
       {
         source: encodeURI("/شركة-عمل-سواتر-ومظلات"),
-        destination: "/projects",
+        destination: "/",
         permanent: true,
       },
       {
         source: encodeURI("/شركة-تركيب-السواتر-والمظلات"),
-        destination: "/projects",
+        destination: "/",
         permanent: true,
       },
 
