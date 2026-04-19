@@ -535,8 +535,9 @@ export function Header({
             initial="closed"
             animate="open"
             exit="closed"
+            className="fixed top-0 left-0 right-0 bottom-[50px] z-70 bg-background/95 backdrop-blur-3xl border-r border-border md:hidden flex flex-col overflow-hidden text-foreground"
             // تغيير z-index إلى 60 ليكون فوق كل شيء
-            className="fixed inset-0 z-[70] bg-background md:hidden flex flex-col overflow-hidden text-foreground"
+            // className="fixed inset-0 z-[70] bg-background md:hidden flex flex-col overflow-hidden text-foreground"
           >
             {/* 1. Header داخل القائمة لضمان ظهور الشعار وزر الإغلاق بوضوح */}
             <div className="flex items-center justify-between p-4 border-b border-border/50 bg-background/80 backdrop-blur-md">
