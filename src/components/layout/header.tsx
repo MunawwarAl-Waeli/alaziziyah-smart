@@ -281,7 +281,7 @@ export function Header({
     <>
       <motion.header
         className={cn(
-          "fixed top-0 left-0 right-0 z-500 transition-all duration-500",
+          "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
           isScrolled
             ? "bg-background/85 backdrop-blur-2xl border-b border-primary/20 shadow-luxury py-3"
             : "bg-transparent py-5 border-b border-transparent",
@@ -535,33 +535,33 @@ export function Header({
             initial="closed"
             animate="open"
             exit="closed"
-            // تم تغيير inset-0 إلى:
-            // top-0 left-0 right-0 bottom-[70px]
-            className="fixed top-0 left-0 right-0 bottom-[50px] z-40 bg-background/95 backdrop-blur-3xl border-r border-border md:hidden flex flex-col overflow-hidden text-foreground shadow-[0_-10px_30px_rgba(0,0,0,0.1)]"
+            // تغيير z-index إلى 60 ليكون فوق كل شيء
+            className="fixed inset-0 z-[70] bg-background md:hidden flex flex-col overflow-hidden text-foreground"
           >
-            {/* إضاءة خلفية هندسية */}
-            <div className="absolute top-[-5%] left-[-5%] w-72 h-72 bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
+            {/* 1. Header داخل القائمة لضمان ظهور الشعار وزر الإغلاق بوضوح */}
+            <div className="flex items-center justify-between p-4 border-b border-border/50 bg-background/80 backdrop-blur-md">
+              {/* الشعار يظهر هنا بوضوح جهة اليمين */}
+              <Link
+                href="/"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="relative h-10 w-28"
+              >
+                <Image
+                  src="/images/logo.png"
+                  alt="الشعار"
+                  fill
+                  className="object-contain object-right"
+                />
+              </Link>
 
-            <motion.div
-              variants={itemVariants}
-              className="flex items-center justify-between p-6 relative z-10 border-b border-border/50"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary-dark rounded-lg flex items-center justify-center text-primary-foreground font-bold shadow-lg shadow-primary/20">
-                  ع
-                </div>
-                <span className="text-xl font-black text-foreground">
-                  القائمة الرئيسية
-                </span>
-              </div>
+              {/* زر الإغلاق جهة اليسار */}
               <button
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="p-2 rounded-full bg-muted border border-border text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+                className="p-2 rounded-full bg-muted text-muted-foreground"
               >
                 <X className="w-6 h-6" />
               </button>
-            </motion.div>
-
+            </div>
             {/* Mobile Search Input */}
             <motion.div
               variants={itemVariants}
