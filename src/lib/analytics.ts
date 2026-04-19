@@ -3,8 +3,10 @@ export const GA_TRACKING_ID = "G-RVTGES597T"; // معرف القياس الخا�
 // وظيفة لإرسال الأحداث العامة إلى Google Analytics
 export const trackGAEvent = (
   eventName: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   params: Record<string, any> = {},
 ) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (typeof window !== "undefined" && (window as any).gtag) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (window as any).gtag("event", eventName, params);
@@ -13,7 +15,9 @@ export const trackGAEvent = (
 
 // وظيفة مخصصة لتحويلات Google Ads (إذا كان لديك كود تحويل محدد)
 export const trackConversion = (url?: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   if (typeof window !== "undefined" && (window as any).gtag) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (window as any).gtag("event", "conversion", {
       send_to: "AW-123456789/AbCdEfGhIjKlMnOpQrSt", // استبدل هذا بكود التحويل من جوجل أدز
       event_callback: () => {

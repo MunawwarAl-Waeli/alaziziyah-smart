@@ -1,6 +1,7 @@
 import { MetadataRoute } from "next";
 // قم بتعديل مسار الاستيراد بناءً على مكان ملف api.ts لديك
 import { getAllServices, getAllProjects } from "@/lib/api";
+import { blogPosts } from "./blog/data/posts";
 // import { getAllPosts } from '@/lib/api'; // إذا قمت بإنشاء دالة للمقالات لاحقاً
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -48,8 +49,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-
+// 5. تحويل بيانات مقالات المدونة الثابتة إلى صيغة Sitemap
+  const blogPages = blogPosts.map((post) => ({
+    url: `${baseUrl}/blog/${post.slug}`,
+    // نستخدم تاريخ المقالة الفعلي لتخبر جوجل بآخر تحديث لها
+    lastModified: new Date(post.date), 
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
 
   // دمج كل الصفحات في خريطة واحدة وإرجاعها لجوجل
-  return [...staticPages, ...servicePages, ...projectPages];
+  return [...staticPages, ...servicePages, ...projectPages, ...blogPages];
 }

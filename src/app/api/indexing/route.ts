@@ -3,23 +3,38 @@ import { google } from "googleapis";
 
 export async function POST(request: Request) {
   try {
-    // 1. استلام الرابط الجديد من الطلب
+    // 1. استلام الرابط الجديد من الطلب (بشكل آمن برمجياً)
     const body = await request.json();
-    const { url } = body;
+    const url = body.url as string; // إخبار تايب سكريبت أن هذا المتغير نصي
 
     if (!url) {
       return NextResponse.json({ error: "الرابط مطلوب" }, { status: 400 });
     }
 
-    // 2. إعداد الاتصال الآمن مع جوجل
-    const jwtClient = new google.auth.JWT(
-      process.env.GOOGLE_CLIENT_EMAIL, null,process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n"), // إصلاح الفواصل["https://www.googleapis.com/auth/indexing"], null,
-    );
+    // 2. التحقق الصارم من المتغيرات البيئية (لإرضاء تايب سكريبت)
+    const clientEmail = process.env.GOOGLE_CLIENT_EMAIL;
+    const privateKey = process.env.GOOGLE_PRIVATE_KEY;
 
-    // 3. تأكيد الاتصال
+    if (!clientEmail || !privateKey) {
+      console.error("Missing Google API Credentials");
+      return NextResponse.json(
+        { error: "إعدادات الربط مع جوجل مفقودة في السيرفر" },
+        { status: 500 },
+      );
+    }
+
+    // 3. إعداد الاتصال الآمن مع جوجل
+    // لاحظ استخدام undefined بدلاً من null
+    const jwtClient = new google.auth.JWT({
+      email: clientEmail,
+      key: privateKey.replace(/\\n/g, "\n"),
+      scopes: ["https://www.googleapis.com/auth/indexing"],
+    });
+
+    // 4. تأكيد الاتصال
     await jwtClient.authorize();
 
-    // 4. إرسال أمر الفهرسة لجوجل (URL_UPDATED تعني رابط جديد أو تم تعديله)
+    // 5. إرسال أمر الفهرسة لجوجل
     const indexing = google.indexing({ version: "v3", auth: jwtClient });
     const response = await indexing.urlNotifications.publish({
       requestBody: {

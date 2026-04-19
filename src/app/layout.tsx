@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Sans_Arabic } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/header";
 import { ThemeProvider } from "@/components/theme/provider";

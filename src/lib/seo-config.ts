@@ -4,7 +4,7 @@ import { Metadata } from "next";
 export const siteConfig = {
   name: "العزيزية للمظلات والسواتر",
   url: "https://al-azizia.com",
-  ogImage: "https://al-azizia.com/icon.jpg",
+  ogImage: "https://al-azizia.com/icon.png",
   description:
     "شركة رائدة في تركيب المظلات والسواتر والبرجولات في المملكة العربية السعودية",
   keywords: [
@@ -13,12 +13,15 @@ export const siteConfig = {
     "برجولات",
     "مظلات سيارات",
     "تركيب مظلات",
+    "تركيب سواتر",
+    "تركيب برجولات",
     "سواتر حديد",
     "برجولات خشبية",
     "مظلات مدارس",
     "مظلات مسابح",
     "هناجر",
     "جدة",
+    
   ],
   twitterHandle: "@alazizia",
   locale: "ar_SA",
@@ -113,7 +116,7 @@ export function organizationSchema() {
     "@type": "Organization",
     name: siteConfig.name,
     url: siteConfig.url,
-    logo: `${siteConfig.url}/icon.jpg`,
+    logo: `${siteConfig.url}/icon.png`,
     description: siteConfig.description,
     address: {
       "@type": "PostalAddress",
@@ -197,7 +200,7 @@ export function articleSchema({
       name: siteConfig.name,
       logo: {
         "@type": "ImageObject",
-        url: `${siteConfig.url}/icon.jpg`,
+        url: `${siteConfig.url}/icon.png`,
       },
     },
     mainEntityOfPage: {
