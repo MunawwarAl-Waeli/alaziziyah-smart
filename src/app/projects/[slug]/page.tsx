@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getProjectGallery } from "@/lib/api";
 import ProjectDetailsClient from "./ProjectDetailsClient"; // تأكد من المسار حسب هيكلة ملفاتك
+import { fixDoubleEncoding } from "@/lib/utils";
 
 // 1. تعريف الواجهة الموحدة لتطابق إصدارات Next.js 15+ الحديثة
 interface Props {
@@ -11,7 +12,13 @@ interface Props {
 // 2. توليد SEO ديناميكي لكل مشروع باحترافية (دلع السيو)
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const project = await getProjectGallery(slug);
+
+  // 1. استخدام الدرع
+  const { cleanSlug } = fixDoubleEncoding(slug);
+  if (!cleanSlug) return { title: "مشروع غير موجود" };
+
+  // 2. جلب البيانات بالرابط النظيف
+  const project = await getProjectGallery(cleanSlug);
 
   // إذا لم يجد المشروع
   if (!project) {
@@ -40,13 +47,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 // 3. المكون الرئيسي لجلب البيانات وتمريرها للعميل
 export default async function ProjectPage({ params }: Props) {
-  // فك التغليف عن params
   const { slug } = await params;
 
-  // جلب البيانات (الدالة الخاصة بك تعالج decodeURIComponent داخلياً)
-  const project = await getProjectGallery(slug);
+  // 1. استخدام الدرع
+  const { cleanSlug } = fixDoubleEncoding(slug);
+  if (!cleanSlug) return notFound();
 
-  // إذا لم يرجع أي بيانات، وجهه لصفحة 404 الأنيقة
+  // 2. جلب البيانات بالرابط النظيف
+  const project = await getProjectGallery(cleanSlug);
   if (!project) {
     notFound();
   }

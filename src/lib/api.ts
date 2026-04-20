@@ -457,7 +457,7 @@ export async function getAllServices(): Promise<ServiceItem[]> {
   return data.services.nodes;
 }
 
-export async function getServiceBySlug(slug: string): Promise<ServiceItem> {
+export async function getServiceBySlug(slug: string): Promise<ServiceItem| null> {
   const query = `
     query GetServiceBySlug($slug: ID!) {
       service(id: $slug, idType: SLUG) {
@@ -487,8 +487,11 @@ export async function getServiceBySlug(slug: string): Promise<ServiceItem> {
     }
   `;
 
-  const data = await wpFetch(query, { slug });
-  const s = data.service;
+const data = await wpFetch(query, { slug });
+  const s = data?.service;
+
+  // 🚀 السطر المنقذ للسيرفر: إذا لم يجد الخدمة، ارجع null فوراً دون محاولة قراءة التفاصيل
+  if (!s) return null; 
 
   type WpAcfImage = { node?: { sourceUrl?: string } } | null | undefined;
   const getImgUrl = (imgField: WpAcfImage): string | null =>
