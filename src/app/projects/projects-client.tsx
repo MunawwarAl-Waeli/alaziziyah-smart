@@ -229,31 +229,11 @@ export function ProjectsClient({ initialProjects }: Props) {
 {/* ===== شريط البحث والفلترة المطور (انسيابي للجوال والحاسوب) ===== */}
 <section
   id="projects"
-  className="sticky top-16 md:top-20 z-40 bg-background/90 backdrop-blur-xl border-y border-border py-3 md:py-4 shadow-sm"
+  className="sticky top-6 md:top-0 z-40 bg-background/90 backdrop-blur-xl border-y border-border py-3 md:py-4 shadow-sm"
 >
   <div className="container mx-auto px-4 max-w-7xl">
     <div className="flex flex-col gap-3 md:gap-4">
-      
-      {/* 1. السطر الأول: شريط البحث (يأخذ العرض كاملاً) */}
-      <div className="relative w-full">
-        <Search className="absolute right-4 top-1/2 -translate-y-1-2 w-4 h-4 md:w-5 md:h-5 text-muted-foreground" />
-        <input
-          type="text"
-          placeholder="ابحث في معرض الأعمال..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full h-11 md:h-14 pr-11 pl-4 bg-card border border-border rounded-xl md:rounded-2xl focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none text-foreground placeholder:text-muted-foreground text-sm md:text-base"
-        />
-        {searchTerm && (
-          <button
-            onClick={() => setSearchTerm("")}
-            className="absolute left-3 top-1/2 -translate-y-1/2 p-1 hover:bg-muted rounded-full transition-colors"
-          >
-            <X className="w-4 h-4 text-muted-foreground" />
-          </button>
-        )}
-      </div>
-
+     
       {/* 2. السطر الثاني: الفلاتر + تبديل العرض (في نفس الصف للجوال) */}
       <div className="flex items-center gap-2 md:gap-4">
         
