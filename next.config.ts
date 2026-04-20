@@ -328,6 +328,13 @@ const nextConfig = {
         destination: "/",
         permanent: true,
       },
+      {
+        // الرابط "الناقص" الذي يظهر في جوجل
+        source: encodeURI("/projects/معرض_برجولات"),
+        // الرابط "الصحيح" الموجود فعلياً في موقعك
+        destination: encodeURI("/projects/معرض_برجولات_حديد"),
+        permanent: true,
+      },
     ];
   },
   experimental: {
