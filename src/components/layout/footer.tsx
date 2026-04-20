@@ -50,7 +50,7 @@ const serviceLinks = [
     href: "/services/تركيب-مظلات-مسابح-لكسان-ضد-الكسر",
     icon: Sparkles,
   },
-  { name: "هناجر", href: "/services/هناجر", icon: Warehouse },
+  { name: "هناجر", href: "/services/", icon: Warehouse },
 ];
 
 export function Footer() {
@@ -126,13 +126,14 @@ export function Footer() {
                 </p>
               </div>
 
-              <div className="flex items-center justify-center md:justify-start gap-3 group">
+              <div className="flex items-center justify-center md:justify-start  gap-3 group">
                 <div className="p-2 bg-slate-900 rounded-lg group-hover:bg-primary/20 transition-colors border border-slate-800">
                   <Phone className="w-4 h-4 text-primary shrink-0" />
                 </div>
                 <a
+                  dir="ltr"
                   href={SOCIAL_LINKS?.phone || "tel:+966530989975"}
-                  className="text-slate-400 hover:text-white text-sm transition-colors font-sans"
+                  className="text-slate-400  hover:text-white text-sm transition-colors font-sans"
                 >
                   +966 5309 89 975
                 </a>

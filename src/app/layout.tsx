@@ -8,12 +8,10 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import {
   getAllProjects,
   getGlobalData,
-  getLatestProjects,
   getWPData,
 } from "@/lib/api";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { Analytics } from "@vercel/analytics/next";
-import Script from "next/script";
 import { Cairo } from "next/font/google";
 const cairo = Cairo({
   subsets: ["arabic"],
@@ -23,7 +21,7 @@ const cairo = Cairo({
 
 export const metadata: Metadata = {
   title: "العزيزية للمظلات والسواتر",
-  description: "المصنع السعودي الرائد للمظلات والأنظمة الذكية",
+  description:"مؤسسة العزيزية: الخيار الأول لتركيب مظلات السيارات، السواتر، والبرجولات بالسعودية. نوفر مظلات حدائق، مسابح، لكسان وساندوتش بانل بأفضل الخامات وضمان معتمد.",
   manifest: "/manifest.json",
   verification: {
     google: "bNOlDODG6YCLIKLCc8Ho2UBEmoI_z49zJUbs5rDM44c",
@@ -44,15 +42,12 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const data = await getGlobalData();
-  const allMenuItems = data?.menu?.menuItems?.nodes || [];
-  const topLevelMenuItems = allMenuItems.filter(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (item: any) => !item.parentId,
-  );
-  const wpData = await getWPData(); // جلب الخدمات
-  const globalData = await getGlobalData(); // جلب المنيو
-  const latestProjects = await getAllProjects(); // يجلب أحدث المشاريع
+  // بدلاً من السطور الأربعة الحالية، استخدم هذا:
+  const [globalData, wpData, latestProjects] = await Promise.all([
+    getGlobalData(),
+    getWPData(),
+    getAllProjects(),
+  ]);
 
   return (
     <html
@@ -61,20 +56,6 @@ export default async function RootLayout({
       className={cairo.className}
       suppressHydrationWarning
     >
-      <head>
-        <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=G-RVTGES597T`}
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-RVTGES597T');
-          `}
-        </Script>
-      </head>
       {/* ✅ تم تفعيل الخط هنا */}
       <body className={"font-sans antialiased bg-background text-foreground"}>
         <ThemeProvider

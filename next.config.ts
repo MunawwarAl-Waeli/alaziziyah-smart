@@ -123,7 +123,7 @@ const nextConfig = {
         permanent: true,
       },
 
-      // خدمات البرجولات والجلسات
+      // خدمات البرجولات والجلسات الشد_الانشائي
       {
         source: encodeURI("/تركيب-برجولات"),
         destination: "/services/تركيب-برجولات",
@@ -167,17 +167,17 @@ const nextConfig = {
       },
       {
         source: encodeURI("/مظلات-مسابح"),
-        destination: "/projects",
+        destination: "/projects/مظلات-مسابح",
         permanent: true,
       },
       {
         source: encodeURI("/مظلات-مدارس"),
-        destination: "/projects",
+        destination: "/projects/مظلات-مدارس",
         permanent: true,
       },
       {
         source: encodeURI("/مظلات-الشد-الانشائي"),
-        destination: "/projects",
+        destination: "/projects/مظلات-الشد-الانشائي",
         permanent: true,
       },
       {
@@ -217,7 +217,7 @@ const nextConfig = {
       },
       {
         source: encodeURI("/مظلات-لكسان"),
-        destination: "/projects",
+        destination: "/projects/مظلات-لكسان",
         permanent: true,
       },
       {
@@ -269,7 +269,7 @@ const nextConfig = {
       },
       {
         source: encodeURI("/سواتر-لكسان"),
-        destination: "/projects/سواتر-حديد",
+        destination: "/projects/مظلات-لكسان",
         permanent: true,
       },
       {
@@ -309,21 +309,6 @@ const nextConfig = {
       // 3. الصفحات الثابتة (السياسات والشروط)
       // ==========================================
       {
-        source: encodeURI("/سياسة-الخصوصية"),
-        destination: "/",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/شروط-استخدام-الموقع-2"),
-        destination: "/",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/sitemap"),
-        destination: "/",
-        permanent: true,
-      },
-      {
         source: encodeURI("/العزيزية-للمظلات-والسواتر"),
         destination: "/",
         permanent: true,
@@ -332,7 +317,7 @@ const nextConfig = {
         // الرابط "الناقص" الذي يظهر في جوجل
         source: encodeURI("/projects/معرض_برجولات"),
         // الرابط "الصحيح" الموجود فعلياً في موقعك
-        destination:"/projects/معرض_برجولات_حديد",
+        destination: "/projects/معرض_برجولات_حديد",
         permanent: true,
       },
     ];

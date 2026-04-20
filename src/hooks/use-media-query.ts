@@ -12,7 +12,8 @@ export function useMediaQuery(query: string): boolean {
     const media = window.matchMedia(query);
 
     // تعيين القيمة الأولية
-    // setMatches(media.matches);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMatches(media.matches);
 
     // إنشاء handler للتحديثات
     const listener = (event: MediaQueryListEvent) => {

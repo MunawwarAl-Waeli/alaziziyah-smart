@@ -1,17 +1,14 @@
 
 "use client";
-
 import { usePathname } from "next/navigation";
-
 export function JsonLd() {
   const pathname = usePathname();
-
   const schema = {
     "@context": "https://schema.org",
     "@type": "HomeAndConstructionBusiness",
     name: "العزيزية للمظلات والسواتر",
     url: "https://al-azizia.com",
-    logo: "https://al-azizia.com/icon.jpg",
+    logo: "https://al-azizia.com/icon.png",
     description:
       "شركة رائدة في تركيب المظلات والسواتر والبرجولات في المملكة العربية السعودية",
     address: {

@@ -41,6 +41,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getAllServices } from "@/lib/api";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 // ==================== أنواع الرسائل ====================
 interface ChatMessage {
@@ -196,7 +197,7 @@ export function FloatingChat() {
   const [unreadCount, setUnreadCount] = useState(1);
   const [hasScrolled, setHasScrolled] = useState(false);
   const [showServicesMenu, setShowServicesMenu] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
+  // const [isMobile, setIsMobile] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -223,16 +224,16 @@ export function FloatingChat() {
   const filteredServices = servicesList.filter((service) =>
     service.name.includes(searchTerm),
   );
-
+  const isMobile = useMediaQuery("(max-width: 767px)");
   // التحقق من حجم الشاشة
-  useEffect(() => {
-    const checkScreen = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkScreen();
-    window.addEventListener("resize", checkScreen);
-    return () => window.removeEventListener("resize", checkScreen);
-  }, []);
+  // useEffect(() => {
+  //   const checkScreen = () => {
+  //     setIsMobile(window.innerWidth < 768);
+  //   };
+  //   checkScreen();
+  //   window.addEventListener("resize", checkScreen);
+  //   return () => window.removeEventListener("resize", checkScreen);
+  // }, []);
 
   useEffect(() => {
     setMounted(true);
