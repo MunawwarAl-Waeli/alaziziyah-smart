@@ -330,5 +330,7 @@ const nextConfig = {
   },
 };
 // تغليف الإعدادات وتصديرها
-module.exports = withPWA(nextConfig);
+// module.exports = withPWA(nextConfig);
+// تغليف الإعدادات وتصديرها
+export default withPWA(nextConfig);
 // module.exports = nextConfig;
