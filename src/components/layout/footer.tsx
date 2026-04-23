@@ -44,7 +44,7 @@ const serviceLinks = [
   },
   { name: "برجولات", href: "/services/تركيب-برجولات", icon: Leaf },
   { name: "سواتر", href: "/services/تركيب-سواتر", icon: Shield },
-  { name: "مظلات مدارس", href: "/services/مظلات-مدارس", icon: Tent },
+  { name: "مظلات قماش", href: "/services/قماش-مظلات", icon: Tent },
   {
     name: "مظلات مسابح",
     href: "/services/تركيب-مظلات-مسابح-لكسان-ضد-الكسر",
@@ -241,7 +241,7 @@ export function Footer() {
 
           <div className="flex gap-3 justify-center">
             <a
-              href="#"
+              href="https://www.facebook.com/share/18E2uf8aH4/"
               className="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:bg-primary hover:border-primary hover:text-white hover:-translate-y-1 transition-all group"
             >
               <Facebook className="w-4 h-4 transition-colors" />
