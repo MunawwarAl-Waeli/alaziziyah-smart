@@ -145,16 +145,16 @@ export default function TermsContent() {
       <p className="text-center text-gray-600">
         في حال هناك مشكلة ما يمكنكم التواصل مع
         <span className="font-bold text-gray-900 mx-1 text-lg">
-          مصمم مواقع عربي منور الوائلي
+          مصمم مواقع م. منور الوائلي
         </span>
         من خلال الرابط التالي:
         <a
-          href="https://Munawwaer.com"
+          href="https://wa.me/967770323857"
           target="_blank"
           rel="noopener noreferrer"
           className="bg-gray-100 px-4 py-2 rounded-full text-blue-600 font-semibold hover:bg-blue-50 transition-colors inline-block mt-2 mr-2"
         >
-          زيارة الموقع الرسمي
+          للتواصل
         </a>
       </p>
     </section>

@@ -1021,13 +1021,13 @@ export function SmartCalculator() {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="text-center mt-6 md:mt-8"
         >
-          <Link
+          {/* <Link
             href="/cost-calculator"
             className="inline-flex items-center gap-2 text-primary hover:text-primary-dark transition-colors group text-sm md:text-base font-medium"
           >
             <span>هل تبحث عن خيارات أكثر دقة؟ جرب الحاسبة المتقدمة</span>
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform shrink-0" />
-          </Link>
+          </Link> */}
         </motion.div>
       </div>
     </section>

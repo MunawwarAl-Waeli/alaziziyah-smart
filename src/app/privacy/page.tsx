@@ -126,16 +126,16 @@ export default function PrivacyPolicy() {
       ></div>
 
       <p className="mt-6">
-        في حال هناك أي مشكلة يمكنكم التواصل مع مطور مواقع عربي
-        <strong> منور الوائلي</strong>
+        في حال هناك أي مشكلة يمكنكم التواصل مع مطور مواقع 
+        <strong>م. منور الوائلي</strong>
         من خلال الموقع التالي:
          <a
-          href="https://Munawwaer.com"
+          href="https://wa.me/967770323857"
           target="_blank"
           rel="noopener noreferrer"
           className="bg-gray-100 px-4 py-2 rounded-full text-blue-600 font-semibold hover:bg-blue-50 transition-colors inline-block mt-2 mr-2"
         >
-          زيارة الموقع الرسمي
+         للتواصل 
         </a>
       </p>
     </section>

@@ -44,7 +44,7 @@ const serviceLinks = [
   },
   { name: "برجولات", href: "/services/تركيب-برجولات", icon: Leaf },
   { name: "سواتر", href: "/services/تركيب-سواتر", icon: Shield },
-  { name: "مظلات مدارس", href: "/services/مظلات_مدارس", icon: Tent },
+  { name: "مظلات مدارس", href: "/services/مظلات-مدارس", icon: Tent },
   {
     name: "مظلات مسابح",
     href: "/services/تركيب-مظلات-مسابح-لكسان-ضد-الكسر",
@@ -59,7 +59,7 @@ export function Footer() {
 
   return (
     <footer
-      className="relative bg-slate-950 text-slate-50 pt-16 pb-8 font-sans mt-10 md:mt-16"
+      className="relative bg-slate-950 text-slate-50 pt-16 pb-20 md:pb-8 font-sans mt-10 md:mt-16"
       dir="rtl"
     >
       {/* 🌊 الموجة الذكية: تطفو للأعلى بحرية دون أن تنقص 🌊 */}
@@ -274,10 +274,11 @@ export function Footer() {
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             <a
-              href="https://lucent-toffee-64037a.netlify.app/"
+              href="https://wa.me/967770323857"
+              rel="noopener noreferrer"
               className="hover:text-primary transition-colors"
             >
-              تطوير بواسطة منور الوائلي
+              تطوير: م.منور الوائلي
             </a>
             <span className="text-slate-800 hidden sm:inline">|</span>
             <Link

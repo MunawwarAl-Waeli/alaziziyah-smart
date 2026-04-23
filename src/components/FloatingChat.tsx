@@ -225,16 +225,6 @@ export function FloatingChat() {
     service.name.includes(searchTerm),
   );
   const isMobile = useMediaQuery("(max-width: 767px)");
-  // التحقق من حجم الشاشة
-  // useEffect(() => {
-  //   const checkScreen = () => {
-  //     setIsMobile(window.innerWidth < 768);
-  //   };
-  //   checkScreen();
-  //   window.addEventListener("resize", checkScreen);
-  //   return () => window.removeEventListener("resize", checkScreen);
-  // }, []);
-
   useEffect(() => {
     setMounted(true);
   }, []);
