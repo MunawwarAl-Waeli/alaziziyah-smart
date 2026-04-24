@@ -45,6 +45,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+
+
+
 // 3. المكون الرئيسي لجلب البيانات وتمريرها للعميل
 export default async function ProjectPage({ params }: Props) {
   const { slug } = await params;

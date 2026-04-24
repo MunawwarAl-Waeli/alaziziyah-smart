@@ -1,3 +1,4 @@
+export const dynamic = 'force-static';
 import { MetadataRoute } from "next";
 // قم بتعديل مسار الاستيراد بناءً على مكان ملف api.ts لديك
 import { getAllServices, getAllProjects } from "@/lib/api";

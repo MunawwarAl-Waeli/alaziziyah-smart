@@ -5,13 +5,9 @@ import { ThemeProvider } from "@/components/theme/provider";
 import { Footer } from "@/components/layout/footer";
 import { FloatingChat } from "@/components/FloatingChat";
 import { GoogleAnalytics } from "@next/third-parties/google";
-import {
-  getAllProjects,
-  getGlobalData,
-  getWPData,
-} from "@/lib/api";
+import { getAllProjects, getGlobalData, getWPData } from "@/lib/api";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { Analytics } from "@vercel/analytics/next";
+
 import { Cairo } from "next/font/google";
 const cairo = Cairo({
   subsets: ["arabic"],
@@ -21,7 +17,8 @@ const cairo = Cairo({
 
 export const metadata: Metadata = {
   title: "العزيزية للمظلات والسواتر",
-  description:"مؤسسة العزيزية: الخيار الأول لتركيب مظلات السيارات، السواتر، والبرجولات بالسعودية. نوفر مظلات حدائق، مسابح، لكسان وساندوتش بانل بأفضل الخامات وضمان معتمد.",
+  description:
+    "مؤسسة العزيزية: الخيار الأول لتركيب مظلات السيارات، السواتر، والبرجولات بالسعودية. نوفر مظلات حدائق، مسابح، لكسان وساندوتش بانل بأفضل الخامات وضمان معتمد.",
   manifest: "/manifest.json",
   verification: {
     google: "bNOlDODG6YCLIKLCc8Ho2UBEmoI_z49zJUbs5rDM44c",
@@ -81,7 +78,6 @@ export default async function RootLayout({
         <FloatingChat />
       </body>
       <GoogleAnalytics gaId="G-RVTGES597T" />
-      <Analytics />
     </html>
   );
 }
