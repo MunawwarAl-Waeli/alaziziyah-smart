@@ -17,10 +17,10 @@ const withPWA = require("@ducanh2912/next-pwa").default({
   },
 });
 const nextConfig = {
-  output: "export",
+  // output: "export",
   images: {
     // 💡 السر هنا: إيقاف التحسين فقط في بيئة التطوير لتجاوز حظر Localhost
-    unoptimized: true,//process.env.NODE_ENV === "development",
+    unoptimized:process.env.NODE_ENV === "development",
     // نستخدم remotePatterns بدلاً من domains لأنها تدعم تحديد البورت (8080) بشكل صحيح
     remotePatterns: [
       {
