@@ -1,14 +1,15 @@
 import { NextResponse } from "next/server";
 
-// export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
     const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
-    const CHANNEL_HANDLE = "@al-azizia"; // المعرف الظاهر في رابط القناة
+    
+    // وضعنا الآي دي الخاص بقناتك هنا مباشرة
+    const CHANNEL_ID = "UCWYMhK-jwAHKgO94NtorJ9w"; 
 
-    // 1. التحقق من وجود API Key
+    // 1. التحقق من وجود مفتاح الـ API
     if (!YOUTUBE_API_KEY) {
       return NextResponse.json(
         { success: false, error: "YouTube API key is missing" },
@@ -16,26 +17,8 @@ export async function GET() {
       );
     }
 
-    // 2. الحصول على Channel ID من الـ handle
-    const channelRes = await fetch(
-      `https://www.googleapis.com/youtube/v3/channels?key=${YOUTUBE_API_KEY}&forHandle=${CHANNEL_HANDLE}&part=id`,
-    );
-    const channelData = await channelRes.json();
-
-    if (!channelData.items?.length) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "Channel not found. Check handle or API key.",
-        },
-        { status: 404 },
-      );
-    }
-
-    const channelId = channelData.items[0].id;
-
-    // 3. جلب أحدث الفيديوهات
-    const searchUrl = `https://www.googleapis.com/youtube/v3/search?key=${YOUTUBE_API_KEY}&channelId=${channelId}&part=snippet,id&order=date&maxResults=20&type=video`;
+    // 2. جلب أحدث الفيديوهات مباشرة باستخدام الـ Channel ID (أسرع وأضمن)
+    const searchUrl = `https://www.googleapis.com/youtube/v3/search?key=${YOUTUBE_API_KEY}&channelId=${CHANNEL_ID}&part=snippet,id&order=date&maxResults=20&type=video`;
     const searchRes = await fetch(searchUrl);
     const searchData = await searchRes.json();
 
@@ -51,12 +34,12 @@ export async function GET() {
       .map((item: any) => item.id.videoId)
       .join(",");
 
-    // 4. جلب تفاصيل المدة
+    // 3. جلب تفاصيل المدة
     const detailsUrl = `https://www.googleapis.com/youtube/v3/videos?key=${YOUTUBE_API_KEY}&id=${videoIds}&part=contentDetails,snippet`;
     const detailsRes = await fetch(detailsUrl);
     const detailsData = await detailsRes.json();
 
-    // 5. تنسيق البيانات
+    // 4. تنسيق البيانات
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const videos = detailsData.items.map((video: any) => {
       const duration = video.contentDetails.duration;
@@ -84,7 +67,7 @@ export async function GET() {
     });
 
     return NextResponse.json({ success: true, videos });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("YouTube API error:", error);
     return NextResponse.json(
