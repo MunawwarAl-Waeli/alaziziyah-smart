@@ -103,30 +103,6 @@ export const blogPosts: BlogPost[] = [
     id: "1",
     title:
       "أفضل أنواع المظلات لمقاومة الرطوبة والصدأ في جدة: الخيارات والأسعار",
-    slug: "best-anti-rust-shades-jeddah-coastal",
-    excerpt:
-      "كيف تختار مظلة سيارتك وحديقتك في جدة؟ تعرف على تقنيات معالجة الحديد والألمنيوم وأقمشة الـ PVC لمقاومة الرطوبة الساحلية العالية.",
-    content: "",
-    metaDescription:
-      "تعرف على شروط تركيب مظلات السيارات خارج السور في الرياض لعام 2025. دليل استخراج التصريح من منصة بلدي، الأسعار، والمواصفات المعتمدة لتجنب الإزالة.",
-    author: authors[1],
-    coverImage: "/images/0.jpg",
-    images: [
-      "/images/1.jpg",
-      "/images/2.jpg",
-    ],
-    date: "2025-03-01T10:00:00.000Z",
-    readTime: 6,
-    tags: ["مظلات سيارات", "الرياض", "منصة بلدي", "تصريح مظلات", "PVC"],
-    featured: true,
-    category: categories[1],
-    views: 1250,
-    city: cities[1],
-  },
-  {
-    id: "2",
-    title:
-      "أفضل أنواع المظلات لمقاومة الرطوبة والصدأ في جدة: الخيارات والأسعار",
     slug: "best-anti-rust-shades-jeddah-coastal-climate",
     excerpt:
       "كيف تختار مظلة سيارتك وحديقتك في جدة؟ تعرف على تقنيات معالجة الحديد والألمنيوم وأقمشة الـ PVC لمقاومة الرطوبة الساحلية العالية.",
@@ -185,7 +161,7 @@ export const blogPosts: BlogPost[] = [
     city: cities[1],
   },
   {
-    id: "3",
+    id: "2",
     title: "مواصفات مظلات المدارس المعتمدة في مكة المكرمة: أمن وسلامة الطلاب",
     slug: "makkah-school-shades-safety-standards",
     excerpt:
@@ -256,7 +232,7 @@ export const blogPosts: BlogPost[] = [
     city: cities[3],
   },
   {
-    id: "4",
+    id: "3",
     title: "تصاميم برجولات الخشب البلاستيكي (WPC) لفلل ومزارع الأحساء",
     slug: "alahsa-wpc-plastic-wood-pergolas-farms",
     excerpt:
@@ -315,7 +291,7 @@ export const blogPosts: BlogPost[] = [
     city: cities[4],
   },
   {
-    id: "5",
+    id: "4",
     title: "مظلات اللكسان الشفافة لتغطية مسابح وحدائق الدمام",
     slug: "dammam-lexan-polycarbonate-transparent-shades",
     excerpt:
@@ -381,7 +357,7 @@ export const blogPosts: BlogPost[] = [
     city: cities[2],
   },
   {
-    id: "6",
+    id: "5",
     title:
       "مقارنة سواتر الحديد الشرائح والمجدول في الرياض: أيهما تختار لفيِلتك؟",
     slug: "riyadh-iron-sawatr-louvers-vs-majdoul-prices",
@@ -446,7 +422,7 @@ export const blogPosts: BlogPost[] = [
     city: cities[2],
   },
   {
-    id: "7",
+    id: "6",
     title: "المظلات المتحركة الذكية بالريموت: الحل العصري لمقاهي وفلل جدة",
     slug: "jeddah-smart-retractable-awnings-cafes-villas",
     excerpt:

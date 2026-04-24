@@ -13,7 +13,8 @@ export function CTASection() {
 
       {/* خلفية مع تدرج لوني جذاب */}
       <div className="absolute inset-0 bg-primary/10 dark:bg-primary/5" />
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20" />
+
+      {/* 🚀 تم حذف سطر noise.svg المعطل من هنا لتسريع الموقع ومنع خطأ 404 */}
 
       {/* دوائر خلفية جمالية */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />

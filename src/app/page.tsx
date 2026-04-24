@@ -63,7 +63,7 @@ async function getData(): Promise<HomePageData> {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query }),
-        next: { revalidate: 10 },
+        next: { revalidate: 3600 }, // 🚀 السرعة تكمن هنا
       },
     );
 
@@ -107,7 +107,6 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen bg-background font-sans" dir="rtl">
-     
       <MainHero
         title={data?.generalSettings?.title || "العزيزية للمظلات"}
         description={acfHeroText || heroDescription}
@@ -145,7 +144,6 @@ export default async function Home() {
     </main>
   );
 }
-
 
 // {
 //   "data": {

@@ -46,6 +46,23 @@ const nextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     minimumCacheTTL: 60,
   },
+   // تفعيل ضغط الملفات لتسريع الموقع
+  compress: true,
+  
+  // ترويسات الأمان المطلوبة من Lighthouse
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          { key: 'X-Frame-Options', value: 'DENY' },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+        ],
+      },
+    ];
+  },
   async redirects() {
     return [
       // ==========================================
@@ -335,3 +352,10 @@ const nextConfig = {
 // تغليف الإعدادات وتصديرها
 export default withPWA(nextConfig);
 // module.exports = nextConfig;
+
+
+ 
+  
+
+
+// export default nextConfig;
