@@ -175,59 +175,57 @@ export async function getWPData(): Promise<{
     return { categories: [], services: [] };
   }
 }
-// دالة لجلب البيانات العامة (هيدر وفوتر)
+// دالة لجلب البيانات العامة (هيدر وفوتر) - النسخة الآمنة
 export async function getGlobalData() {
   const WP_URL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL as string;
 
-  const response = await fetch(WP_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    // revalidate: 60 يعني تحديث البيانات كل دقيقة (مفيد للأداء)
-    next: { revalidate: 60 },
-    body: JSON.stringify({
-      query: `
-        query GetGlobalData {
-          generalSettings { 
-            title 
-            description 
-          }
-          menu(id: "Main Menu", idType: SLUG) { 
-            menuItems(first: 100) { 
-              nodes { 
-                id 
-                label 
-                url 
-                path
-                parentId
-                childItems(first: 100) {
-                  nodes {
-                    id
-                    label
-                    url
-                    path
-                  }
-                }
+  try {
+    const response = await fetch(WP_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      next: { revalidate: 60 },
+      body: JSON.stringify({
+        // ... (نفس استعلام الـ GraphQL الخاص بك بدون تغيير)
+        query: `
+          query GetGlobalData {
+            generalSettings { title description }
+            menu(id: "Main Menu", idType: SLUG) { 
+              menuItems(first: 100) { 
+                nodes { id label url path parentId childItems(first: 100) { nodes { id label url path } } } 
               } 
-            } 
+            }
           }
-        }
-      `,
-    }),
-  });
+        `,
+      }),
+    });
 
-  const json = await response.json();
+    // الحماية من الردود الخاطئة وصفحات الـ HTML
+    if (!response.ok) {
+      console.error("Global Data Error: HTTP status", response.status);
+      return { menu: { menuItems: { nodes: [] } } }; // إرجاع قيم افتراضية فارغة كي لا يتعطل الموقع
+    }
 
-  // حماية إضافية: إذا كان هناك خطأ من السيرفر، نعيد مصفوفة فارغة كي لا يتعطل الموقع
-  if (json.errors || !json.data) {
-    console.error("GraphQL Error:", json.errors);
-    return { menu: { menuItems: { nodes: [] } } };
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      console.error("Global Data Error: Received HTML instead of JSON");
+      return { menu: { menuItems: { nodes: [] } } };
+    }
+
+    const json = await response.json();
+
+    if (json.errors || !json.data) {
+      console.error("GraphQL Error:", json.errors);
+      return { menu: { menuItems: { nodes: [] } } };
+    }
+
+    return json.data;
+  } catch (error) {
+    console.error("Failed to fetch Global Data:", error);
+    return { menu: { menuItems: { nodes: [] } } }; // القيم الافتراضية تنقذ الموقع من الانهيار
   }
-
-  return json.data;
 }
-
 // دالة لجلب أحدث المشاريع من الووردبريس
 export async function getLatestProjects() {
   const WP_URL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL as string;
@@ -417,28 +415,45 @@ export interface ProjectSummary {
 }
 
 // ==========================================
-// 3. دالة الجلب الأساسية الموحدة (Base Fetch)
+// 3. دالة الجلب الأساسية الموحدة (Base Fetch) - النسخة الآمنة
 // ==========================================
 async function wpFetch(query: string, variables = {}) {
-  const res = await fetch(API_URL!, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query, variables }),
-  });
+  try {
+    const res = await fetch(API_URL!, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query, variables }),
+    });
 
-  const json = await res.json();
-  if (json.errors) {
-    console.error(
-      "GraphQL Error Details:",
-      JSON.stringify(json.errors, null, 2),
-    );
+    // 1. التأكد من نجاح الاتصال أولاً
+    if (!res.ok) {
+      console.error(
+        `WP Fetch Error: Server responded with status ${res.status}`,
+      );
+      return null;
+    }
+
+    // 2. التأكد من أن الرد هو JSON وليس صفحة HTML
+    const contentType = res.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      console.error("WP Fetch Error: Response is not valid JSON.");
+      return null;
+    }
+
+    const json = await res.json();
+
+    if (json.errors) {
+      console.error(
+        "GraphQL Error Details:",
+        JSON.stringify(json.errors, null, 2),
+      );
+    }
+    return json.data;
+  } catch (error) {
+    console.error("Network or Fetch execution error:", error);
+    return null;
   }
-  return json.data;
 }
-
-// ==========================================
-// 4. دوال جلب الخدمات (Services Functions)
-// ==========================================
 export async function getAllServices(): Promise<ServiceItem[]> {
   const query = `
     query GetAllServices {
@@ -454,10 +469,19 @@ export async function getAllServices(): Promise<ServiceItem[]> {
     }
   `;
   const data = await wpFetch(query);
+
+  // ✅ سطر الحماية الإضافي: إذا كان الرد فارغاً أو تعطل الووردبريس، أرجع مصفوفة فارغة
+  if (!data || !data.services) {
+    console.error("No services data returned from WordPress.");
+    return []; 
+  }
+
   return data.services.nodes;
 }
 
-export async function getServiceBySlug(slug: string): Promise<ServiceItem| null> {
+export async function getServiceBySlug(
+  slug: string,
+): Promise<ServiceItem | null> {
   const query = `
     query GetServiceBySlug($slug: ID!) {
       service(id: $slug, idType: SLUG) {
@@ -487,11 +511,11 @@ export async function getServiceBySlug(slug: string): Promise<ServiceItem| null>
     }
   `;
 
-const data = await wpFetch(query, { slug });
+  const data = await wpFetch(query, { slug });
   const s = data?.service;
 
   // 🚀 السطر المنقذ للسيرفر: إذا لم يجد الخدمة، ارجع null فوراً دون محاولة قراءة التفاصيل
-  if (!s) return null; 
+  if (!s) return null;
 
   type WpAcfImage = { node?: { sourceUrl?: string } } | null | undefined;
   const getImgUrl = (imgField: WpAcfImage): string | null =>
