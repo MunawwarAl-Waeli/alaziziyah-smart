@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-export const runtime = "edge";
+// export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
@@ -84,7 +84,7 @@ export async function GET() {
     });
 
     return NextResponse.json({ success: true, videos });
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("YouTube API error:", error);
     return NextResponse.json(
