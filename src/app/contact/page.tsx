@@ -252,11 +252,11 @@ export default function ContactPage() {
                   >
                     <option value="">اختر نوع الخدمة...</option>
                     <option value="pergolas">
-                      🏗️ تركيب برجولات (خشب/حديد)
+                       تركيب برجولات (خشب/حديد)
                     </option>
-                    <option value="umbrellas">☂️ مظلات سيارات وحدائق</option>
-                    <option value="barriers">🛡️ سواتر للحماية والخصوصية</option>
-                    <option value="other">📋 أخرى</option>
+                    <option value="umbrellas"> مظلات سيارات وحدائق</option>
+                    <option value="barriers"> سواتر للحماية والخصوصية</option>
+                    <option value="other"> أخرى</option>
                   </select>
                 </div>
 

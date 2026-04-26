@@ -207,30 +207,6 @@ export function ServicesGridClient({
             </Link>
           </motion.div>
         )}
-
-        {/* ===== شارة الجودة ===== */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={isInView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ duration: 0.6, delay: 0.7 }}
-          className="flex flex-wrap justify-center gap-6 mt-16"
-        >
-          {[
-            { icon: <Award className="w-5 h-5" />, text: "ضمان حتى 15 سنة" },
-            { icon: <Star className="w-5 h-5" />, text: "مواد أوروبية" },
-            { icon: <Shield className="w-5 h-5" />, text: "تنفيذ معتمد" },
-          ].map((item, i) => (
-            <div
-              key={i}
-              className="flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur rounded-full border border-amber-500/20"
-            >
-              <span className="text-amber-500">{item.icon}</span>
-              <span className="text-sm font-medium text-muted-foreground">
-                {item.text}
-              </span>
-            </div>
-          ))}
-        </motion.div>
       </div>
     </section>
   );

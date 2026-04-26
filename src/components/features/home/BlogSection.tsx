@@ -202,46 +202,6 @@ export function BlogSection() {
             />
           </Link>
         </motion.div>
-
-        {/* إحصائيات سريعة */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16"
-        >
-          {[
-            {
-              icon: BookOpen,
-              value: blogPosts.length.toString() + "+",
-              label: "مقال",
-            },
-            { icon: TrendingUp, value: "100K+", label: "مشاهدة" },
-            {
-              icon: User,
-              value: authors.length.toString() + "+",
-              label: "كاتب",
-            },
-            { icon: MapPin, value: cities.length.toString(), label: "مدن" },
-          ].map((stat, i) => {
-            const Icon = stat.icon;
-            return (
-              <div
-                key={i}
-                className="text-center p-4 bg-card/50 backdrop-blur rounded-xl border border-border/50"
-              >
-                <Icon className="w-6 h-6 text-primary mx-auto mb-2" />
-                <div className="text-xl font-bold text-foreground">
-                  {stat.value}
-                </div>
-                <div className="text-sm text-muted-foreground">
-                  {stat.label}
-                </div>
-              </div>
-            );
-          })}
-        </motion.div>
       </div>
     </section>
   );

@@ -114,13 +114,6 @@ export default function ProjectDetailsClient({
     ? new Date(project.date).getFullYear().toString()
     : "٢٠٢٤";
 
-  const projectMeta = [
-    { icon: User, label: "العميل", value: "عميل خاص" },
-    { icon: Ruler, label: "المساحة", value: "٤٥٠ م²" },
-    { icon: Calendar, label: "التنفيذ", value: projectYear },
-    { icon: MapPin, label: "الموقع", value: "الرياض" },
-  ];
-
   return (
     <main
       className="bg-slate-950 selection:bg-primary/30 relative font-sans"
@@ -179,33 +172,6 @@ export default function ProjectDetailsClient({
             >
               {project.title}
             </motion.h1>
-
-            <motion.div
-              variants={fadeUp}
-              className="flex flex-wrap items-center gap-3 md:gap-4"
-            >
-              {projectMeta.map((item, index) => {
-                const Icon = item.icon;
-                return (
-                  <div
-                    key={index}
-                    className="flex items-center gap-3 px-4 py-3 md:px-5 md:py-3.5 bg-slate-900/40 backdrop-blur-xl rounded-2xl border border-white/10 hover:bg-slate-800/60 transition-colors"
-                  >
-                    <div className="p-2 bg-primary/20 rounded-xl">
-                      <Icon className="w-4 h-4 md:w-5 md:h-5 text-primary" />
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-[10px] md:text-xs text-slate-300 font-medium">
-                        {item.label}
-                      </span>
-                      <span className="text-sm md:text-base text-white font-bold">
-                        {item.value}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </motion.div>
           </motion.div>
         </motion.div>
       </div>
@@ -479,5 +445,3 @@ export default function ProjectDetailsClient({
     </main>
   );
 }
-
-

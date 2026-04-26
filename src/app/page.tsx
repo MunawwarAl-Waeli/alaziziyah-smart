@@ -1,15 +1,16 @@
 /* eslint-disable react/jsx-no-undef */
-
 import { MainHero } from "@/components/features/home/hero";
 import { ServicesSection } from "@/components/sections/services-section";
 import { ProjectsSection } from "@/components/sections/projects-section";
 import { KeywordsMarquee } from "@/components/layout/KeywordsMarquee";
 import { HomeSections } from "@/components/HomeSections";
-// 1. أزلنا استيراد framer-motion واستوردنا الغلاف الجديد
 import { SectionWrapper } from "@/components/layout/SectionWrapper";
 import { Metadata } from "next";
 import { SoftWavesDivider } from "@/components/ui/SoftWavesDivider";
 import { ElegantCurveDivider } from "@/components/ui/ElegantCurveDivider";
+
+// استيراد الإعدادات الموحدة التي أنشأناها سابقاً
+import { siteConfig } from "@/lib/seo-config";
 
 interface HomePageData {
   generalSettings: {
@@ -85,12 +86,41 @@ async function getData(): Promise<HomePageData> {
 
 export async function generateMetadata(): Promise<Metadata> {
   const data = await getData();
-  const seoDescription =
+  const title = data?.generalSettings?.title || siteConfig.name;
+  const description =
     "شركة العزيزية للمظلات والسواتر: متخصصون في تركيب مظلات سيارات، سواتر حديد، برجولات حدائق، هناجر ومستودعات، وأعمال الشد الإنشائي في جدة والمملكة.";
 
+  // الرابط المباشر للصورة التي تريدها أن تظهر في جوجل (يفضل أن تكون صورة واجهة مميزة)
+  const ogImage = "https://al-azizia.com/main-project-image.jpg";
+
   return {
-    title: data?.generalSettings?.title || "العزيزية للمظلات والسواتر",
-    description: seoDescription,
+    title: `${title} | الخيار الأول للمظلات والسواتر`,
+    description: description,
+    alternates: {
+      canonical: "https://al-azizia.com", // ضروري جداً لمنع تكرار المحتوى
+    },
+    openGraph: {
+      title: title,
+      description: description,
+      url: "https://al-azizia.com",
+      siteName: siteConfig.name,
+      images: [
+        {
+          url: ogImage, // هذه الصورة هي التي يحاول جوجل سحبها لجانب النتيجة
+          width: 1200,
+          height: 630,
+          alt: title,
+        },
+      ],
+      locale: "ar_SA",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: title,
+      description: description,
+      images: [ogImage],
+    },
   };
 }
 
@@ -107,18 +137,19 @@ export default async function Home() {
 
   return (
     <main className="min-h-screen bg-background font-sans" dir="rtl">
+      {/* ملاحظة: كود الـ JSON-LD الخاص بالتقييمات (5 نجوم) 
+          يتم حقنه تلقائياً هنا لأنه موجود في layout.js الرئيسي */}
+
       <MainHero
         title={data?.generalSettings?.title || "العزيزية للمظلات"}
         description={acfHeroText || heroDescription}
       />
+
       <section
         id="services"
         className="relative bg-slate-50 dark:bg-slate-900/50 pt-20 pb-16"
       >
-        {/* 1. الفاصل المموج (يجب أن يكون خارج الغلاف ليبقى ثابتاً في الأعلى) */}
         <SoftWavesDivider />
-
-        {/* 2. محتوى القسم مع غلاف الحركة الخاص بك */}
         <div className="relative z-10">
           <SectionWrapper delay={0}>
             <KeywordsMarquee />
@@ -126,254 +157,19 @@ export default async function Home() {
           </SectionWrapper>
         </div>
       </section>
-      {/* قسم المشاريع */}
+
       <section id="projects" className="relative bg-background pt-20 pb-16">
-        {/* 1. فاصل المنحنى الأنيق */}
         <div className="[&>svg>path]:fill-slate-50 dark:[&>svg>path]:fill-slate-900/50">
           <ElegantCurveDivider />
         </div>
-
-        {/* 2. محتوى القسم مع غلاف الحركة الخاص بك */}
         <div className="relative z-10">
           <SectionWrapper delay={0.2}>
             <ProjectsSection />
           </SectionWrapper>
         </div>
       </section>
+
       <HomeSections />
     </main>
   );
 }
-
-// {
-//   "data": {
-//     "pages": {
-//       "nodes": [
-//         {
-//           "slug": "sitemap",
-//           "uri": "/sitemap/"
-//         },
-//         {
-//           "slug": "سياسة-الخصوصية",
-//           "uri": "/سياسة-الخصوصية/"
-//         },
-//         {
-//           "slug": "شروط-استخدام-الموقع-2",
-//           "uri": "/شروط-استخدام-الموقع-2/"
-//         },
-//         {
-//           "slug": "مظلات-منازل",
-//           "uri": "/مظلات-منازل/"
-//         },
-//         {
-//           "slug": "سواتر-شرائح-حديد",
-//           "uri": "/سواتر-شرائح-حديد/"
-//         },
-//         {
-//           "slug": "سواتر-لكسان",
-//           "uri": "/سواتر-لكسان/"
-//         },
-//         {
-//           "slug": "مظلات-محلات",
-//           "uri": "/مظلات-محلات/"
-//         },
-//         {
-//           "slug": "مظلات-قرميد",
-//           "uri": "/مظلات-قرميد/"
-//         },
-//         {
-//           "slug": "مظلات-مسابح",
-//           "uri": "/مظلات-مسابح/"
-//         },
-//         {
-//           "slug": "مظلات-مدارس",
-//           "uri": "/مظلات-مدارس/"
-//         },
-//         {
-//           "slug": "سواتر-خشبية",
-//           "uri": "/سواتر-خشبية/"
-//         },
-//         {
-//           "slug": "مظلات-الشد-الانشائي",
-//           "uri": "/مظلات-الشد-الانشائي/"
-//         },
-//         {
-//           "slug": "برجولات-حدائق",
-//           "uri": "/برجولات-حدائق/"
-//         },
-//         {
-//           "slug": "مظلات-بي-في-سي",
-//           "uri": "/مظلات-بي-في-سي/"
-//         },
-//         {
-//           "slug": "مظلات-قماش",
-//           "uri": "/مظلات-قماش/"
-//         },
-//         {
-//           "slug": "مظلات-سيارات-حديد",
-//           "uri": "/مظلات-سيارات-حديد/"
-//         },
-//         {
-//           "slug": "مظلات-برجولات",
-//           "uri": "/مظلات-برجولات/"
-//         },
-//         {
-//           "slug": "مظلات-خارجية-للمنازل",
-//           "uri": "/مظلات-خارجية-للمنازل/"
-//         },
-//         {
-//           "slug": "مظلات-حدائق-منزلية",
-//           "uri": "/مظلات-حدائق-منزلية/"
-//         },
-//         {
-//           "slug": "قماش-مظلات",
-//           "uri": "/قماش-مظلات/"
-//         },
-//         {
-//           "slug": "مظلات-لكسان",
-//           "uri": "/مظلات-لكسان/"
-//         },
-//         {
-//           "slug": "سواتر-حديد",
-//           "uri": "/سواتر-حديد/"
-//         },
-//         {
-//           "slug": "برجولات-حديد",
-//           "uri": "/برجولات-حديد/"
-//         },
-//         {
-//           "slug": "مظلات-حديد",
-//           "uri": "/مظلات-حديد/"
-//         },
-//         {
-//           "slug": "مظلات-خشبية",
-//           "uri": "/مظلات-خشبية/"
-//         },
-//         {
-//           "slug": "مظلات-جلسات",
-//           "uri": "/مظلات-جلسات/"
-//         },
-//         {
-//           "slug": "سواتر-قماش",
-//           "uri": "/سواتر-قماش/"
-//         },
-//         {
-//           "slug": "مظلات-سيارات-متحركة",
-//           "uri": "/مظلات-سيارات-متحركة/"
-//         },
-//         {
-//           "slug": "مظلات-متحركة",
-//           "uri": "/مظلات-متحركة/"
-//         },
-//         {
-//           "slug": "مظلات-حدائق",
-//           "uri": "/مظلات-حدائق/"
-//         },
-//         {
-//           "slug": "مظلات-سيارات",
-//           "uri": "/مظلات-سيارات/"
-//         },
-//         {
-//           "slug": "تركيب-مظلات-جدة",
-//           "uri": "/تركيب-مظلات-جدة/"
-//         },
-//         {
-//           "slug": "تركيب-مظلات-الأحساء",
-//           "uri": "/تركيب-مظلات-الأحساء/"
-//         },
-//         {
-//           "slug": "تركيب-سواتر-حديد",
-//           "uri": "/تركيب-سواتر-حديد/"
-//         },
-//         {
-//           "slug": "تركيب-سندوش-بنل",
-//           "uri": "/تركيب-سندوش-بنل/"
-//         },
-//         {
-//           "slug": "تركيب-مظلات-خارجية",
-//           "uri": "/تركيب-مظلات-خارجية/"
-//         },
-//         {
-//           "slug": "تركيب-مظلات-متحركة",
-//           "uri": "/تركيب-مظلات-متحركة/"
-//         },
-//         {
-//           "slug": "تركيب-سواتر-ابواب",
-//           "uri": "/تركيب-سواتر-ابواب/"
-//         },
-//         {
-//           "slug": "تركيب-جلسات-خارجية",
-//           "uri": "/تركيب-جلسات-خارجية/"
-//         },
-//         {
-//           "slug": "تركيب-قماش-مظلات-2",
-//           "uri": "/تركيب-قماش-مظلات-2/"
-//         },
-//         {
-//           "slug": "تركيب-مظلات-حدائق",
-//           "uri": "/تركيب-مظلات-حدائق/"
-//         },
-//         {
-//           "slug": "تفصيل-مظلة-للسيارة",
-//           "uri": "/تفصيل-مظلة-للسيارة/"
-//         },
-//         {
-//           "slug": "تركيب-مظلات-مدارس",
-//           "uri": "/تركيب-مظلات-مدارس/"
-//         },
-//         {
-//           "slug": "تركيب-قماش-مظلات",
-//           "uri": "/تركيب-قماش-مظلات/"
-//         },
-//         {
-//           "slug": "تركيب-برجولات",
-//           "uri": "/تركيب-برجولات/"
-//         },
-//         {
-//           "slug": "تركيب-لكسان",
-//           "uri": "/تركيب-لكسان/"
-//         },
-//         {
-//           "slug": "تركيب-مظلات-سيارات",
-//           "uri": "/تركيب-مظلات-سيارات/"
-//         },
-//         {
-//           "slug": "تركيب-مظلات-وسواتر",
-//           "uri": "/تركيب-مظلات-وسواتر/"
-//         },
-//         {
-//           "slug": "تركيب-سواتر",
-//           "uri": "/تركيب-سواتر/"
-//         },
-//         {
-//           "slug": "تركيب-مظلات",
-//           "uri": "/تركيب-مظلات/"
-//         },
-//         {
-//           "slug": "تركيب-مظلات-الدمام",
-//           "uri": "/تركيب-مظلات-الدمام/"
-//         },
-//         {
-//           "slug": "شركة-عمل-سواتر-ومظلات",
-//           "uri": "/شركة-عمل-سواتر-ومظلات/"
-//         },
-//         {
-//           "slug": "شركة-تركيب-السواتر-والمظلات",
-//           "uri": "/شركة-تركيب-السواتر-والمظلات/"
-//         },
-//         {
-//           "slug": "العزيزية-للمظلات-والسواتر",
-//           "uri": "/"
-//         }
-//       ]
-//     }
-//   },
-//   "extensions": {
-//     "debug": [
-//       {
-//         "type": "DEBUG_LOGS_INACTIVE",
-//         "message": "GraphQL Debug logging is not active. To see debug logs, GRAPHQL_DEBUG must be enabled."
-//       }
-//     ]
-//   }
-// }

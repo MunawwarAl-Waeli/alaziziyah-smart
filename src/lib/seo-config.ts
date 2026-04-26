@@ -21,7 +21,6 @@ export const siteConfig = {
     "مظلات مسابح",
     "هناجر",
     "جدة",
-    
   ],
   twitterHandle: "@alazizia",
   locale: "ar_SA",
@@ -109,11 +108,10 @@ export function generateMetadata({
   };
 }
 
-// دالة لإنشاء JSON-LD للمنظمة
 export function organizationSchema() {
   return {
     "@context": "https://schema.org",
-    "@type": "Organization",
+    "@type": "Organization", // أو HomeAndConstructionBusiness كما في الكود السابق
     name: siteConfig.name,
     url: siteConfig.url,
     logo: `${siteConfig.url}/icon.png`,
@@ -122,14 +120,16 @@ export function organizationSchema() {
       "@type": "PostalAddress",
       streetAddress: "حي النخيل",
       addressLocality: "جدة",
-      addressRegion: "المنطقة الشرقية",
+      addressRegion: "منطقة مكة المكرمة", // تم التعديل هنا بدلاً من الشرقية
       postalCode: "32415",
       addressCountry: "SA",
     },
+    // يفضل إضافة الهاتف هنا أيضاً مباشرة لحل تحذير جوجل
+    telephone: "+966530989975",
     contactPoint: [
       {
         "@type": "ContactPoint",
-        telephone: "+966 53 098 9975",
+        telephone: "+966530989975",
         contactType: "customer service",
         availableLanguage: ["Arabic", "English"],
       },
@@ -210,41 +210,53 @@ export function articleSchema({
     articleSection: category,
   };
 }
+export function breadcrumbSchema(path: string) {
+  const segments = path.split("/").filter((s) => s);
+  const items = segments.map((segment, index) => ({
+    "@type": "ListItem",
+    position: index + 2, // 1 محجوز للرئيسية
+    name: decodeURIComponent(segment).replace(/-/g, " "),
+    item: `${siteConfig.url}/${segments.slice(0, index + 1).join("/")}`,
+  }));
 
-// دالة لإنشاء JSON-LD للخدمة
-export function serviceSchema({
-  name,
-  description,
-  image,
-  category,
-  offers,
-}: {
-  name: string;
-  description: string;
-  image: string;
-  category: string;
-  offers?: {
-    price: string;
-    priceCurrency: string;
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "الرئيسية",
+        item: siteConfig.url,
+      },
+      ...items,
+    ],
   };
-}) {
+}
+
+// أضف ratingValue و reviewCount للمتغيرات
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function serviceSchema({ name, description, image, category, ratingValue, reviewCount }: any) {
   return {
     "@context": "https://schema.org",
     "@type": "Service",
-    name: name,
-    description: description,
-    image: image,
-    serviceType: category,
+    name,
+    description,
+    image,
     provider: {
-      "@type": "Organization",
+      "@type": "LocalBusiness", // تغيير النوع هنا يعطي قوة أكبر للخدمات المحلية
       name: siteConfig.name,
+      image: image, // يحل التحذير الأصفر الخاص بالصورة
+      telephone: "+966530989975"
     },
-    ...(offers && {
-      offers: {
-        "@type": "Offer",
-        price: offers.price,
-        priceCurrency: offers.priceCurrency,
-      },
-    }),
+    // إذا مررت تقييمات، ستظهر النجوم في جوجل لهذه الخدمة
+    ...(ratingValue && {
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: ratingValue,
+        reviewCount: reviewCount,
+      }
+    })
   };
 }
+
