@@ -71,12 +71,12 @@ export default async function PostPage({ params }: PostPageProps) {
   const jsonLd = articleSchema({
     title: post.title,
     description: post.excerpt, // أو الوصف المختصر للمقال
-    image: `https://al-azizia.com${post.coverImage}`,
+    image: `https://www.al-azizia.com${post.coverImage}`,
     publishedTime: post.date,
     modifiedTime: post.date, // أو تاريخ التعديل إن وجد
     category: post.category.name,
     authors: ["شركة العزيزية"],
-    url: `https://al-azizia.com/blog/${post.slug}`,
+    url: `https://www.al-azizia.com/blog/${post.slug}`,
   });
   const prevPost = currentIndex > 0 ? blogPosts[currentIndex - 1] : null;
   const nextPost =

@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       project.seo?.metaDesc ||
       `تفاصيل وصور مشروع ${project.title} المنفذ بأعلى معايير الجودة.`,
     alternates: {
-      canonical: `https://al-azizia.com/projects/${cleanSlug}`,
+      canonical: `https://www.al-azizia.com/projects/${cleanSlug}`,
     },
     openGraph: {
       title: project.title,
@@ -73,13 +73,13 @@ export default async function ProjectPage({ params }: Props) {
       project.seo?.metaDesc || `مشروع تنفيذ ${project.title} من شركة العزيزية`,
     image:
       project.featuredImage?.node?.sourceUrl ||
-      "https://al-azizia.com/icon.png",
+      "https://www.al-azizia.com/icon.png",
     publishedTime: project.date || new Date().toISOString(),
     authors: ["شركة العزيزية"],
     category: "مشاريع المظلات والسواتر",
     // 👇 السطرين الإضافيين لحل الخطأ 👇
     modifiedTime: project.date, // يمكنك استخدام نفس تاريخ النشر إذا لم يوجد تاريخ تعديل
-    url: `https://al-azizia.com/projects/${project.slug}`, // تأكد من وضع رابط المشروع هنا
+    url: `https://www.al-azizia.com/projects/${project.slug}`, // تأكد من وضع رابط المشروع هنا
   });
 
   return (

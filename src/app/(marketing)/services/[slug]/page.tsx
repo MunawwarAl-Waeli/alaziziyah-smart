@@ -64,7 +64,7 @@ export default async function ServiceDetailPage({ params }: Props) {
       service.content?.replace(/<[^>]*>?/gm, "").slice(0, 160),
     image:
       service.featuredImage?.node?.sourceUrl ||
-      "https://al-azizia.com/icon.png",
+      "https://www.al-azizia.com/icon.png",
     category: service.serviceCategories?.nodes[0]?.name || "مظلات وسواتر",
     ratingValue: "4.9", // القيمة التي ظهرت في اختبارك
     reviewCount: "500", // القيمة التي ظهرت في اختبارك

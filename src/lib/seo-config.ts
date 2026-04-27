@@ -3,8 +3,8 @@ import { Metadata } from "next";
 // بيانات عامة للموقع
 export const siteConfig = {
   name: "العزيزية للمظلات والسواتر",
-  url: "https://al-azizia.com",
-  ogImage: "https://al-azizia.com/icon.png",
+  url: "https://www.al-azizia.com",
+  ogImage: "https://www.al-azizia.com/icon.png",
   description:
     "شركة رائدة في تركيب المظلات والسواتر والبرجولات في المملكة العربية السعودية",
   keywords: [

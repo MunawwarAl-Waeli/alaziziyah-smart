@@ -16,6 +16,10 @@ const cairo = Cairo({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.al-azizia.com"),
+  alternates: {
+    canonical: "https://www.al-azizia.com",
+  },
   title: "العزيزية للمظلات والسواتر",
   description:
     "مؤسسة العزيزية: الخيار الأول لتركيب مظلات السيارات، السواتر، والبرجولات بالسعودية. نوفر مظلات حدائق، مسابح، لكسان وساندوتش بانل بأفضل الخامات وضمان معتمد.",

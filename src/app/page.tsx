@@ -6,7 +6,6 @@ import { KeywordsMarquee } from "@/components/layout/KeywordsMarquee";
 import { HomeSections } from "@/components/HomeSections";
 import { SectionWrapper } from "@/components/layout/SectionWrapper";
 import { Metadata } from "next";
-import { SoftWavesDivider } from "@/components/ui/SoftWavesDivider";
 import { ElegantCurveDivider } from "@/components/ui/ElegantCurveDivider";
 
 // استيراد الإعدادات الموحدة التي أنشأناها سابقاً
@@ -91,18 +90,18 @@ export async function generateMetadata(): Promise<Metadata> {
     "شركة العزيزية للمظلات والسواتر: متخصصون في تركيب مظلات سيارات، سواتر حديد، برجولات حدائق، هناجر ومستودعات، وأعمال الشد الإنشائي في جدة والمملكة.";
 
   // الرابط المباشر للصورة التي تريدها أن تظهر في جوجل (يفضل أن تكون صورة واجهة مميزة)
-  const ogImage = "https://al-azizia.com/main-project-image.jpg";
+  const ogImage = "https://www.al-azizia.com/main-project-image.jpg";
 
   return {
     title: `${title} | الخيار الأول للمظلات والسواتر`,
     description: description,
     alternates: {
-      canonical: "https://al-azizia.com", // ضروري جداً لمنع تكرار المحتوى
+      canonical: "https://www.al-azizia.com", // ضروري جداً لمنع تكرار المحتوى
     },
     openGraph: {
       title: title,
       description: description,
-      url: "https://al-azizia.com",
+      url: "https://www.al-azizia.com",
       siteName: siteConfig.name,
       images: [
         {
