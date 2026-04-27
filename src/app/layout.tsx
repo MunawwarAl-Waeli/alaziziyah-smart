@@ -4,7 +4,7 @@ import { Header } from "@/components/layout/header";
 import { ThemeProvider } from "@/components/theme/provider";
 import { Footer } from "@/components/layout/footer";
 import { FloatingChat } from "@/components/FloatingChat";
-import { GoogleAnalytics } from "@next/third-parties/google";
+import { GoogleTagManager } from "@next/third-parties/google";
 import { getAllProjects, getGlobalData, getWPData } from "@/lib/api";
 import { JsonLd } from "@/components/seo/JsonLd";
 
@@ -77,7 +77,7 @@ export default async function RootLayout({
         </ThemeProvider>
         <FloatingChat />
       </body>
-      <GoogleAnalytics gaId="G-RVTGES597T" />
+      <GoogleTagManager gtmId="GTM-N62SKLV6" />
     </html>
   );
 }

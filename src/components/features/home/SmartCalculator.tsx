@@ -272,6 +272,30 @@ export function SmartCalculator() {
       <SoftWavesDivider />
 
       <div className="container mx-auto px-4 relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-10 md:mb-12 max-w-3xl mx-auto"
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-4 md:mb-6">
+            <Calculator className="w-4 h-4 text-primary" />
+            <span className="text-primary text-sm font-bold">
+              حاسبة التكلفة
+            </span>
+          </div>
+          <h2 className="text-3xl md:text-5xl lg:text-6xl font-black mb-4 md:mb-6 text-foreground">
+            احسب تكلفة{" "}
+            <span className="text-transparent bg-clip-text bg-gradient-to-l from-primary to-primary-dark">
+              مشروعك
+            </span>
+          </h2>
+          <p className="text-muted-foreground text-base md:text-lg leading-relaxed px-2">
+            احصل على تقدير فوري لتكلفة مشروع المظلة أو الساتر أو البرجولة في
+            دقائق
+          </p>
+        </motion.div>
         <div ref={calculatorTopRef} className="scroll-mt-24"></div>
 
         {/* شريط التقدم الصغير */}

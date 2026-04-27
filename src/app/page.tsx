@@ -147,9 +147,9 @@ export default async function Home() {
 
       <section
         id="services"
-        className="relative bg-slate-50 dark:bg-slate-900/50 pt-20 pb-16"
+        className="relative bg-slate-50 dark:bg-slate-900/50 pt-20 pb-2"
       >
-        <SoftWavesDivider />
+      
         <div className="relative z-10">
           <SectionWrapper delay={0}>
             <KeywordsMarquee />
