@@ -35,7 +35,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // 3. تحويل بيانات الخدمات إلى صيغة Sitemap
   const servicePages = services.map((service) => ({
-    url: `${baseUrl}/services/${service.slug}`,
+    url: `${baseUrl}/services/${encodeURIComponent(service.slug)}`,
     // نستخدم تاريخ اليوم كقيمة افتراضية (انظر الملاحظة بالأسفل لتحسينها)
     lastModified: new Date(),
     changeFrequency: "weekly" as const,
@@ -44,17 +44,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // 4. تحويل بيانات المشاريع إلى صيغة Sitemap
   const projectPages = projects.map((project) => ({
-    url: `${baseUrl}/projects/${project.slug}`,
+    url: `${baseUrl}/projects/${encodeURIComponent(project.slug)}`,
     lastModified: new Date(),
     changeFrequency: "monthly" as const,
     priority: 0.9,
   }));
 
-// 5. تحويل بيانات مقالات المدونة الثابتة إلى صيغة Sitemap
+  // 5. تحويل بيانات مقالات المدونة الثابتة إلى صيغة Sitemap
   const blogPages = blogPosts.map((post) => ({
     url: `${baseUrl}/blog/${post.slug}`,
     // نستخدم تاريخ المقالة الفعلي لتخبر جوجل بآخر تحديث لها
-    lastModified: new Date(post.date), 
+    lastModified: new Date(post.date),
     changeFrequency: "weekly" as const,
     priority: 0.7,
   }));

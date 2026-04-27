@@ -147,7 +147,7 @@ export default async function Home() {
 
       <section
         id="services"
-        className="relative bg-slate-50 dark:bg-slate-900/50 pt-20 pb-2"
+        className="relative bg-slate-50 dark:bg-slate-900/50 pt-2 pb-2"
       >
       
         <div className="relative z-10">
