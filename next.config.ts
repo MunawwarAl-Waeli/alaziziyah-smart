@@ -20,7 +20,7 @@ const nextConfig = {
   // output: "export",
   images: {
     // 💡 السر هنا: إيقاف التحسين فقط في بيئة التطوير لتجاوز حظر Localhost
-    unoptimized:process.env.NODE_ENV === "development",
+    unoptimized: process.env.NODE_ENV === "development",
     // نستخدم remotePatterns بدلاً من domains لأنها تدعم تحديد البورت (8080) بشكل صحيح
     remotePatterns: [
       {
@@ -46,25 +46,34 @@ const nextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     minimumCacheTTL: 60,
   },
-   // تفعيل ضغط الملفات لتسريع الموقع
+  // تفعيل ضغط الملفات لتسريع الموقع
   compress: true,
-  
+
   // ترويسات الأمان المطلوبة من Lighthouse
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: "/(.*)",
         headers: [
-          { key: 'X-Frame-Options', value: 'DENY' },
-          { key: 'X-Content-Type-Options', value: 'nosniff' },
-          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-          { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=63072000; includeSubDomains; preload",
+          },
         ],
       },
     ];
   },
   async redirects() {
     return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "al-azizia.com" }],
+        destination: "https://www.al-azizia.com/:path*",
+        permanent: true,
+      },
       // ==========================================
       // 1. قسم الخدمات (الروابط التي تبدأ بـ "تركيب")
       // ==========================================
