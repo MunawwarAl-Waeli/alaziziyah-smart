@@ -77,6 +77,9 @@ export default async function ProjectPage({ params }: Props) {
     publishedTime: project.date || new Date().toISOString(),
     authors: ["شركة العزيزية"],
     category: "مشاريع المظلات والسواتر",
+    // 👇 السطرين الإضافيين لحل الخطأ 👇
+    modifiedTime: project.date, // يمكنك استخدام نفس تاريخ النشر إذا لم يوجد تاريخ تعديل
+    url: `https://al-azizia.com/projects/${project.slug}`, // تأكد من وضع رابط المشروع هنا
   });
 
   return (
