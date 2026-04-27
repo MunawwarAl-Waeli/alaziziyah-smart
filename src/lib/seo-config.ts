@@ -20,6 +20,12 @@ export const siteConfig = {
     "مظلات مدارس",
     "مظلات مسابح",
     "هناجر",
+    "قرميد",
+    "سواتر ابواب",
+    "شركة تركيب مظلات",
+    "بيوت شعر",
+    "العزيزية",
+    "تركيب pvc",
     "جدة",
   ],
   twitterHandle: "@alazizia",
@@ -173,15 +179,19 @@ export function articleSchema({
   description,
   image,
   publishedTime,
+  modifiedTime,
   authors,
   category,
+  url,
 }: {
   title: string;
   description: string;
   image: string;
   publishedTime: string;
+  modifiedTime: string;
   authors: string[];
   category: string;
+  url: string;
 }) {
   return {
     "@context": "https://schema.org",
@@ -190,7 +200,7 @@ export function articleSchema({
     description: description,
     image: image,
     datePublished: publishedTime,
-    dateModified: publishedTime,
+    dateModified: modifiedTime || publishedTime,
     author: authors.map((author) => ({
       "@type": "Person",
       name: author,
@@ -205,7 +215,7 @@ export function articleSchema({
     },
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": siteConfig.url,
+      "@id": url,
     },
     articleSection: category,
   };
@@ -234,29 +244,44 @@ export function breadcrumbSchema(path: string) {
   };
 }
 
-// أضف ratingValue و reviewCount للمتغيرات
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function serviceSchema({ name, description, image, category, ratingValue, reviewCount }: any) {
+// تعريف أنواع البيانات بدلاً من استخدام any
+interface ServiceSchemaProps {
+  name: string;
+  description: string;
+  image: string;
+  category?: string;
+  ratingValue?: number | string;
+  reviewCount?: number | string;
+}
+
+export function serviceSchema({
+  name,
+  description,
+  image,
+  category,
+  ratingValue,
+  reviewCount,
+}: ServiceSchemaProps) {
   return {
     "@context": "https://schema.org",
-    "@type": "Service",
+    "@type": "Product",
     name,
     description,
     image,
-    provider: {
-      "@type": "LocalBusiness", // تغيير النوع هنا يعطي قوة أكبر للخدمات المحلية
+    ...(category && { category }), // استخدمنا الـ category هنا بشكل صحيح
+    brand: {
+      "@type": "LocalBusiness",
       name: siteConfig.name,
-      image: image, // يحل التحذير الأصفر الخاص بالصورة
-      telephone: "+966530989975"
+      image: image,
+      telephone: "+966530989975",
     },
-    // إذا مررت تقييمات، ستظهر النجوم في جوجل لهذه الخدمة
-    ...(ratingValue && {
-      aggregateRating: {
-        "@type": "AggregateRating",
-        ratingValue: ratingValue,
-        reviewCount: reviewCount,
-      }
-    })
+    ...(ratingValue &&
+      reviewCount && {
+        aggregateRating: {
+          "@type": "AggregateRating",
+          ratingValue: Number(ratingValue), // تحويل صريح لرقم لضمان قراءة جوجل له
+          reviewCount: Number(reviewCount),
+        },
+      }),
   };
 }
-

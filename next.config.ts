@@ -347,9 +347,7 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === "production",
   },
 };
-// تغليف الإعدادات وتصديرها
-// module.exports = withPWA(nextConfig);
-// تغليف الإعدادات وتصديرها
+
 export default withPWA(nextConfig);
 // module.exports = nextConfig;
 
