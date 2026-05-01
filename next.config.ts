@@ -68,12 +68,12 @@ const nextConfig = {
   },
   async redirects() {
     return [
-      {
-        source: "/:path*",
-        has: [{ type: "host", value: "al-azizia.com" }],
-        destination: "https://www.al-azizia.com/:path*",
-        permanent: true,
-      },
+      // {
+      //   source: "/:path*",
+      //   has: [{ type: "host", value: "al-azizia.com" }],
+      //   destination: "https://www.al-azizia.com/:path*",
+      //   permanent: true,
+      // },
       // ==========================================
       // 1. قسم الخدمات (الروابط التي تبدأ بـ "تركيب")
       // ==========================================
