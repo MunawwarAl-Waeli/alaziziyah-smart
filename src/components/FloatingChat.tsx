@@ -38,9 +38,10 @@ import {
   Umbrella,
   PenTool,
   LucideIcon,
+  Briefcase,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getAllServices } from "@/lib/api";
+import { getAllProjects, getAllServices } from "@/lib/api";
 import { useMediaQuery } from "@/hooks/use-media-query";
 
 // ==================== أنواع الرسائل ====================
@@ -127,7 +128,6 @@ const botResponses = [
 // نحدد نوع الإرجاع كـ LucideIcon بدلاً من string
 export const getServiceIcon = (text: string): LucideIcon => {
   const lowerText = text.toLowerCase();
-
   if (lowerText.includes("سيارات")) return CarFront;
   if (lowerText.includes("مسابح")) return Waves;
   if (lowerText.includes("مدارس") || lowerText.includes("محلات"))
@@ -151,8 +151,6 @@ export const getServiceIcon = (text: string): LucideIcon => {
   if (lowerText.includes("حديد") || lowerText.includes("ساندوتش"))
     return Warehouse;
   if (lowerText.includes("مظلات")) return Umbrella;
-
-  // الأيقونة الافتراضية لأي خدمة غير مصنفة أعلاه
   return PenTool;
 };
 
@@ -190,39 +188,66 @@ export function FloatingChat() {
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [showQuickReplies, setShowQuickReplies] = useState(true);
-  const [showEmoji, setShowEmoji] = useState(false);
+  // const [showEmoji, setShowEmoji] = useState(false);
   const [agentOnline, setAgentOnline] = useState(true);
   const [waitTime, setWaitTime] = useState(2);
   const [activeUsers, setActiveUsers] = useState(5);
   const [unreadCount, setUnreadCount] = useState(1);
-  const [hasScrolled, setHasScrolled] = useState(false);
+  // const [hasScrolled, setHasScrolled] = useState(false);
   const [showServicesMenu, setShowServicesMenu] = useState(false);
   // const [isMobile, setIsMobile] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [searchTerm, setSearchTerm] = useState("");
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [servicesList, setServicesList] = useState<any[]>([]);
-  const [isLoadingServices, setIsLoadingServices] = useState(true);
+  // 💡 حالة فتح القائمة المدمجة
+  const [showCombinedMenu, setShowCombinedMenu] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
-  // تحميل الخدمات
+  // 💡 مصفوفة واحدة تضم الخدمات والمشاريع معاً
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [combinedList, setCombinedList] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // 💡 جلب البيانات ودمجها في مصفوفة واحدة
   useEffect(() => {
-    async function fetchServices() {
+    async function fetchAllData() {
       try {
-        const data = await getDynamicServicesList();
-        setServicesList(data);
+        setIsLoading(true);
+
+        // جلب الخدمات وتحديد نوعها
+        const services = await getAllServices();
+        const formattedServices = services.map((s) => ({
+          id: `service-${s.id || s.slug}`,
+          name: s.title,
+          href: `/services/${s.slug}`,
+          type: "service", // 👈 تحديد النوع لمعرفة الأيقونة لاحقاً
+        }));
+
+        // جلب المشاريع وتحديد نوعها
+        const projects = await getAllProjects();
+        const formattedProjects = projects.map((p) => ({
+          id: `project-${p.slug}`,
+          name: p.title,
+          href: `/projects/${p.slug}`,
+          type: "project", // 👈 تحديد النوع لمعرفة الأيقونة لاحقاً
+        }));
+
+        // دمج المصفوفتين معاً
+        setCombinedList([...formattedServices, ...formattedProjects]);
       } catch (error) {
-        console.error("Failed to load services:", error);
+        console.error("Failed to load data:", error);
       } finally {
-        setIsLoadingServices(false);
+        setIsLoading(false);
       }
     }
-    fetchServices();
+    fetchAllData();
+    setMounted(true);
   }, []);
 
-  const filteredServices = servicesList.filter((service) =>
-    service.name.includes(searchTerm),
+  // 💡 فلترة المصفوفة المدمجة بناءً على البحث
+  const filteredList = combinedList.filter((item) =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
   const isMobile = useMediaQuery("(max-width: 767px)");
   useEffect(() => {
@@ -365,7 +390,7 @@ export function FloatingChat() {
           {/* الشريط السفلي */}
           <div className="flex items-center justify-around py-2 px-3">
             <button
-              onClick={() => setShowServicesMenu(!showServicesMenu)}
+              onClick={() => setShowCombinedMenu(!showCombinedMenu)}
               className="flex flex-col items-center gap-1 text-muted-foreground hover:text-amber-600 transition-colors"
             >
               <Grid3x3 className="w-6 h-6" />
@@ -403,78 +428,97 @@ export function FloatingChat() {
             </a>
           </div>
 
-          {/* قائمة الخدمات (Bottom Sheet) */}
+          {/* 💡 القائمة المدمجة (الخدمات + المشاريع معاً) */}
           <AnimatePresence>
-            {showServicesMenu && (
+            {showCombinedMenu && (
               <>
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  onClick={() => setShowServicesMenu(false)}
-                  className="fixed inset-0 bg-black/60 z-50"
+                  onClick={() => setShowCombinedMenu(false)}
+                  className="fixed inset-0 bg-black/60 z-50 backdrop-blur-sm"
                 />
                 <motion.div
                   initial={{ y: "100%" }}
                   animate={{ y: 0 }}
                   exit={{ y: "100%" }}
-                  transition={{ type: "spring", damping: 30, stiffness: 300 }}
-                  className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-slate-900 rounded-t-3xl shadow-xl max-h-[85vh] overflow-hidden flex flex-col"
+                  transition={{ type: "spring", damping: 25, stiffness: 300 }}
+                  className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-slate-900 rounded-t-3xl shadow-2xl max-h-[85vh] h-[80vh] flex flex-col"
                   dir="rtl"
                 >
-                  <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mt-3" />
-                  <div className="flex justify-between items-center p-4 border-b border-border/50">
-                    <h3 className="text-xl font-bold">جميع الخدمات</h3>
+                  <div className="w-12 h-1.5 bg-gray-300 dark:bg-slate-700 rounded-full mx-auto mt-4" />
+                  <div className="flex justify-between items-center p-5 border-b border-border/50">
+                    <h3 className="text-xl font-black text-foreground">
+                      الخدمات والمشاريع
+                    </h3>
                     <button
-                      onClick={() => setShowServicesMenu(false)}
-                      className="p-2 rounded-full hover:bg-slate-100"
+                      onClick={() => setShowCombinedMenu(false)}
+                      className="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-muted-foreground"
                     >
                       <X className="w-6 h-6" />
                     </button>
                   </div>
                   <div className="p-4 pb-2">
                     <div className="relative">
-                      <Search className="absolute right-3 top-3 w-5 h-5 text-muted-foreground" />
+                      <Search className="absolute right-4 top-3.5 w-5 h-5 text-muted-foreground" />
                       <input
                         type="text"
-                        placeholder="ابحث عن خدمة..."
+                        placeholder="ابحث هنا..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full p-3 pr-10 rounded-xl bg-slate-100 dark:bg-slate-800 border-none focus:ring-2 focus:ring-amber-500"
+                        className="w-full p-3.5 pr-12 rounded-2xl bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all font-medium"
                       />
                     </div>
                   </div>
-                  <div className="flex-1 overflow-y-auto p-4 pt-2">
-                    <div className="grid grid-cols-2 gap-3">
-                      {filteredServices.map((service) => {
-                        // 1. تحويل مرجع الأيقونة إلى مكون يمكن لـ React قراءته
-                        const IconComponent = service.icon;
+                  <div className="flex-1 overflow-y-auto p-4 pt-2 no-scrollbar">
+                    {isLoading ? (
+                      <div className="flex items-center justify-center h-40">
+                        <div className="w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full animate-spin" />
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-2 gap-3">
+                        {filteredList.map((item) => {
+                          // 💡 إذا كان مشروع نضع له أيقونة حقيبة، وإذا كان خدمة نجلب أيقونته الديناميكية
+                          const IconComponent =
+                            item.type === "project"
+                              ? Briefcase
+                              : getServiceIcon(item.name);
 
-                        return (
-                          <button
-                            key={service.id}
-                            onClick={() => {
-                              setShowServicesMenu(false);
-                              window.location.href = service.href;
-                            }}
-                            className="flex flex-col items-center gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-transparent hover:border-amber-200 hover:bg-amber-50 dark:hover:bg-slate-800/80 transition-all text-center group shadow-sm"
-                          >
-                            {/* 2. تصميم الدائرة المحيطة بالأيقونة */}
-                            <div className="w-12 h-12 rounded-full bg-white dark:bg-slate-700 flex items-center justify-center shadow-sm border border-slate-100 dark:border-slate-600 group-hover:bg-amber-100 dark:group-hover:bg-amber-500/20 group-hover:border-amber-200 transition-colors duration-300">
-                              {/* 3. استدعاء الأيقونة مع إعطائها ألوان تتغير عند التمرير */}
-                              <IconComponent className="w-6 h-6 text-slate-500 dark:text-slate-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors" />
-                            </div>
-                            <span className="text-sm font-bold text-slate-700 dark:text-slate-300 group-hover:text-amber-600 dark:group-hover:text-amber-400 line-clamp-2 transition-colors">
-                              {service.name}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                    {filteredServices.length === 0 && (
-                      <div className="text-center py-10 text-muted-foreground flex flex-col items-center gap-3">
-                        <Search className="w-8 h-8 text-slate-300 dark:text-slate-600" />
-                        <span>لا توجد خدمات مطابقة</span>
+                          return (
+                            <button
+                              key={item.id}
+                              onClick={() => {
+                                setShowCombinedMenu(false);
+                                window.location.href = item.href;
+                              }}
+                              className="flex flex-col items-center gap-3 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-border/50 hover:border-amber-500/50 hover:bg-amber-50 dark:hover:bg-slate-800 transition-all text-center group shadow-sm relative overflow-hidden"
+                            >
+                              {/* علامة صغيرة تميز المشروع عن الخدمة */}
+                              {item.type === "project" && (
+                                <span className="absolute top-0 right-0 bg-blue-500 text-white text-[8px] px-2 py-0.5 rounded-bl-lg font-bold">
+                                  اعمالنا
+                                </span>
+                              )}
+
+                              <div className="w-12 h-12 rounded-2xl bg-white dark:bg-slate-700 flex items-center justify-center shadow-sm border border-slate-100 dark:border-slate-600 group-hover:bg-amber-100 dark:group-hover:bg-amber-500/20 group-hover:border-amber-200 transition-colors duration-300">
+                                <IconComponent className="w-6 h-6 text-slate-500 dark:text-slate-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors" />
+                              </div>
+                              <span className="text-xs font-bold text-slate-700 dark:text-slate-300 group-hover:text-amber-600 dark:group-hover:text-amber-400 line-clamp-2 transition-colors">
+                                {item.name}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {!isLoading && filteredList.length === 0 && (
+                      <div className="text-center py-16 text-muted-foreground flex flex-col items-center gap-3">
+                        <Search className="w-10 h-10 text-slate-300 dark:text-slate-600 opacity-50" />
+                        <span className="font-medium">
+                          لا توجد نتائج مطابقة لبحثك
+                        </span>
                       </div>
                     )}
                   </div>

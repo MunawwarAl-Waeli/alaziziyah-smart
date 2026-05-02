@@ -4,32 +4,10 @@
 import { useRef, useState, useEffect } from "react";
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
-import {
-  Sparkles,
-  Shield,
-  Award,
-  Star,
-  LayoutGrid,
-  ArrowUpRight,
-} from "lucide-react";
+import { Sparkles, LayoutGrid, ArrowUpRight } from "lucide-react";
 import { ServiceItem } from "@/lib/api";
 import { ServiceCard } from "../services/services-card";
 import { SoftWavesDivider } from "../ui/SoftWavesDivider";
-
-// ==========================================
-// دالة مساعدة لإنشاء نقاط بقيم ثابتة
-// ==========================================
-const generateParticles = (count: number = 20) => {
-  return Array.from({ length: count }).map((_, i) => ({
-    id: i,
-    // استخدام قيم محسوبة من الـ index لتجنب Math.random()
-    x: ((i * 73) % 2000) - 1000,
-    y: ((i * 37) % 2000) - 1000,
-    moveX: ((i * 13) % 100) - 50,
-    moveY: ((i * 17) % 100) - 50,
-    duration: 15 + (i % 15),
-  }));
-};
 
 // ==========================================
 // المكون الرئيسي (Client Component)
@@ -48,7 +26,6 @@ export function ServicesGridClient({
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, { once: true, amount: 0.1 });
   const [mounted, setMounted] = useState(false);
-  const [particles] = useState(() => generateParticles(20));
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -80,7 +57,6 @@ export function ServicesGridClient({
       className="relative py-24 md:py-32 bg-gradient-to-b from-background via-background/95 to-slate-50 dark:to-slate-950 overflow-hidden"
       dir="rtl"
     >
-      <SoftWavesDivider />
 
       {/* ===== خلفية القسم البصرية ===== */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -102,27 +78,6 @@ export function ServicesGridClient({
           transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
           className="absolute -bottom-40 -left-40 w-[700px] h-[700px] bg-amber-600/10 rounded-full blur-3xl"
         />
-
-        {/* النقاط المتحركة - تم إصلاحها بالكامل */}
-        {particles.map((particle) => (
-          <motion.div
-            key={particle.id}
-            initial={{
-              x: particle.x,
-              y: particle.y,
-            }}
-            animate={{
-              y: [0, particle.moveY, 0],
-              x: [0, particle.moveX, 0],
-            }}
-            transition={{
-              duration: particle.duration,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-            className="absolute w-1 h-1 bg-amber-500/20 rounded-full"
-          />
-        ))}
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
@@ -158,7 +113,7 @@ export function ServicesGridClient({
 
         {/* ===== شبكة الخدمات ===== */}
         {displayServices.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xI:grid-cols-3 gap-6 md:gap-8">
             {displayServices.map((service, index) => (
               <motion.div
                 key={service.id}
@@ -211,5 +166,3 @@ export function ServicesGridClient({
     </section>
   );
 }
-
-

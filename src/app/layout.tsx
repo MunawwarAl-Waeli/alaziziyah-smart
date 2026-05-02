@@ -9,11 +9,11 @@ import { getAllProjects, getGlobalData, getWPData } from "@/lib/api";
 import { JsonLd } from "@/components/seo/JsonLd";
 
 import { Cairo } from "next/font/google";
-const cairo = Cairo({
-  subsets: ["arabic"],
-  weight: ["400", "500", "600", "700", "800"],
-  display: "swap",
-});
+// const cairo = Cairo({
+//   subsets: ["arabic"],
+//   weight: ["400", "500", "600", "700", "800"],
+//   display: "swap",
+// });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.al-azizia.com"),
@@ -54,7 +54,7 @@ export default async function RootLayout({
     <html
       lang="ar"
       dir="rtl"
-      className={cairo.className}
+      // className={cairo.className}
       suppressHydrationWarning
     >
       {/* ✅ تم تفعيل الخط هنا */}

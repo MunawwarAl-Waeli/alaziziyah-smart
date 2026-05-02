@@ -68,12 +68,7 @@ const nextConfig = {
   },
   async redirects() {
     return [
-      // {
-      //   source: "/:path*",
-      //   has: [{ type: "host", value: "al-azizia.com" }],
-      //   destination: "https://www.al-azizia.com/:path*",
-      //   permanent: true,
-      // },
+     
       // ==========================================
       // 1. قسم الخدمات (الروابط التي تبدأ بـ "تركيب")
       // ==========================================
@@ -109,7 +104,7 @@ const nextConfig = {
       },
       {
         source: encodeURI("/تركيب-مظلات-مدارس"),
-        destination: "/services",
+        destination: "/projects/مظلات-مدارس",
         permanent: true,
       },
       {
@@ -189,7 +184,7 @@ const nextConfig = {
       },
       {
         source: encodeURI("/مظلات-قرميد"),
-        destination: "/projects",
+        destination: "/services/قرميد",
         permanent: true,
       },
       {
@@ -214,7 +209,7 @@ const nextConfig = {
       },
       {
         source: encodeURI("/مظلات-قماش"),
-        destination: "/projects",
+        destination: "/services/قماش-مظلات",
         permanent: true,
       },
       {
@@ -239,7 +234,7 @@ const nextConfig = {
       },
       {
         source: encodeURI("/قماش-مظلات"),
-        destination: "/projects",
+        destination: "/services/قماش-مظلات",
         permanent: true,
       },
       {
@@ -323,7 +318,7 @@ const nextConfig = {
       // روابط عامة
       {
         source: encodeURI("/شركة-عمل-سواتر-ومظلات"),
-        destination: "/",
+        destination: "/contact",
         permanent: true,
       },
       {

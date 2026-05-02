@@ -86,6 +86,7 @@ export function Footer() {
         {/* الشبكة الرئيسية */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 md:gap-12 mb-12">
           {/* العمود 1: معلومات الشركة */}
+          {/* العمود 1: معلومات الشركة (مُحسن لـ SEO) */}
           <div className="flex flex-col gap-5 text-center md:text-right">
             <div className="flex flex-col items-center md:items-start">
               <h3 className="text-xl font-bold text-white mb-2">
@@ -93,12 +94,40 @@ export function Footer() {
               </h3>
               <div className="w-12 h-1 bg-primary rounded-full"></div>
             </div>
+
+            {/* النص المحسن مع الروابط الداخلية */}
             <p className="text-slate-400 leading-relaxed text-sm text-justify md:text-right">
-              شركة العزيزية للمظلات والسواتر، هي شركة متخصصة في تركيب سواتر
-              ومظلات وغيرها من الأعمال مثل: تركيب المظلات، تركيب البرجولات،
-              تركيب السواتر، وصيانة المظلات والسواتر بكافة أنواعها بأعلى معايير
-              الجودة الهندسية.
+              مؤسسة العزيزية للمقاولات والحدادة، خيارك الموثوق لـ{" "}
+              <Link
+                href="/services/تركيب-مظلات-سيارات"
+                className="text-primary hover:text-white font-bold transition-colors hover:underline underline-offset-4 decoration-primary/50"
+              >
+                تركيب مظلات سيارات
+              </Link>{" "}
+              لحماية مركبتك بأعلى معايير الجودة، وتصميم{" "}
+              <Link
+                href="/projects/مظلات-حدائق"
+                className="text-primary hover:text-white font-bold transition-colors hover:underline underline-offset-4 decoration-primary/50"
+              >
+                مظلات حدائق
+              </Link>{" "}
+              عصرية. متخصصون في تنفيذ وتوريد{" "}
+              <Link
+                href="/services/تركيب-سواتر"
+                className="text-primary hover:text-white font-bold transition-colors hover:underline underline-offset-4 decoration-primary/50"
+              >
+                السواتر بكافة أنواعها
+              </Link>{" "}
+              (حديد، خشب، لكسان) لتوفير الخصوصية التامة، بالإضافة إلى بناء{" "}
+              <Link
+                href="/services/تركيب-برجولات"
+                className="text-primary hover:text-white font-bold transition-colors hover:underline underline-offset-4 decoration-primary/50"
+              >
+                برجولات راقية
+              </Link>{" "}
+              للفلل والاستراحات. نضمن لك متانة هندسية وتصاميم مبتكرة.
             </p>
+
             <div className="flex justify-center md:justify-start">
               <Link href="/contact" className="inline-flex w-fit mt-2">
                 <button className="bg-gradient-to-l from-primary to-primary text-primary-foreground font-bold py-2.5 px-5 rounded-xl transition-all shadow-lg shadow-primary/20 hover:-translate-y-1 hover:shadow-xl flex items-center gap-2 group text-sm">
@@ -222,6 +251,7 @@ export function Footer() {
             </a>
             <span className="hidden md:inline text-slate-700">|</span>
             <a
+              dir="ltr"
               href="tel:+966530989975"
               className="hover:text-primary transition-colors flex items-center gap-2 font-sans"
             >
@@ -299,4 +329,3 @@ export function Footer() {
     </footer>
   );
 }
-

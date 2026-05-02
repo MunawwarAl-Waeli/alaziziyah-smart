@@ -2,10 +2,8 @@
 "use client";
 import Image from "next/image";
 import { motion } from "framer-motion";
-
 import Link from "next/link";
 import {
-  Sparkles,
   ArrowLeft,
   Umbrella,
   Fence,
@@ -15,31 +13,14 @@ import {
   Palmtree,
   Settings,
   LucideIcon,
-  Shield,
   School,
-  Award,
-  Star,
-  LayoutGrid,
-  ArrowUpRight,
 } from "lucide-react";
 export interface ServiceCategory {
   name: string;
   slug: string;
 }
 
-export interface ServiceItem {
-  id: string;
-  title: string;
-  slug: string;
-  featuredImage?: {
-    node?: {
-      sourceUrl?: string;
-    };
-  } | null;
-  serviceCategories?: {
-    nodes: ServiceCategory[];
-  } | null;
-}
+import { ServiceItem } from "@/lib/api";
 const ICON_MAP: Record<string, LucideIcon> = {
   cars: Umbrella,
   shades: Umbrella,
@@ -55,13 +36,22 @@ const ICON_MAP: Record<string, LucideIcon> = {
 const getIconKey = (categorySlug: string = ""): LucideIcon => {
   const slug = categorySlug?.toLowerCase() || "";
   if (slug.includes("car") || slug.includes("مظلات")) return ICON_MAP.cars;
-  if (slug.includes("sawater") || slug.includes("ساتر"))
+  if (
+    slug.includes("sawater") ||
+    slug.includes("ساتر") ||
+    slug.includes("سواتر")
+  )
     return ICON_MAP.sawater;
-  if (slug.includes("pergola") || slug.includes("برجول"))
+  if (
+    slug.includes("pergola") ||
+    slug.includes("برجول") ||
+    slug.includes("برجولات")
+  )
     return ICON_MAP.pergolas;
   if (slug.includes("school") || slug.includes("مدارس"))
     return ICON_MAP.schools;
-  if (slug.includes("pool") || slug.includes("مسبح")) return ICON_MAP.pools;
+  if (slug.includes("pool") || slug.includes("مسبح") || slug.includes("مسابح"))
+    return ICON_MAP.pools;
   if (slug.includes("warehouse") || slug.includes("هناجر"))
     return ICON_MAP.warehouses;
   return ICON_MAP.default;
@@ -69,8 +59,7 @@ const getIconKey = (categorySlug: string = ""): LucideIcon => {
 // ==========================================
 export function ServiceCard({ service }: { service: ServiceItem }) {
   // استخراج البيانات الحقيقية من كائن الخدمة
-  const imageUrl =
-    service.featuredImage?.node?.sourceUrl || "/images/0.jpg";
+  const imageUrl = service.featuredImage?.node?.sourceUrl || "/images/0.jpg";
   const category = service.serviceCategories?.nodes?.[0];
   const Icon = getIconKey(category?.slug);
 
@@ -81,10 +70,11 @@ export function ServiceCard({ service }: { service: ServiceItem }) {
         className="relative h-full bg-card rounded-2xl overflow-hidden border border-border/50 hover:border-amber-500/30 shadow-lg hover:shadow-xl transition-all duration-300 group flex flex-col"
       >
         {/* الحاوية العلوية للصورة */}
-        <div className="relative h-48 overflow-hidden w-full">
+        <div className="relative h-52 md:h-60 lg:h-64 overflow-hidden w-full">
           <Image
             src={imageUrl}
             alt={service.title}
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" // 👈
             fill
             className="object-cover transition-transform duration-700 group-hover:scale-110"
           />
@@ -92,7 +82,7 @@ export function ServiceCard({ service }: { service: ServiceItem }) {
         </div>
 
         {/* الأيقونة العائمة */}
-        <div className="absolute top-[10.5rem] right-4 w-12 h-12 rounded-xl bg-card border border-amber-500/30 shadow-lg flex items-center justify-center group-hover:bg-amber-500 transition-colors duration-300 z-10">
+        <div className="absolute top-[11rem] md:top-[13rem] lg:top-[14rem] right-4 w-12 h-12 rounded-xl bg-card border border-amber-500/30 shadow-lg flex items-center justify-center group-hover:bg-amber-500 transition-colors duration-300 z-10">
           <Icon className="w-6 h-6 text-amber-500 group-hover:text-white transition-colors" />
         </div>
 
@@ -102,10 +92,9 @@ export function ServiceCard({ service }: { service: ServiceItem }) {
             {service.title}
           </h3>
 
-          {/* استخدام اسم التصنيف بدلاً من excerpt لأن الاستعلام لا يجلبه */}
           <p className="text-sm text-muted-foreground line-clamp-2 mb-4 flex-1">
-            تصميم وتنفيذ {category?.name || "مظلات وسواتر"} بأعلى معايير الجودة
-            والإتقان.
+            {service.serviceDetails?.heroSubtitle ||
+              `استكشف تفاصيل ومميزات ${service.title} الهندسية المصممة بأعلى معايير الجودة...`}
           </p>
 
           <div className="flex items-center justify-between mt-auto">
@@ -126,4 +115,3 @@ export function ServiceCard({ service }: { service: ServiceItem }) {
     </Link>
   );
 }
-

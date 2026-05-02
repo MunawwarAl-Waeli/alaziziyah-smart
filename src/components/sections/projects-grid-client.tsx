@@ -22,7 +22,6 @@ export default function ProjectsGridClient({
       className="py-20 md:py-32 bg-background relative overflow-hidden"
       dir="rtl"
     >
-      <ElegantCurveDivider />
 
       {/* إضاءة خلفية فخمة لكسر جمود اللون الداكن */}
       <div className="absolute top-0 right-0 w-[40rem] h-[40rem] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />

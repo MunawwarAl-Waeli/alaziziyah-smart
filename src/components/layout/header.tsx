@@ -300,15 +300,12 @@ export function Header({
                 key={`nav-link-${link.id}`}
                 className="relative px-3 py-2 lg:px-4"
                 onMouseEnter={() => {
-                  // 1. التعديل الأول: تصفير القيم فوراً عند دخول الماوس لمنع التداخل
-                  setHoveredIndex(null);
-                  setActiveMegaMenu(false);
-
-                  // 2. التعديل الثاني: استخدام تأخير بسيط جداً (10 ملي ثانية) لتفعيل الرابط الجديد
-                  setTimeout(() => {
-                    setHoveredIndex(index);
-                    if (link.isMega) setActiveMegaMenu(true);
-                  }, 10);
+                  setHoveredIndex(index);
+                  if (link.isMega) {
+                    setActiveMegaMenu(true);
+                  } else {
+                    setActiveMegaMenu(false);
+                  }
                 }}
               >
                 <Link
@@ -354,11 +351,13 @@ export function Header({
               </div>
             ))}
 
-            <AnimatePresence>
+            <AnimatePresence mode="wait">
+              {/* إضافة mode="wait" تمنع التداخل أيضاً */}
               {activeMegaMenu &&
                 hoveredIndex !== null &&
                 dynamicNavLinks[hoveredIndex]?.isMega && (
                   <motion.div
+                    key={`mega-menu-${hoveredIndex}`} // 👈 هذا السطر السحري يحل مشكلة التكدس تماماً
                     initial={{ opacity: 0, y: 15, height: 0 }}
                     animate={{ opacity: 1, y: 0, height: "auto" }}
                     exit={{ opacity: 0, y: 15, height: 0 }}
@@ -369,7 +368,9 @@ export function Header({
                     <div className="relative w-[300px] rounded-2xl overflow-hidden shrink-0 group flex flex-col justify-end p-6 border border-primary/20 bg-slate-900">
                       <div
                         className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-110 opacity-80"
-                        style={{ backgroundImage: "url('/images/0.jpg')" }}
+                        style={{
+                          backgroundImage: `url('${fetchedProjects?.[0]?.featuredImage?.node?.sourceUrl || "/images/0.jpg"}')`,
+                        }}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/60 to-transparent" />
                       <div className="absolute top-4 right-4 bg-primary text-primary-foreground text-[10px] font-bold px-3 py-1 rounded-full z-10 shadow-lg shadow-primary/30 flex items-center gap-1">
@@ -487,10 +488,14 @@ export function Header({
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               className="p-2.5 text-foreground bg-accent/50 rounded-full transition-colors"
             >
-              {theme === "dark" ? (
-                <Sun className="w-5 h-5 text-primary" />
+              {mounted ? (
+                theme === "dark" ? (
+                  <Sun className="w-5 h-5 text-primary" />
+                ) : (
+                  <Moon className="w-5 h-5" />
+                )
               ) : (
-                <Moon className="w-5 h-5" />
+                <div className="w-5 h-5" /> // مساحة فارغة تحافظ على التصميم حتى يحمل المتصفح
               )}
             </button>
             <button
@@ -709,22 +714,6 @@ export function Header({
               variants={itemVariants}
               className="p-6 border-t border-border bg-background/90 backdrop-blur-md relative z-10"
             >
-              <div className="flex justify-between items-center mb-4 px-2">
-                <span className="text-sm font-bold text-foreground">
-                  الوضع الداكن
-                </span>
-                <button
-                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                  className="p-2.5 rounded-full text-muted-foreground border border-border hover:text-primary hover:bg-primary/10 transition-colors"
-                  aria-label="تبديل الثيم"
-                >
-                  {mounted && theme === "dark" ? (
-                    <Sun className="h-5 w-5 text-primary" />
-                  ) : (
-                    <Moon className="h-5 w-5" />
-                  )}
-                </button>
-              </div>
               <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)}>
                 <button className="w-full bg-gradient-to-l from-primary-dark to-primary text-primary-foreground font-bold py-4 rounded-xl shadow-lg shadow-primary/25 active:scale-95 transition-transform flex items-center justify-center gap-3 border border-primary-light/30">
                   <CalendarCheck className="w-5 h-5" />

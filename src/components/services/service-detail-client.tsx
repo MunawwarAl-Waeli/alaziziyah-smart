@@ -197,7 +197,7 @@ export default function ServiceDetailClient({
                     {service.serviceDetails.features.map((feature, idx) => (
                       <div
                         key={idx}
-                        className="bg-slate-50 dark:bg-slate-900/50 p-5 rounded-2xl border border-border/50 flex flex-col items-start gap-4 hover:border-primary/40 transition-colors group"
+                        className="bg-slate-50 dark:bg-slate-900/50 p-5 md:p-6 rounded-2xl border border-border/50 flex flex-col items-center text-center gap-4 hover:border-primary/40 transition-colors group"
                       >
                         <div className="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-300">
                           {idx === 0 ? (
@@ -241,13 +241,11 @@ export default function ServiceDetailClient({
                       >
                         <div className="relative w-full md:w-64 lg:w-72 h-52 md:h-auto bg-muted shrink-0 overflow-hidden">
                           <Image
-                            src={
-                              type.image?.sourceUrl || "/images/placeholder.jpg"
-                            }
+                            src={type.image?.sourceUrl || "/images/0.jpg"}
                             alt={type.title}
                             fill
                             className="object-cover transition-transform duration-700 group-hover:scale-105"
-                            unoptimized
+                            sizes="(max-width: 768px) 100vw, 33vw"
                           />
                         </div>
                         <div className="p-6 flex-1 flex flex-col justify-center">
