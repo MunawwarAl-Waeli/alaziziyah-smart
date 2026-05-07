@@ -1,143 +1,149 @@
+import { Metadata } from "next";
+import { siteConfig } from "@/lib/seo-config";
+
+// 🚀 1. إضافة الميتا داتا لضمان أرشفة قانونية سليمة
+export const metadata: Metadata = {
+  title: "سياسة الخصوصية | مؤسسة العزيزية للمظلات والسواتر",
+  description:
+    "تعرف على كيفية جمع وحماية بياناتك عند استخدام موقع مؤسسة العزيزية لتركيب المظلات والسواتر في السعودية.",
+  robots: {
+    index: true,
+    follow: true,
+  },
+  alternates: {
+    canonical: `${siteConfig.url}/privacy-policy`,
+  },
+};
+
 export default function PrivacyPolicy() {
   return (
-    <section
+    <main
       dir="rtl"
-      className="max-w-4xl mx-auto px-6 py-16 leading-8 text-right"
+      className="min-h-screen bg-stone-50 dark:bg-slate-950 pt-24 pb-16"
     >
-      <h2>سياسة الخصوصية</h2>
-      <p>
-        <strong>تاريخ السريان:</strong> 2024-07-03
-      </p>
+      <section className="max-w-4xl mx-auto px-6 py-12 bg-white dark:bg-slate-900 shadow-sm rounded-3xl border border-stone-200 dark:border-slate-800 leading-relaxed text-right">
+        {/* العناوين الرئيسية */}
+        <header className="border-b border-stone-100 dark:border-slate-800 pb-8 mb-8">
+          <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white mb-4">
+            سياسة الخصوصية
+          </h1>
+          <p className="text-slate-500 dark:text-slate-400 text-sm">
+            <strong>تاريخ آخر تحديث:</strong> 2024-07-03
+          </p>
+        </header>
 
-      <h2 className="text-2xl font-bold mt-8 mb-4">1. المقدمة</h2>
-      <p>مرحبا بكم في شركة العزيزية لتركيب المظلات والسواتر.</p>
-      <p>
-        تعمل شركة العزيزية لتركيب المظلات والسواتر (&quot;نحن&quot; أو
-        &quot;نحن&quot; أو &quot;خاصتنا&quot;) على تشغيل
-        <a
-          href="https://al-azizia.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-600 hover:underline mx-1"
-        >
-          https://al-azizia.com/
-        </a>
-        (يشار إليها فيما يلي باسم &quot;الخدمة&quot;).
-      </p>
-      <p>
-        تحكم سياسة الخصوصية الخاصة بنا زيارتك لموقع{" "}
-        <a
-          href="https://al-azizia.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-600 hover:underline"
-        >
-          https://al-azizia.com/
-        </a>
-        ، وتشرح كيف نقوم بجمع المعلومات الناتجة عن استخدامك لخدمتنا وحمايتها
-        والكشف عنها.
-      </p>
-      <p>
-        نحن نستخدم بياناتك لتقديم الخدمة وتحسينها. باستخدام الخدمة، فإنك توافق
-        على جمع واستخدام المعلومات وفقا لهذه السياسة. ما لم يتم تحديد خلاف ذلك
-        في سياسة الخصوصية هذه، فإن المصطلحات المستخدمة في سياسة الخصوصية هذه لها
-        نفس المعاني كما في الشروط والأحكام الخاصة بنا.
-      </p>
-      <p>
-        تحكم الشروط والأحكام الخاصة بنا (&quot;الشروط&quot;) جميع استخدامات
-        خدمتنا وتشكل مع سياسة الخصوصية اتفاقيتك معنا (&quot;الاتفاقية&quot;).
-      </p>
+        <div className="space-y-8 text-slate-700 dark:text-slate-300">
+          {/* 1. المقدمة */}
+          <article>
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+              <span className="w-1.5 h-6 bg-amber-500 rounded-full"></span>
+              1. المقدمة
+            </h2>
+            <p>
+              مرحباً بكم في{" "}
+              <strong>مؤسسة العزيزية لتركيب المظلات والسواتر</strong>. نحن نثمن
+              ثقتكم بنا ونلتزم بحماية خصوصية بياناتكم الشخصية.
+            </p>
+            <p className="mt-4">
+              تحكم هذه السياسة زيارتكم لموقعنا
+              <a
+                href="https://al-azizia.com/"
+                className="text-amber-600 hover:underline mx-1 font-bold"
+              >
+                al-azizia.com
+              </a>
+              وتوضح إجراءاتنا في جمع البيانات وحمايتها.
+            </p>
+          </article>
 
-      <h2 className="text-2xl font-bold mt-8 mb-4">2. التعاريف</h2>
-      <p>
-        <strong>الخدمة</strong> تعني موقع{" "}
-        <a
-          href="https://al-azizia.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-600 hover:underline"
-        >
-          https://al-azizia.com/
-        </a>{" "}
-        الذي تديره شركة العزيزية لتركيب المظلات والسواتر.
-      </p>
-      <p>
-        <strong>البيانات الشخصية</strong> تعني البيانات المتعلقة بفرد حي يمكن
-        التعرف عليه من تلك البيانات (أو من تلك المعلومات وغيرها التي في حوزتنا
-        أو من المحتمل أن تكون في حوزتنا).
-      </p>
-      <p>
-        <strong>بيانات الاستخدام</strong> هي البيانات التي يتم جمعها تلقائيًا
-        إما عن طريق استخدام الخدمة أو من البنية التحتية للخدمة نفسها (على سبيل
-        المثال، مدة زيارة الصفحة).
-      </p>
-      <p>
-        <strong>ملفات تعريف الارتباط</strong> هي ملفات صغيرة مخزنة على جهازك
-        (الكمبيوتر أو الجهاز المحمول).
-      </p>
-      <p>
-        <strong>مراقب البيانات</strong> يعني الشخص الطبيعي أو الاعتباري الذي
-        (سواء بمفرده أو بالاشتراك أو بالاشتراك مع أشخاص آخرين) يحدد الأغراض التي
-        من أجلها والطريقة التي تتم بها معالجة أي بيانات شخصية.
-      </p>
+          {/* 2. التعاريف */}
+          <article>
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+              <span className="w-1.5 h-6 bg-amber-500 rounded-full"></span>
+              2. التعاريف الأساسية
+            </h2>
+            <ul className="space-y-3 pr-4 border-r-2 border-stone-100 dark:border-slate-800">
+              <li>
+                <strong>الخدمة:</strong> تعني الموقع الإلكتروني التابع للمؤسسة.
+              </li>
+              <li>
+                <strong>البيانات الشخصية:</strong> أي معلومات تسمح بالتعرف على
+                هوية الفرد.
+              </li>
+              <li>
+                <strong>بيانات الاستخدام:</strong> معلومات تُجمع تلقائياً عند
+                تصفح الموقع (مثل مدة الزيارة).
+              </li>
+            </ul>
+          </article>
 
-      <h2 className="text-2xl font-bold mt-8 mb-4">
-        3. جمع المعلومات واستخدامها
-      </h2>
-      <p>
-        نقوم بجمع عدة أنواع مختلفة من المعلومات لأغراض مختلفة لتوفير خدماتنا
-        وتحسينها لك.
-      </p>
+          {/* 3. البيانات التي نجمعها */}
+          <article>
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+              <span className="w-1.5 h-6 bg-amber-500 rounded-full"></span>
+              3. أنواع البيانات المجمعة
+            </h2>
+            <p className="mb-4">
+              قد نطلب منكم تزويدنا بالبيانات التالية عند طلب عرض سعر:
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[
+                "الاسم الكامل",
+                "رقم الجوال",
+                "عنوان البريد الإلكتروني",
+                "الموقع الجغرافي (المدينة)",
+                "ملفات تعريف الارتباط (Cookies)",
+              ].map((item, index) => (
+                <div
+                  key={index}
+                  className="flex items-center gap-2 p-3 bg-stone-50 dark:bg-slate-800/50 rounded-xl border border-stone-100 dark:border-slate-800 text-sm"
+                >
+                  <span className="text-amber-500 font-bold">✓</span> {item}
+                </div>
+              ))}
+            </div>
+          </article>
 
-      <h2 className="text-2xl font-bold mt-8 mb-4">
-        4. أنواع البيانات التي تم جمعها
-      </h2>
-      <h3 className="text-xl font-semibold mt-6 mb-2">بيانات شخصية</h3>
-      <p>
-        أثناء استخدام خدمتنا، قد نطلب منك تزويدنا ببعض معلومات التعريف الشخصية.
-        قد تتضمن:
-      </p>
-      <ul className="list-none pr-0">
-        <li>0.1. عنوان البريد الإلكتروني</li>
-        <li>0.2. الاسم الأول واسم العائلة</li>
-        <li>0.3. رقم التليفون</li>
-        <li>0.4. العنوان، البلد، المدينة</li>
-        <li>0.5. ملفات تعريف الارتباط وبيانات الاستخدام</li>
-      </ul>
+          {/* خط فاصل جمالي */}
+          <hr className="border-stone-100 dark:border-slate-800" />
 
-      {/* البديل لوسم hr باستخدام Tailwind */}
-      <div className="h-[2px] bg-gray-200 my-8"></div>
+          {/* 4. التواصل */}
+          <article>
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
+              4. اتصل بنا
+            </h2>
+            <p className="mb-4">
+              لأي استفسارات تتعلق بسياسة الخصوصية، يمكنكم التواصل معنا مباشرة:
+            </p>
+            <a
+              href="mailto:info@al-azizia.com"
+              className="inline-flex items-center px-6 py-3 bg-slate-900 dark:bg-amber-600 text-white rounded-2xl hover:bg-slate-800 transition-colors shadow-md"
+            >
+              info@al-azizia.com
+            </a>
+          </article>
 
-      <h2 className="text-2xl font-bold mt-8 mb-4">20. اتصل بنا</h2>
-      <p>
-        إذا كان لديك أي أسئلة حول سياسة الخصوصية هذه، يرجى الاتصال بنا عبر
-        البريد الإلكتروني:
-        <a
-          href="mailto:info@al-azizia.com"
-          className="text-blue-600 hover:underline mx-1"
-        >
-          info@al-azizia.com
-        </a>
-      </p>
-
-      {/* البديل لوسم hr الذي طلبته بشكل مخصص */}
-      <div
-        style={{ height: "2px", backgroundColor: "#eaeaea", margin: "30px 0" }}
-      ></div>
-
-      <p className="mt-6">
-        في حال هناك أي مشكلة يمكنكم التواصل مع مطور مواقع 
-        <strong>م. منور الوائلي</strong>
-        من خلال الموقع التالي:
-         <a
-          href="https://wa.me/967770323857"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="bg-gray-100 px-4 py-2 rounded-full text-blue-600 font-semibold hover:bg-blue-50 transition-colors inline-block mt-2 mr-2"
-        >
-         للتواصل 
-        </a>
-      </p>
-    </section>
+          {/* الركن التقني (تم تحسين المظهر ليكون احترافياً) */}
+          <footer className="mt-12 pt-8 border-t border-stone-100 dark:border-slate-800">
+            <div className="bg-stone-50 dark:bg-slate-800/30 p-6 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4">
+              <p className="text-sm text-slate-500 dark:text-slate-400">
+                في حال وجود مشاكل تقنية، يمكنك التواصل مع مطور الموقع:
+                <span className="block font-bold text-slate-900 dark:text-white mt-1">
+                  م. منور الوائلي
+                </span>
+              </p>
+              <a
+                href="https://wa.me/966530989975"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-6 py-2 bg-white dark:bg-slate-900 border border-stone-200 dark:border-slate-700 text-amber-600 font-bold rounded-full hover:shadow-md transition-all"
+              >
+                الدعم التقني
+              </a>
+            </div>
+          </footer>
+        </div>
+      </section>
+    </main>
   );
 }

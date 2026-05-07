@@ -1,20 +1,18 @@
+// src/app/projects/[slug]/page.tsx
 import React from "react";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { getProjectGallery, getAllProjects } from "@/lib/api";
 import ProjectDetailsClient from "./ProjectDetailsClient";
 import { fixDoubleEncoding } from "@/lib/utils";
-// استيراد دوال الـ SEO
-import { breadcrumbSchema, articleSchema } from "@/lib/seo-config";
+import { breadcrumbSchema } from "@/lib/seo-config";
 
 export async function generateStaticParams() {
   const projects = await getAllProjects();
-  return projects.map((project) => ({
-    slug: project.slug,
-  }));
+  return projects.map((project) => ({ slug: project.slug }));
 }
 
-export const revalidate = 3600;
+export const revalidate = 36000;
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -23,31 +21,33 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const { cleanSlug } = fixDoubleEncoding(slug);
-  if (!cleanSlug) return { title: "مشروع غير موجود" };
+  if (!cleanSlug) return { title: "معرض غير موجود" };
 
   const project = await getProjectGallery(cleanSlug);
-  if (!project) {
-    return {
-      title: "المشروع غير موجود | العزيزية للمظلات",
-      description: "عذراً، لم يتم العثور على المشروع المطلوب.",
-    };
-  }
+  if (!project) return { title: "غير موجود" };
+
+  const projectUrl = `https://al-azizia.com/projects/${cleanSlug}`;
+  const ogImage =
+    project.featuredImage?.node?.sourceUrl ||
+    "https://al-azizia.com/0.jpg";
 
   return {
-    title: `${project.title} | شركة العزيزية`,
+    // 🚀 العنوان البيعي لكتالوج الصور
+    title: `صور وأشكال ${project.title} حديثة بجدة | كتالوج العزيزية`,
+    // 🚀 الوصف المبني على نية البحث البصرية
     description:
       project.seo?.metaDesc ||
-      `تفاصيل وصور مشروع ${project.title} المنفذ بأعلى معايير الجودة.`,
+      `تصفح أحدث كتالوج صور وتصميمات ${project.title}. أشكال عصرية، خامات متنوعة (حديد، خشب، قماش) تناسب كافة المساحات في جدة والمملكة.`,
     alternates: {
-      canonical: `https://www.al-azizia.com/projects/${cleanSlug}`,
+      canonical: projectUrl,
     },
+    keywords: `صور ${project.title}, اشكال ${project.title}, تصميمات ${project.title}, كتالوج ${project.title}, ${project.title} جدة`,
     openGraph: {
-      title: project.title,
-      description:
-        project.seo?.metaDesc || `تصفح صور وتفاصيل مشروع ${project.title}`,
-      images: project.featuredImage?.node?.sourceUrl
-        ? [{ url: project.featuredImage.node.sourceUrl }]
-        : [],
+      title: `كتالوج صور: ${project.title}`,
+      description: `استلهم فكرتك القادمة من معرض صور ${project.title} الخاص بمؤسسة العزيزية.`,
+      url: projectUrl,
+      images: [{ url: ogImage, width: 1200, height: 630 }],
+      type: "website",
     },
   };
 }
@@ -58,41 +58,47 @@ export default async function ProjectPage({ params }: Props) {
   if (!cleanSlug) return notFound();
 
   const project = await getProjectGallery(cleanSlug);
-  if (!project) notFound();
+  if (!project) return notFound();
 
-  // --- إعداد البيانات المنظمة (JSON-LD) للمشاريع ---
   const path = `/projects/${cleanSlug}`;
-
-  // 1. مسارات التنقل (لحل مشكلة الصفر في Search Console)
   const bSchema = breadcrumbSchema(path);
 
-  // 2. كود المشروع (نستخدم Article أو CreativeWork ليظهر جوجل الصور بشكل أفضل)
-  const pSchema = articleSchema({
-    title: project.title,
-    description:
-      project.seo?.metaDesc || `مشروع تنفيذ ${project.title} من شركة العزيزية`,
-    image:
-      project.featuredImage?.node?.sourceUrl ||
-      "https://www.al-azizia.com/icon.png",
-    publishedTime: project.date || new Date().toISOString(),
-    authors: ["شركة العزيزية"],
-    category: "مشاريع المظلات والسواتر",
-    // 👇 السطرين الإضافيين لحل الخطأ 👇
-    modifiedTime: project.date, // يمكنك استخدام نفس تاريخ النشر إذا لم يوجد تاريخ تعديل
-    url: `https://www.al-azizia.com/projects/${project.slug}`, // تأكد من وضع رابط المشروع هنا
-  });
+  // 🚀 السلاح المدمر: CollectionPage + ImageGallery
+  // هذا يخبر جوجل حرفياً: "هذه صفحة كتالوج تحتوي على معرض صور"
+  const galleryImages = project.galleryImages || [];
+
+  const catalogSchema = {
+    "@context": "https://schema.org",
+    "@type": ["CollectionPage", "ImageGallery"],
+    name: `معرض صور ${project.title}`,
+    description: `كتالوج شامل يعرض أحدث تصميمات وأشكال ${project.title}`,
+    url: `https://al-azizia.com${path}`,
+    publisher: {
+      "@type": "HomeAndConstructionBusiness",
+      name: "العزيزية للمظلات والسواتر",
+    },
+    // ربط الصور مباشرة بالكتالوج مع استخدام النص البديل (altText) من ووردبريس
+    mainEntity: galleryImages.map((img, index) => ({
+      "@type": "ImageObject",
+      contentUrl: img.sourceUrl,
+      // ⚠️ هذه النقطة هي التي ستجعلك تتصدر بحث الصور
+      name: img.altText || `${project.title} - تصميم رقم ${index + 1}`,
+      caption: img.altText || `صورة توضح شكل من أشكال ${project.title}`,
+    })),
+  };
 
   return (
     <>
-      {/* حقن الـ JSON-LD */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(bSchema) }}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(pSchema) }}
-      />
+      {galleryImages.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(catalogSchema) }}
+        />
+      )}
 
       <ProjectDetailsClient project={project} />
     </>

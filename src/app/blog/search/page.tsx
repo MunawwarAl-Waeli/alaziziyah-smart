@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { BlogCard } from "../components/BlogCard";
 import { SearchBar } from "../components/SearchBar";
 import { Pagination } from "../components/Pagination";
-import { searchPosts } from "../data/posts";
+import { fetchAllCategories, searchPosts } from "../data/posts";
 import { Breadcrumbs } from "../components/Breadcrumbs";
 import Link from "next/link";
 
@@ -24,7 +24,7 @@ interface SearchPageProps {
 export default async function SearchPage(props: SearchPageProps) {
   // 💡 التحديث 3: فك الـ Promise هنا أولاً
   const searchParams = await props.searchParams;
-
+const allCategories = await fetchAllCategories(); // جلب جميع التصنيفات لتمريرها إلى Breadcrumbs
   const query = searchParams.q;
   const currentPage = Number(searchParams.page) || 1;
   const postsPerPage = 6;
@@ -33,12 +33,14 @@ export default async function SearchPage(props: SearchPageProps) {
     notFound();
   }
 
-  const { posts, pagination } = searchPosts(query, currentPage, postsPerPage);
+  const { posts, pagination } = await searchPosts(query, currentPage, postsPerPage);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50/50 to-white dark:from-slate-950 dark:to-slate-900 py-12">
       <div className="container mx-auto px-4">
-        <Breadcrumbs />
+        <Breadcrumbs 
+        categories={allCategories}
+        />
 
         <div className="max-w-4xl mx-auto">
           {/* رأس البحث */}

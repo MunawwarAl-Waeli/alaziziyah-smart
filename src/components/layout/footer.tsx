@@ -23,6 +23,7 @@ import {
   Tent,
   Sparkles,
   Warehouse,
+  Youtube,
 } from "lucide-react";
 
 import { usePathname } from "next/navigation";
@@ -246,12 +247,14 @@ export function Footer() {
             <a
               href="mailto:info@al-azizia.com"
               className="hover:text-primary transition-colors flex items-center gap-2"
+              aria-label="الايميل"
             >
               info@al-azizia.com
             </a>
             <span className="hidden md:inline text-slate-700">|</span>
             <a
               dir="ltr"
+              aria-label="للتواصل مباشرة"
               href="tel:+966530989975"
               className="hover:text-primary transition-colors flex items-center gap-2 font-sans"
             >
@@ -261,6 +264,7 @@ export function Footer() {
             <a
               href="https://wa.me/967770323857"
               target="_blank"
+              aria-label="للتواصل معا المطور"
               rel="noopener noreferrer"
               className="text-green-500 hover:text-white hover:bg-green-600 transition-all bg-slate-900 border border-slate-800 p-2.5 rounded-full hover:-translate-y-1 group"
             >
@@ -270,28 +274,25 @@ export function Footer() {
 
           <div className="flex gap-3 justify-center">
             <a
+              aria-label="النقل الي صفحة الفيسبوك"
               href="https://www.facebook.com/share/18E2uf8aH4/"
               className="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:bg-primary hover:border-primary hover:text-white hover:-translate-y-1 transition-all group"
             >
               <Facebook className="w-4 h-4 transition-colors" />
             </a>
             <a
-              href="#"
+              aria-label="النقل الي صفحة انستجرام"
+              href="https://www.instagram.com/alazizia1234556?igsh=MW4yc3J2aHc3aXdoMA=="
               className="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:bg-primary hover:border-primary hover:text-white hover:-translate-y-1 transition-all group"
             >
               <Instagram className="w-4 h-4 transition-colors" />
             </a>
             <a
-              href="#"
+              aria-label="النقل الي اليوتيوب"
+              href="https://youtube.com/@al-azizia?si=w-w9SFZvmG0GyWYQ"
               className="w-10 h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:bg-primary hover:border-primary hover:text-white hover:-translate-y-1 transition-all group"
             >
-              <svg
-                viewBox="0 0 24 24"
-                className="w-4 h-4 fill-current transition-colors"
-                aria-hidden="true"
-              >
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.004 4.076H5.022z" />
-              </svg>
+              <Youtube className="w-4 h-4 transition-colors" />
             </a>
           </div>
         </div>
@@ -303,6 +304,17 @@ export function Footer() {
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3">
             <a
+              onClick={() => {
+                // 🚀 إرسال الحدث إلى جوجل تاج منجر
+                if (typeof window !== "undefined") {
+                  window.dataLayer = window.dataLayer || [];
+                  window.dataLayer.push({
+                    event: "contact_developer_click", // اسم الحدث
+                    click_location: "footer", // مكان الزر
+                  });
+                }
+              }}
+              aria-label="معلومات المطور"
               href="https://wa.me/967770323857"
               rel="noopener noreferrer"
               className="hover:text-primary transition-colors"
@@ -311,6 +323,7 @@ export function Footer() {
             </a>
             <span className="text-slate-800 hidden sm:inline">|</span>
             <Link
+              aria-label="سياسة الخصوصية"
               href="/privacy"
               className="hover:text-primary transition-colors"
             >
@@ -318,6 +331,7 @@ export function Footer() {
             </Link>
             <span className="text-slate-800 hidden sm:inline">|</span>
             <Link
+              aria-label="شرزط الاستخدام"
               href="/terms"
               className="hover:text-primary transition-colors"
             >

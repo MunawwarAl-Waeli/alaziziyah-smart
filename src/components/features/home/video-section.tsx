@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Play, X, Clock, Video } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { SoftWavesDivider } from "@/components/ui/SoftWavesDivider";
 
 interface YouTubeVideo {
   id: string;

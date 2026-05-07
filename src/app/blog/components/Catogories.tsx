@@ -2,19 +2,24 @@
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { blogPosts, categories } from "../data/posts";
 import { motion } from "framer-motion";
+import { Category } from "../types/bolg.types";
 
+// ✅ 1. أضفنا totalPosts كخاصية اختيارية
 interface CategoriesProps {
+  categories: Category[];
   selectedCategory?: string;
   showCount?: boolean;
   variant?: "sidebar" | "horizontal";
+  totalPosts?: number;
 }
 
 export function Categories({
+  categories,
   selectedCategory,
   showCount = true,
   variant = "sidebar",
+  totalPosts, // ✅ 2. استقبلناها هنا
 }: CategoriesProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -103,7 +108,10 @@ export function Categories({
           )}
         >
           <span>جميع المقالات</span>
-          <span className="text-sm text-slate-500">{blogPosts.length}</span>
+          {/* ✅ 3. استخدمنا المتغير الجديد المرر من الصفحة الأب */}
+          {totalPosts !== undefined && (
+            <span className="text-sm text-slate-500">{totalPosts}</span>
+          )}
         </motion.button>
 
         {categories.map((category) => (

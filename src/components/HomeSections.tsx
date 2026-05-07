@@ -1,6 +1,7 @@
 // src/components/HomeSections.tsx
 "use client";
 
+import { BlogPost } from "@/app/blog/types/bolg.types";
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
 
@@ -19,7 +20,6 @@ const VideoGallery = dynamic(
     ),
   },
 );
-
 const BlogSection = dynamic(
   () =>
     import("@/components/features/home/BlogSection").then(
@@ -31,6 +31,7 @@ const BlogSection = dynamic(
         جاري التحميل...
       </div>
     ),
+    ssr: false,
   },
 );
 
@@ -62,7 +63,13 @@ const CTASection = dynamic(
   },
 );
 
-export function HomeSections() {
+interface HomeSectionsProps {
+  allPosts: BlogPost[];
+}
+
+export default function HomeSections({ allPosts }: HomeSectionsProps) {
+  console.log("Received posts in BlogSection:", allPosts); // ✅ للتأكد من البيانات
+
   return (
     <>
       <section id="videos">
@@ -83,7 +90,8 @@ export function HomeSections() {
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8, ease: "easeOut", delay: 0.6 }}
         >
-          <BlogSection />
+          {/* 2. تمرير البيانات للمكون */}
+          <BlogSection posts={allPosts} />
         </motion.div>
       </section>
 
@@ -111,60 +119,3 @@ export function HomeSections() {
     </>
   );
 }
-// "use client";
-
-// import { motion } from "framer-motion";
-// import { BlogSection } from "@/components/features/home/BlogSection";
-// import { CTASection } from "@/components/features/home/cta-section";
-// import { SmartCalculator } from "@/components/features/home/SmartCalculator";
-// import { VideoGallery } from "@/components/features/home/video-section";
-
-// export function HomeSections() {
-//   return (
-//     <>
-//       <section id="videos">
-//         <motion.div
-//           initial={{ opacity: 0, y: 50 }}
-//           whileInView={{ opacity: 1, y: 0 }}
-//           viewport={{ once: true, margin: "-100px" }}
-//           transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
-//         >
-//           <VideoGallery />
-//         </motion.div>
-//       </section>
-
-//       <section id="blog">
-//         <motion.div
-//           initial={{ opacity: 0, y: 50 }}
-//           whileInView={{ opacity: 1, y: 0 }}
-//           viewport={{ once: true, margin: "-100px" }}
-//           transition={{ duration: 0.8, ease: "easeOut", delay: 0.6 }}
-//         >
-//           <BlogSection />
-//         </motion.div>
-//       </section>
-
-//       <section id="calculator">
-//         <motion.div
-//           initial={{ opacity: 0, y: 50 }}
-//           whileInView={{ opacity: 1, y: 0 }}
-//           viewport={{ once: true, margin: "-100px" }}
-//           transition={{ duration: 0.8, ease: "easeOut", delay: 0.8 }}
-//         >
-//           <SmartCalculator />
-//         </motion.div>
-//       </section>
-
-//       <section id="contact">
-//         <motion.div
-//           initial={{ opacity: 0, y: 50 }}
-//           whileInView={{ opacity: 1, y: 0 }}
-//           viewport={{ once: true, margin: "-100px" }}
-//           transition={{ duration: 0.8, ease: "easeOut", delay: 1.0 }}
-//         >
-//           <CTASection />
-//         </motion.div>
-//       </section>
-//     </>
-//   );
-// }

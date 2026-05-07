@@ -3,8 +3,8 @@ import { Metadata } from "next";
 // بيانات عامة للموقع
 export const siteConfig = {
   name: "العزيزية للمظلات والسواتر",
-  url: "https://www.al-azizia.com",
-  ogImage: "https://www.al-azizia.com/icon.png",
+  url: "https://al-azizia.com",
+  ogImage: "https://al-azizia.com/icon.png",
   description:
     "شركة رائدة في تركيب المظلات والسواتر والبرجولات في المملكة العربية السعودية",
   keywords: [
@@ -117,7 +117,7 @@ export function generateMetadata({
 export function organizationSchema() {
   return {
     "@context": "https://schema.org",
-    "@type": "Organization", // أو HomeAndConstructionBusiness كما في الكود السابق
+    "@type": "HomeAndConstructionBusiness", // أو HomeAndConstructionBusiness كما في الكود السابق
     name: siteConfig.name,
     url: siteConfig.url,
     logo: `${siteConfig.url}/icon.png`,
@@ -127,7 +127,7 @@ export function organizationSchema() {
       streetAddress: "حي النخيل",
       addressLocality: "جدة",
       addressRegion: "منطقة مكة المكرمة", // تم التعديل هنا بدلاً من الشرقية
-      postalCode: "32415",
+      postalCode: "21589",
       addressCountry: "SA",
     },
     // يفضل إضافة الهاتف هنا أيضاً مباشرة لحل تحذير جوجل
@@ -141,10 +141,9 @@ export function organizationSchema() {
       },
     ],
     sameAs: [
-      "https://facebook.com/alazizia",
-      "https://twitter.com/alazizia",
-      "https://instagram.com/alazizia",
-      "https://youtube.com/alazizia",
+      "https://www.facebook.com/share/18E2uf8aH4/",
+      "https://www.instagram.com/alazizia1234556?igsh=MW4yc3J2aHc3aXdoMA==",
+      "https://youtube.com/@al-azizia?si=w-w9SFZvmG0GyWYQ",
     ],
   };
 }
@@ -206,7 +205,7 @@ export function articleSchema({
       name: author,
     })),
     publisher: {
-      "@type": "Organization",
+      "@type": "HomeAndConstructionBusiness",
       name: siteConfig.name,
       logo: {
         "@type": "ImageObject",
@@ -264,12 +263,12 @@ export function serviceSchema({
 }: ServiceSchemaProps) {
   return {
     "@context": "https://schema.org",
-    "@type": "Product",
+    "@type": "Service",
     name,
     description,
     image,
     ...(category && { category }), // استخدمنا الـ category هنا بشكل صحيح
-    brand: {
+    provider: {
       "@type": "LocalBusiness",
       name: siteConfig.name,
       image: image,

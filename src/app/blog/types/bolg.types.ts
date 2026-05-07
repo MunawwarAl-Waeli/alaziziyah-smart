@@ -23,6 +23,7 @@ export interface BlogPost {
   content: string;
   category: Category;
   metaDescription:string;
+  metaTitle:string;
   author: Author;
   coverImage: string;
   images?: string[];

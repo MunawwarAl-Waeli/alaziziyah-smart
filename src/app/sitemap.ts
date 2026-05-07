@@ -2,18 +2,17 @@
 import { MetadataRoute } from "next";
 // قم بتعديل مسار الاستيراد بناءً على مكان ملف api.ts لديك
 import { getAllServices, getAllProjects } from "@/lib/api";
-import { blogPosts } from "./blog/data/posts";
-// import { getAllPosts } from '@/lib/api'; // إذا قمت بإنشاء دالة للمقالات لاحقاً
+import { fetchAllBlogPosts } from "./blog/data/posts";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://www.al-azizia.com";
+  const baseUrl = "https://al-azizia.com";
 
   // 1. جلب البيانات من الووردبريس (باستخدام دوالك الجاهزة)
   // نستخدم Promise.all لنجلب الخدمات والمشاريع في نفس اللحظة لتسريع بناء الموقع
-  const [services, projects] = await Promise.all([
+  const [services, projects, blogPosts] = await Promise.all([
     getAllServices(),
     getAllProjects(),
-    // getAllPosts(), // أضفها هنا عند برمجتها
+    fetchAllBlogPosts(), // أضفها هنا عند برمجتها
   ]);
 
   // 2. الصفحات الثابتة
@@ -54,7 +53,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const blogPages = blogPosts.map((post) => ({
     url: `${baseUrl}/blog/${post.slug}`,
     // نستخدم تاريخ المقالة الفعلي لتخبر جوجل بآخر تحديث لها
-    lastModified: new Date(post.date),
+    lastModified: post.date ? new Date(post.date) : new Date(),
     changeFrequency: "weekly" as const,
     priority: 0.7,
   }));

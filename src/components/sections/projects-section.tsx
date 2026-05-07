@@ -2,7 +2,7 @@ import React from "react";
 import { getAllProjects } from "@/lib/api"; // تأكد من مسار الاستيراد
 import ProjectsGridClient from "./projects-grid-client"; // مسار مكون العميل
 
-export async function ProjectsSection() {
+export default async function ProjectsSection() {
   // جلب البيانات من الووردبريس
   const projects = await getAllProjects();
 

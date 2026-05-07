@@ -316,6 +316,7 @@ export function Header({
                       ? "text-primary"
                       : "text-foreground/80 hover:text-primary",
                   )}
+                  aria-label={link.name}
                 >
                   {link.name}
                   {link.isMega && (
@@ -409,6 +410,7 @@ export function Header({
                               href={item.href}
                               onClick={() => setActiveMegaMenu(false)}
                               className="group flex flex-col items-start gap-3 p-3.5 rounded-2xl bg-muted/50 hover:bg-card border border-transparent hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
+                              aria-label={item.title}
                             >
                               <div className="w-10 h-10 rounded-xl bg-background shadow-sm border border-border flex items-center justify-center group-hover:scale-110 group-hover:bg-primary/10 group-hover:border-primary/30 transition-all duration-300 shrink-0">
                                 <item.icon className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
@@ -487,6 +489,7 @@ export function Header({
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               className="p-2.5 text-foreground bg-accent/50 rounded-full transition-colors"
+              aria-label="تبديل ثيم الموقع"
             >
               {mounted ? (
                 theme === "dark" ? (
@@ -633,6 +636,7 @@ export function Header({
                             )
                           }
                           className="w-full flex items-center justify-between p-4 text-foreground active:bg-accent/50 transition-colors"
+                          aria-label={link.name}
                         >
                           <div className="flex items-center gap-4">
                             {link.icon && (
@@ -679,6 +683,7 @@ export function Header({
                                     href={sub.href}
                                     onClick={() => setIsMobileMenuOpen(false)}
                                     className="flex items-center gap-3 p-3 rounded-xl hover:bg-background border border-transparent hover:border-border transition-all group shadow-sm"
+                                    aria-label={sub.desc}
                                   >
                                     <div className="w-10 h-10 rounded-full bg-background border border-border flex items-center justify-center group-hover:bg-primary/10 group-hover:border-primary/30 transition-colors">
                                       <sub.icon className="w-5 h-5 text-muted-foreground group-hover:text-primary" />
@@ -698,6 +703,7 @@ export function Header({
                         href={link.href}
                         onClick={() => setIsMobileMenuOpen(false)}
                         className="flex items-center gap-4 p-4 rounded-xl text-lg font-bold text-foreground/80 hover:text-primary hover:bg-primary/5 border border-transparent hover:border-primary/20 transition-all"
+                        aria-label={link.name}
                       >
                         {link.icon && (
                           <link.icon className="w-5 h-5 text-muted-foreground" />
@@ -776,7 +782,8 @@ export function Header({
                       href={result.href}
                       onClick={() => setIsSearchOpen(false)}
                       className="flex items-center gap-4 p-5 hover:bg-muted transition-colors border-b border-border last:border-0 group"
-                    >
+                  
+                  >
                       <div className="w-14 h-14 rounded-xl bg-background border border-border flex items-center justify-center shrink-0 group-hover:border-primary/50 group-hover:bg-primary/10 transition-colors">
                         {result.category === "خدمات" ? (
                           <Package className="w-7 h-7 text-muted-foreground group-hover:text-primary" />

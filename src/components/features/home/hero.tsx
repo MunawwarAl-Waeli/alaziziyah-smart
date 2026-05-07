@@ -61,8 +61,6 @@ export function MainHero({ title, description }: HeroProps) {
   const backgroundY = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
   const backgroundOpacity = useTransform(scrollYProgress, [0, 1], [1, 0.3]);
 
-
-
   return (
     <section
       ref={containerRef}
@@ -133,27 +131,6 @@ export function MainHero({ title, description }: HeroProps) {
           <Sun className="w-20 h-20 text-yellow-500/20" />
         </motion.div>
 
-        {/* النقاط المتحركة */}
-        {particles.map((particle) => (
-          <motion.div
-            key={particle.id}
-            initial={{
-              x: particle.x,
-              y: particle.y,
-            }}
-            animate={{
-              y: [0, particle.moveY, 0],
-              x: [0, particle.moveX, 0],
-            }}
-            transition={{
-              duration: particle.duration,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-            className="absolute w-1 h-1 bg-white/30 rounded-full"
-          />
-        ))}
-
         <div className="absolute bottom-0 left-0 right-0">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -220,29 +197,6 @@ export function MainHero({ title, description }: HeroProps) {
                   </motion.div>
                 ))}
               </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              className="grid grid-cols-3 gap-2 sm:gap-4 mb-8"
-            >
-              {[
-                { number: "500+", label: "مشروع", icon: "🏗️" },
-                { number: "15+", label: "سنوات", icon: "⏳" },
-                { number: "100%", label: "رضا العملاء", icon: "⭐" },
-              ].map((stat, i) => (
-                <div
-                  key={i}
-                  className="bg-white/5 backdrop-blur rounded-xl p-3 text-center border border-white/10"
-                >
-                  <span className="text-xl sm:text-2xl font-bold text-amber-400">
-                    {stat.number}
-                  </span>
-                  <p className="text-xs text-amber-200">{stat.label}</p>
-                </div>
-              ))}
             </motion.div>
 
             <motion.div
@@ -358,7 +312,6 @@ export function MainHero({ title, description }: HeroProps) {
                   alt="تركيب برجولات خشبية وحديدية في جدة"
                   fill
                   className="object-cover"
-                  priority
                   sizes="(max-width: 768px) 100vw, 350px"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
@@ -385,7 +338,6 @@ export function MainHero({ title, description }: HeroProps) {
                   alt="سواتر حديد ليزر وسواتر قماشية بجدة"
                   fill
                   className="object-cover"
-                  priority
                   sizes="(max-width: 768px) 100vw, 200px"
                 />
               </motion.div>

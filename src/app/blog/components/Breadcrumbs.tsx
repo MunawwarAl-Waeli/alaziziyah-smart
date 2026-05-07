@@ -3,68 +3,58 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, ChevronLeft } from "lucide-react";
-import { categories, cities, blogPosts } from "../data/posts";
+import { cities } from "../data/posts"; // ✅ تم حذف blogPosts من هنا
+import { Category } from "../types/bolg.types";
 
-export function Breadcrumbs() {
+// ✅ جعلنا المكون يقبل عنوان المقال كـ prop اختياري
+interface BreadcrumbsProps {
+  postTitle?: string;
+  categories: Category[]; // ✅ استقبلنا قائمة التصنيفات
+}
+
+export function Breadcrumbs({ postTitle, categories }: BreadcrumbsProps) {
   const pathname = usePathname();
-  const segments = pathname.split("/").filter(Boolean);
-
-  const getSegmentLabel = (segment: string, index: number) => {
-    if (segment === "blog") return "المدونة";
-    if (segment === "search") return "البحث";
-    if (segment === "category") {
-      const categorySlug = segments[index + 1];
-      const category = categories.find((c) => c.slug === categorySlug);
-      return category?.name || categorySlug;
-    }
-    if (segment === "city") {
-      const citySlug = segments[index + 1];
-      const city = cities.find((c) => c.slug === citySlug);
-      return `مظلات ${city?.name}` || citySlug;
-    }
-
-    // إذا كان هذا هو عنوان المقالة (slug)
-    const post = blogPosts.find(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (p: any) => p.slug === segment,
-    );
-    if (post) return post.title;
-
-    return decodeURIComponent(segment);
-  };
-
-  const buildHref = (index: number) => {
-    return "/" + segments.slice(0, index + 1).join("/");
-  };
-
-  if (pathname === "/blog") return null;
+  const paths = pathname.split("/").filter(Boolean);
 
   return (
-    <nav className="flex items-center gap-2 text-sm mb-6 bg-white/50 dark:bg-slate-900/50 p-3 rounded-lg border border-amber-100 dark:border-amber-900/30">
+    <nav className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground overflow-x-auto whitespace-nowrap pb-2 no-scrollbar">
       <Link
         href="/"
-        className="flex items-center gap-1 text-slate-600 dark:text-slate-400 hover:text-amber-600 transition-colors"
+        className="flex items-center gap-1.5 hover:text-primary transition-colors"
       >
         <Home className="w-4 h-4" />
-        الرئيسية
+        <span className="hidden sm:inline">الرئيسية</span>
       </Link>
 
-      {segments.map((segment, index) => {
-        const label = getSegmentLabel(segment, index);
-        const isLast = index === segments.length - 1;
-        const href = buildHref(index);
+      {paths.map((path, index) => {
+        const href = `/${paths.slice(0, index + 1).join("/")}`;
+        const isLast = index === paths.length - 1;
+
+        // ترجمة الكلمات الإنجليزية للعربية في المسار
+        let label = path;
+        if (path === "blog") label = "المدونة";
+        else {
+          const category = categories.find((c) => c.slug === path);
+          const city = cities.find((c) => c.slug === path);
+
+          if (category) label = category.name;
+          else if (city) label = city.name;
+          // ✅ إذا كان هذا هو الرابط الأخير (وتم تمرير عنوان المقال)، استخدم العنوان!
+          else if (isLast && postTitle) label = postTitle;
+          else label = decodeURIComponent(path).replace(/-/g, " ");
+        }
 
         return (
-          <div key={segment + index} className="flex items-center gap-2">
-            <ChevronLeft className="w-3 h-3 text-slate-400" />
+          <div key={path} className="flex items-center gap-1.5 sm:gap-2">
+            <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground/50" />
             {isLast ? (
-              <span className="text-amber-600 dark:text-amber-400 font-medium line-clamp-1 max-w-[200px]">
+              <span className="text-foreground font-medium truncate max-w-[150px] sm:max-w-[300px]">
                 {label}
               </span>
             ) : (
               <Link
                 href={href}
-                className="text-slate-600 dark:text-slate-400 hover:text-amber-600 transition-colors line-clamp-1"
+                className="hover:text-primary transition-colors"
               >
                 {label}
               </Link>

@@ -1,15 +1,31 @@
 /* eslint-disable react/jsx-no-undef */
 import { MainHero } from "@/components/features/home/hero";
-import { ServicesSection } from "@/components/sections/services-section";
-import { ProjectsSection } from "@/components/sections/projects-section";
+
 import { KeywordsMarquee } from "@/components/layout/KeywordsMarquee";
-import { HomeSections } from "@/components/HomeSections";
 import { SectionWrapper } from "@/components/layout/SectionWrapper";
 import { Metadata } from "next";
 import { ElegantCurveDivider } from "@/components/ui/ElegantCurveDivider";
 
 // استيراد الإعدادات الموحدة التي أنشأناها سابقاً
 import { siteConfig } from "@/lib/seo-config";
+import { fetchAllBlogPosts } from "./blog/data/posts";
+import dynamic from "next/dynamic";
+
+const ServicesSection = dynamic(
+  () => import("@/components/sections/services-section"),
+  {
+    ssr: true,
+    loading: () => <div className="h-96 animate-pulse bg-slate-50" />, // هيكل مؤقت لتحسين الـ FCP
+  },
+);
+
+const ProjectsSection = dynamic(
+  () => import("@/components/sections/projects-section"),
+  { ssr: true },
+);
+const HomeSections = dynamic(() => import("@/components/HomeSections"), {
+  ssr: true,
+});
 
 interface HomePageData {
   generalSettings: {
@@ -30,9 +46,9 @@ function cleanContent(html: string | null | undefined): string {
   let text = html.replace(/<[^>]*>?/gm, "");
   text = text.replace(/\s+/g, " ").trim();
   if (text.length > 250) {
-    text = text.substr(0, 250);
+    text = text.substring(0, 250);
     text =
-      text.substr(0, Math.min(text.length, text.lastIndexOf(" "))) + " ...";
+      text.substring(0, Math.min(text.length, text.lastIndexOf(" "))) + " ...";
   }
   return text;
 }
@@ -90,18 +106,18 @@ export async function generateMetadata(): Promise<Metadata> {
     "شركة العزيزية للمظلات والسواتر: متخصصون في تركيب مظلات سيارات، سواتر حديد، برجولات حدائق، هناجر ومستودعات، وأعمال الشد الإنشائي في جدة والمملكة.";
 
   // الرابط المباشر للصورة التي تريدها أن تظهر في جوجل (يفضل أن تكون صورة واجهة مميزة)
-  const ogImage = "https://www.al-azizia.com/main-project-image.jpg";
+  const ogImage = "https://al-azizia.com/main-project-image.jpg";
 
   return {
     title: `${title} | الخيار الأول للمظلات والسواتر`,
     description: description,
     alternates: {
-      canonical: "https://www.al-azizia.com", // ضروري جداً لمنع تكرار المحتوى
+      canonical: "/", // ضروري جداً لمنع تكرار المحتوى
     },
     openGraph: {
       title: title,
       description: description,
-      url: "https://www.al-azizia.com",
+      url: "https://al-azizia.com",
       siteName: siteConfig.name,
       images: [
         {
@@ -124,8 +140,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  const data = await getData();
-
+  const [data, allPosts] = await Promise.all([getData(), fetchAllBlogPosts()]);
   let heroDescription = cleanContent(data?.nodeByUri?.content);
   if (heroDescription.length < 10) {
     heroDescription =
@@ -148,7 +163,6 @@ export default async function Home() {
         id="services"
         className="relative bg-slate-50 dark:bg-slate-900/50 pt-2 pb-2"
       >
-      
         <div className="relative z-10">
           <SectionWrapper delay={0}>
             <KeywordsMarquee />
@@ -168,7 +182,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <HomeSections />
+      <HomeSections allPosts={allPosts} />
     </main>
   );
 }

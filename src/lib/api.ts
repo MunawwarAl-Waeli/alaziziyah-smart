@@ -17,60 +17,70 @@ export interface _ServiceItem {
   fullContent: string;
 }
 
-// واجهات استجابة GraphQL من ووردبريس
-interface WPPageNode {
+const API_URL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL;
+
+export interface ServiceCategory {
+  name: string;
+  slug: string;
+}
+export interface ServiceItem {
   id: string;
   title: string;
   slug: string;
   content: string;
-  featuredImage: {
-    node: {
-      sourceUrl: string;
-    };
-  } | null;
-  categories: {
-    nodes: {
-      name: string;
-      slug: string;
-    }[];
+  excerpt?: string;
+  featuredImage: { node: { sourceUrl: string } };
+  serviceCategories: { nodes: ServiceCategory[] };
+  seo: { title: string; metaDesc: string };
+  serviceDetails: {
+    heroSubtitle: string;
+    features: Array<{ title: string; description: string }>;
+    types: Array<{
+      title: string;
+      description: string;
+      image: { sourceUrl: string };
+    }>;
+    faqs: Array<{ question: string; answer: string }>;
+    gallery: string[];
   };
 }
-
-interface WPGraphQLResponse {
-  data: {
-    pages: {
-      nodes: WPPageNode[];
-    };
-    categories: {
-      nodes: {
-        id: string;
-        name: string;
-        slug: string;
-      }[];
-    };
-  };
+export interface GalleryImage {
+  sourceUrl: string;
+  altText: string | null;
+}
+export interface ProjectFields {
+  seoaftergallery: string | null;
+}
+export interface ProjectCategory {
+  name: string;
+  slug: string;
+}
+export interface ProjectData {
+  title: string;
+  slug: string;
+  content: string | null;
+  featuredImage: FeaturedImage | null;
+  galleryImages: GalleryImage[] | null;
+  projectFields: ProjectFields | null;
+  date: string;
+  projectCategorys: { nodes: ProjectCategory[] };
+  seo: { title: string; metaDesc: string } | null;
+}
+export interface FeaturedImage {
+  node: { sourceUrl: string; altText: string | null };
+}
+export interface ProjectSummary {
+  id: string;
+  title: string;
+  slug: string;
+  content: string | null;
+  featuredImage: FeaturedImage | null;
+  galleryImages: GalleryImage[] | null;
+  ProjectCategory: { nodes: ProjectCategory[] };
+  date?: string;
 }
 
-const EXCLUDED_SLUGS = [
-  "sitemap",
-  "privacy-policy",
-  "terms-and-conditions",
-  "contact-us",
-  "about-us",
-  "سياسة-الخصوصية",
-  "شروط-استخدام-الموقع",
-  "اتصل-بنا",
-  "من-نحن",
-];
 
-const EXCLUDED_TITLES = [
-  "sitemap",
-  "سياسة الخصوصية",
-  "شروط استخدام الموقع",
-  "اتصل بنا",
-  "من نحن",
-  "Home",
-];
 
 function cleanText(html: string, limit: number = 120): string {
   if (!html) return "خدمات هندسية متميزة بأعلى معايير الجودة والضمان الفني...";
@@ -153,40 +163,21 @@ export async function getWPData(): Promise<{
 }
 
 export async function getGlobalData() {
-  const WP_URL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL as string;
-
-  try {
-    const response = await fetch(WP_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      next: { revalidate: 3600 }, // 🚀 تحديث الهيدر والفوتر كل ساعة
-      body: JSON.stringify({
-        query: `
-          query GetGlobalData {
-            generalSettings { title description }
-            menu(id: "Main Menu", idType: SLUG) { 
-              menuItems(first: 100) { 
-                nodes { id label url path parentId childItems(first: 100) { nodes { id label url path } } } 
-              } 
-            }
-          }
-        `,
-      }),
-    });
-
-    if (!response.ok) return { menu: { menuItems: { nodes: [] } } };
-    const contentType = response.headers.get("content-type");
-    if (!contentType || !contentType.includes("application/json"))
-      return { menu: { menuItems: { nodes: [] } } };
-
-    const json = await response.json();
-    if (json.errors || !json.data)
-      return { menu: { menuItems: { nodes: [] } } };
-    return json.data;
-  } catch (error) {
-    return { menu: { menuItems: { nodes: [] } } };
-  }
+  const query = `
+    query GetGlobalData {
+      generalSettings { title description }
+      menu(id: "Main Menu", idType: SLUG) { 
+        menuItems(first: 100) { 
+          nodes { id label url path parentId childItems(first: 100) { nodes { id label url path } } } 
+        } 
+      }
+    }
+  `;
+  
+  const data = await wpFetch(query);
+  return data || { menu: { menuItems: { nodes: [] } } };
 }
+
 
 export async function getLatestProjects() {
   const WP_URL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL as string;
@@ -214,99 +205,24 @@ export async function getLatestProjects() {
 }
 
 export async function getProjectBySlug(slug: string) {
-  const WP_URL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL as string;
   const decodedSlug = decodeURIComponent(slug);
+  const query = `
+    query GetProjectDetails($slug: String!) {
+      posts(where: { name: $slug }, first: 1) {
+        nodes {
+          id title date content(format: RENDERED)
+          featuredImage { node { sourceUrl } }
+          categories { nodes { name } }
+        }
+      }
+    }
+  `;
 
-  try {
-    const response = await fetch(WP_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      next: { revalidate: 3600 }, // 🚀 تمت إضافة الكاش هنا
-      body: JSON.stringify({
-        query: `
-          query GetProjectDetails($slug: String!) {
-            posts(where: { name: $slug }, first: 1) {
-              nodes {
-                id title date content(format: RENDERED)
-                featuredImage { node { sourceUrl } }
-                categories { nodes { name } }
-              }
-            }
-          }
-        `,
-        variables: { slug: decodedSlug },
-      }),
-    });
-
-    const json = await response.json();
-    return json?.data?.posts?.nodes[0] || null;
-  } catch (error) {
-    return null;
-  }
+  const data = await wpFetch(query, { slug: decodedSlug });
+  return data?.posts?.nodes[0] || null;
 }
 
-const API_URL = process.env.NEXT_PUBLIC_WORDPRESS_API_URL;
 
-export interface ServiceCategory {
-  name: string;
-  slug: string;
-}
-export interface ServiceItem {
-  id: string;
-  title: string;
-  slug: string;
-  content: string;
-  excerpt?: string;
-  featuredImage: { node: { sourceUrl: string } };
-  serviceCategories: { nodes: ServiceCategory[] };
-  seo: { title: string; metaDesc: string };
-  serviceDetails: {
-    heroSubtitle: string;
-    features: Array<{ title: string; description: string }>;
-    types: Array<{
-      title: string;
-      description: string;
-      image: { sourceUrl: string };
-    }>;
-    faqs: Array<{ question: string; answer: string }>;
-    gallery: string[];
-  };
-}
-export interface GalleryImage {
-  sourceUrl: string;
-  altText: string | null;
-}
-export interface ProjectFields {
-  seoaftergallery: string | null;
-}
-export interface ProjectCategory {
-  name: string;
-  slug: string;
-}
-export interface ProjectData {
-  title: string;
-  slug: string;
-  content: string | null;
-  featuredImage: FeaturedImage | null;
-  galleryImages: GalleryImage[] | null;
-  projectFields: ProjectFields | null;
-  date: string;
-  projectCategorys: { nodes: ProjectCategory[] };
-  seo: { title: string; metaDesc: string } | null;
-}
-export interface FeaturedImage {
-  node: { sourceUrl: string; altText: string | null };
-}
-export interface ProjectSummary {
-  id: string;
-  title: string;
-  slug: string;
-  content: string | null;
-  featuredImage: FeaturedImage | null;
-  galleryImages: GalleryImage[] | null;
-  ProjectCategory: { nodes: ProjectCategory[] };
-  date?: string;
-}
 
 // 🚀 الدالة المحدثة مع إضافة نظام الكاش
 async function wpFetch(query: string, variables = {}) {

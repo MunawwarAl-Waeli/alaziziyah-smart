@@ -18,10 +18,10 @@ export function JsonLd() {
     telephone: "+966530989975", // إضافة الهاتف في المستوى الرئيسي لحل التحذير الثاني
     address: {
       "@type": "PostalAddress",
-      streetAddress: "حي النخيل",
+      streetAddress: "حي سامر",
       addressLocality: "جدة",
       addressRegion: "منطقة مكة المكرمة", // تصحيح المنطقة (جدة تتبع مكة وليس الشرقية)
-      postalCode: "32415",
+      postalCode: "23462",
       addressCountry: "SA",
     },
     contactPoint: {
@@ -31,10 +31,9 @@ export function JsonLd() {
       availableLanguage: ["Arabic", "English"],
     },
     sameAs: [
-      "https://facebook.com/alazizia",
-      "https://twitter.com/alazizia",
-      "https://instagram.com/alazizia",
-      "https://youtube.com/alazizia",
+      "https://www.facebook.com/share/18E2uf8aH4/",
+      "https://www.instagram.com/alazizia1234556?igsh=MW4yc3J2aHc3aXdoMA==",
+      "https://youtube.com/@al-azizia?si=w-w9SFZvmG0GyWYQ",
     ],
     openingHours: "Sa-Th 08:00-20:00",
     priceRange: "SAR",

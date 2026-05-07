@@ -94,13 +94,12 @@ export default function ServiceDetailClient({
         <motion.div style={{ y: imageY }} className="absolute inset-0 -z-10">
           <Image
             src={
-              service.featuredImage?.node.sourceUrl || "/images/placeholder.jpg"
+              service.featuredImage?.node.sourceUrl || "/images/3.jpg"
             }
             alt={service.title}
             fill
             className="object-cover scale-105"
             priority
-            unoptimized
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-slate-900/30 opacity-95" />
         </motion.div>
@@ -329,7 +328,7 @@ export default function ServiceDetailClient({
 
               <div className="flex flex-col gap-3 relative z-10">
                 <a
-                  href="tel:530989975"
+                  href="tel:+966530989975"
                   className="w-full bg-gradient-to-l from-primary-dark to-primary hover:from-primary hover:to-primary-light text-primary-foreground font-black py-3.5 px-5 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-primary/25 hover:-translate-y-1 text-sm md:text-base"
                 >
                   <Phone className="w-4 h-4 md:w-5 md:h-5" /> اتصل بنا الآن

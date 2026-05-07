@@ -5,7 +5,7 @@ import { Search, X, Loader2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { blogPosts } from "../data/posts";
+import { BlogPost } from "../types/bolg.types"; // ✅ 1. استيراد النوع بدلاً من البيانات الثابتة
 
 interface SearchResult {
   id: string;
@@ -14,7 +14,12 @@ interface SearchResult {
   category: string;
 }
 
-export function SearchBar() {
+// ✅ 2. جعل المكون يستقبل المقالات كـ Prop
+interface SearchBarProps {
+  posts?: BlogPost[];
+}
+
+export function SearchBar({ posts = [] }: SearchBarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(searchParams.get("q") || "");
@@ -45,21 +50,22 @@ export function SearchBar() {
 
       setIsLoading(true);
 
-      // محاكاة بحث (في التطبيق الحقيقي، استخدم API)
+      // محاكاة بحث سريع جداً في الواجهة الأمامية باستخدام المقالات الممررة (posts)
       setTimeout(() => {
-        const searchResults = blogPosts
+        // ✅ 3. استخدمنا posts بدلاً من blogPosts المحذوفة
+        const searchResults = posts
           .filter(
             (post) =>
               post.title.toLowerCase().includes(query.toLowerCase()) ||
               post.excerpt.toLowerCase().includes(query.toLowerCase()) ||
-              post.tags.some((tag) => tag.includes(query)),
+              (post.tags && post.tags.some((tag) => tag.includes(query))),
           )
           .slice(0, 5)
           .map((post) => ({
             id: post.id,
             title: post.title,
             slug: post.slug,
-            category: post.category.name,
+            category: post.category?.name || "عام",
           }));
 
         setResults(searchResults);
@@ -69,7 +75,7 @@ export function SearchBar() {
 
     const debounce = setTimeout(searchPosts, 300);
     return () => clearTimeout(debounce);
-  }, [query]);
+  }, [query, posts]); // ✅ أضفنا posts لمصفوفة التبعيات
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

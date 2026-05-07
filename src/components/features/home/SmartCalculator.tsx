@@ -1,20 +1,15 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { COMPANY_INFO } from "@/lib/config";
 import {
   Calculator,
   Check,
   ChevronLeft,
-  ChevronRight,
-  Ruler,
-  MessageCircle,
   Clock,
   Shield,
-  Calendar,
   RotateCcw,
-  Printer,
   CarFront,
   Home,
   ShieldCheck,
@@ -22,10 +17,10 @@ import {
   Waves,
   Factory,
   Layers,
-  Mail,
+  MessageCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { trackGAEvent } from "@/lib/analytics";
+// import { trackGAEvent } from "@/lib/analytics"; // قم بتفعيله إذا كنت تستخدمه
 import { SoftWavesDivider } from "@/components/ui/SoftWavesDivider";
 
 // ==========================================
@@ -50,22 +45,6 @@ interface MaterialOption {
   warranty: string;
   features: string[];
 }
-
-interface CalculationResult {
-  baseCost: number;
-  materialCost: number;
-  totalCost: number;
-  estimatedTime: string;
-  warranty: string;
-  breakdown: {
-    label: string;
-    amount: number;
-  }[];
-}
-
-// ==========================================
-// 2. البيانات كاملة بدون حذف
-// ==========================================
 
 const services: ServiceOption[] = [
   {
@@ -160,14 +139,14 @@ const materials: MaterialOption[] = [
 ];
 
 const steps = [
-  { id: 1, name: "الخدمة", description: "نوع الخدمة" },
-  { id: 2, name: "المساحة", description: "المساحة" },
-  { id: 3, name: "المواد", description: "المواد" },
-  { id: 4, name: "النتيجة", description: "التكلفة" },
+  { id: 1, name: "الخدمة" },
+  { id: 2, name: "المساحة" },
+  { id: 3, name: "المواد" },
+  { id: 4, name: "النتيجة" },
 ];
 
 // ==========================================
-// 3. المكون الرئيسي
+// 2. المكون الرئيسي
 // ==========================================
 
 export function SmartCalculator() {
@@ -183,8 +162,28 @@ export function SmartCalculator() {
   const [selectedMaterial, setSelectedMaterial] =
     useState<MaterialOption | null>(null);
   const [formData, setFormData] = useState({ name: "", phone: "", email: "" });
-  const [calculationResult, setCalculationResult] =
-    useState<CalculationResult | null>(null);
+
+  // 🚀 تحسين الأداء: استخدام useMemo بدلاً من useEffect لمنع إعادة التصيير المزدوج
+  const calculationResult = useMemo(() => {
+    if (!selectedService || !selectedMaterial) return null;
+
+    const baseCost = selectedService.basePrice * area;
+    const materialCost = baseCost * (selectedMaterial.priceFactor - 1);
+    const totalCost = baseCost + materialCost;
+    const estimatedDays = Math.max(3, Math.ceil(area / 50) * 2);
+
+    return {
+      baseCost,
+      materialCost,
+      totalCost,
+      estimatedTime: `${estimatedDays} - ${estimatedDays + 3} أيام`,
+      warranty: selectedMaterial.warranty,
+      breakdown: [
+        { label: "التكلفة الأساسية", amount: baseCost },
+        { label: "إضافة الخامة", amount: materialCost },
+      ],
+    };
+  }, [selectedService, area, selectedMaterial]);
 
   const scrollToCalculatorTop = () => {
     if (calculatorTopRef.current) {
@@ -195,43 +194,30 @@ export function SmartCalculator() {
     }
   };
 
-  useEffect(() => {
-    if (selectedService && selectedMaterial) {
-      const baseCost = selectedService.basePrice * area;
-      const materialCost = baseCost * (selectedMaterial.priceFactor - 1);
-      const totalCost = baseCost + materialCost;
-      const estimatedDays = Math.max(3, Math.ceil(area / 50) * 2);
-
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setCalculationResult({
-        baseCost,
-        materialCost,
-        totalCost,
-        estimatedTime: `${estimatedDays} - ${estimatedDays + 3} أيام`,
-        warranty: selectedMaterial.warranty,
-        breakdown: [
-          { label: "التكلفة الأساسية", amount: baseCost },
-          { label: "إضافة الخامة", amount: materialCost },
-        ],
-      });
-    }
-  }, [selectedService, area, selectedMaterial]);
-
   const nextStep = () => {
     if (currentStep < 4) {
-      setCurrentStep(currentStep + 1);
-      scrollToCalculatorTop();
+      setCurrentStep((prev) => prev + 1);
     } else {
       setShowResult(true);
-      scrollToCalculatorTop();
     }
+    scrollToCalculatorTop();
   };
 
   const prevStep = () => {
     if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
+      setCurrentStep((prev) => prev - 1);
       scrollToCalculatorTop();
     }
+  };
+
+  const resetCalculator = () => {
+    setCurrentStep(1);
+    setSelectedService(null);
+    setArea(20);
+    setSelectedMaterial(null);
+    setShowResult(false);
+    setShowContactForm(false);
+    scrollToCalculatorTop();
   };
 
   const canProceed = () => {
@@ -241,101 +227,110 @@ export function SmartCalculator() {
     return true;
   };
 
-  const resetCalculator = () => {
-    setCurrentStep(1);
-    setSelectedService(null);
-    setArea(20);
-    setSelectedMaterial(null);
-    setCalculationResult(null);
-    setShowResult(false);
-    setShowContactForm(false);
-    scrollToCalculatorTop();
-  };
-
-  const formatPrice = (price: number) => price.toLocaleString() + " ريال";
+  const formatPrice = (price: number) =>
+    Math.round(price).toLocaleString("en-US") + " ريال";
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!calculationResult) return;
+
+    // 🚀 إرسال الحدث والبيانات إلى Google Tag Manager
+    if (typeof window !== "undefined") {
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: "calculator_whatsapp_lead", // هذا هو اسم الحدث الذي سنستخدمه في GTM
+        lead_category: "Smart Calculator",
+        service_name: selectedService?.name,
+        material_type: selectedMaterial?.name,
+        project_area: area,
+        estimated_value: calculationResult.totalCost, // مفيد جداً لتتبع قيمة التحويل في إعلانات جوجل
+      });
+    }
+
+    // الكود الأصلي لفتح الواتساب
     const message = `طلب عرض سعر رسمي\nالاسم: ${formData.name}\nالخدمة: ${selectedService?.name}\nالمساحة: ${area} م²\nالمواد: ${selectedMaterial?.name}\nالتكلفة التقديرية: ${formatPrice(calculationResult.totalCost)}`;
-    window.open(
-      `https://wa.me/${COMPANY_INFO.whatsapp}?text=${encodeURIComponent(message)}`,
-      "_blank",
-    );
+    window.open(`https://wa.me/${COMPANY_INFO.whatsapp}?text=${encodeURIComponent(message)}`, "_blank");
   };
+
 
   return (
     <section
-      className="py-6 md:py-24 relative overflow-hidden bg-gradient-to-b from-background via-background/95 to-slate-50 dark:to-slate-950"
+      className="py-12 md:py-24 relative overflow-hidden bg-gradient-to-b from-background via-background/95 to-slate-50 dark:to-slate-950"
       dir="rtl"
     >
       <SoftWavesDivider />
 
       <div className="container mx-auto px-4 relative z-10">
+        {/* رأس القسم */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-10 md:mb-12 max-w-3xl mx-auto"
+          className="text-center mb-10 md:mb-14 max-w-3xl mx-auto"
         >
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-4 md:mb-6">
-            <Calculator className="w-4 h-4 text-primary" />
+          <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary/10 border border-primary/20 mb-6">
+            <Calculator className="w-5 h-5 text-primary" />
             <span className="text-primary text-sm font-bold">
-              حاسبة التكلفة
+              حاسبة التكلفة الذكية
             </span>
           </div>
-          <h2 className="text-3xl md:text-5xl lg:text-6xl font-black mb-4 md:mb-6 text-foreground">
+          <h2 className="text-3xl md:text-5xl lg:text-6xl font-black mb-6 text-foreground leading-tight">
             احسب تكلفة{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-l from-primary to-primary-dark">
               مشروعك
             </span>
           </h2>
-          <p className="text-muted-foreground text-base md:text-lg leading-relaxed px-2">
-            احصل على تقدير فوري لتكلفة مشروع المظلة أو الساتر أو البرجولة في
-            دقائق
+          <p className="text-muted-foreground text-sm md:text-lg leading-relaxed px-4">
+            خطوات بسيطة للحصول على تقدير فوري لتكلفة مشروع المظلة أو الساتر أو
+            البرجولة
           </p>
         </motion.div>
-        <div ref={calculatorTopRef} className="scroll-mt-24"></div>
 
-        {/* شريط التقدم الصغير */}
-        <div className="max-w-4xl mx-auto mb-6 md:mb-10">
-          <div className="flex items-center justify-between mb-3 px-1">
+        <div ref={calculatorTopRef} className="scroll-mt-28"></div>
+
+        {/* شريط التقدم (Progress Bar) */}
+        <div className="max-w-4xl mx-auto mb-8 md:mb-12">
+          <div className="flex items-center justify-between mb-4 px-2 md:px-6">
             {steps.map((step) => (
               <div
                 key={step.id}
                 className={cn(
-                  "flex flex-col items-center gap-1",
-                  step.id > currentStep && !showResult && "opacity-30",
+                  "flex flex-col items-center gap-2 transition-opacity duration-300",
+                  step.id > currentStep && !showResult && "opacity-40",
                 )}
               >
                 <div
                   className={cn(
-                    "w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center text-[10px] md:text-sm font-bold transition-all",
+                    "w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-sm md:text-base font-bold transition-all duration-300 shadow-sm",
                     step.id < currentStep || (step.id === 4 && showResult)
                       ? "bg-primary text-white"
                       : step.id === currentStep && !showResult
-                        ? "bg-primary/20 text-primary border-2 border-primary"
-                        : "bg-slate-200 dark:bg-slate-800 text-muted-foreground",
+                        ? "bg-primary/10 text-primary border-2 border-primary"
+                        : "bg-slate-100 dark:bg-slate-800 text-muted-foreground border border-border",
                   )}
                 >
                   {step.id < currentStep || (step.id === 4 && showResult) ? (
-                    <Check className="w-3 h-3 md:w-4 md:h-4" />
+                    <Check className="w-4 h-4 md:w-5 md:h-5" />
                   ) : (
                     step.id
                   )}
                 </div>
-                <span className="text-[8px] md:text-xs font-bold text-foreground">
+                <span className="text-xs md:text-sm font-bold text-foreground">
                   {step.name}
                 </span>
               </div>
             ))}
           </div>
-          <div className="w-full h-1 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+          <div className="w-full h-1.5 md:h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
             <motion.div
+              initial={{ width: 0 }}
               animate={{
-                width: showResult ? "100%" : `${(currentStep / 4) * 100}%`,
+                width: showResult
+                  ? "100%"
+                  : `${((currentStep - 1) / 3) * 100}%`,
               }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
               className="h-full bg-primary"
             />
           </div>
@@ -343,7 +338,7 @@ export function SmartCalculator() {
 
         {/* نموذج الحاسبة */}
         <div className="max-w-4xl mx-auto bg-card rounded-2xl shadow-xl border border-border/50 overflow-hidden">
-          <div className="p-3 md:p-8">
+          <div className="p-4 md:p-8 lg:p-10">
             <AnimatePresence mode="wait">
               {!showResult ? (
                 <motion.div
@@ -351,45 +346,50 @@ export function SmartCalculator() {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.2 }}
+                  transition={{ duration: 0.3 }}
                 >
-                  {/* الخطوة 1: الخدمات - عمودين في الجوال */}
+                  {/* ================= الخطوة 1: الخدمات ================= */}
                   {currentStep === 1 && (
-                    <div className="space-y-4">
-                      <h3 className="text-sm md:text-2xl font-bold text-center text-foreground">
+                    <div className="space-y-6">
+                      <h3 className="text-xl md:text-2xl font-bold text-center text-foreground mb-6">
                         اختر نوع الخدمة
                       </h3>
-                      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-5">
+                      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5">
                         {services.map((service) => {
                           const Icon = service.icon;
+                          const isSelected = selectedService?.id === service.id;
                           return (
                             <button
                               key={service.id}
-                              onClick={() => setSelectedService(service)}
+                              onClick={() => {
+                                setSelectedService(service);
+                                if (area < service.minArea)
+                                  setArea(service.minArea); // ضبط المساحة تلقائياً
+                              }}
                               className={cn(
-                                "relative p-2 md:p-6 rounded-xl border-2 transition-all text-center flex flex-col items-center group bg-background",
-                                selectedService?.id === service.id
-                                  ? "border-primary ring-1 ring-primary bg-primary/5"
-                                  : "border-border/50",
+                                "relative p-4 md:p-6 rounded-2xl border-2 transition-all duration-300 text-center flex flex-col items-center group h-full",
+                                isSelected
+                                  ? "border-primary ring-2 ring-primary/20 bg-primary/5 shadow-md"
+                                  : "border-border/60 hover:border-primary/50 hover:bg-slate-50 dark:hover:bg-slate-800/50 bg-background",
                               )}
                             >
                               <div
                                 className={cn(
-                                  "mb-1 md:mb-4 p-2 md:p-4 rounded-full transition-colors",
-                                  selectedService?.id === service.id
-                                    ? "bg-primary/20 text-primary"
-                                    : "bg-muted text-muted-foreground",
+                                  "mb-3 md:mb-5 p-3 md:p-4 rounded-full transition-colors duration-300",
+                                  isSelected
+                                    ? "bg-primary text-white shadow-lg shadow-primary/30"
+                                    : "bg-muted text-muted-foreground group-hover:text-primary group-hover:bg-primary/10",
                                 )}
                               >
                                 <Icon
-                                  className="w-5 h-5 md:w-12 md:h-12"
+                                  className="w-6 h-6 md:w-10 md:h-10"
                                   strokeWidth={1.5}
                                 />
                               </div>
-                              <h4 className="font-bold text-[10px] md:text-lg text-foreground leading-tight">
+                              <h4 className="font-bold text-sm md:text-lg text-foreground mb-1 md:mb-2">
                                 {service.name}
                               </h4>
-                              <p className="text-[8px] md:text-xs text-muted-foreground line-clamp-1 mt-0.5">
+                              <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed px-1">
                                 {service.description}
                               </p>
                             </button>
@@ -399,171 +399,216 @@ export function SmartCalculator() {
                     </div>
                   )}
 
-                  {/* الخطوة 2: المساحة */}
+                  {/* ================= الخطوة 2: المساحة ================= */}
                   {currentStep === 2 && selectedService && (
-                    <div className="space-y-4">
-                      <h3 className="text-sm md:text-2xl font-bold text-center text-foreground">
-                        المساحة م²
+                    <div className="space-y-6 md:space-y-8">
+                      <h3 className="text-xl md:text-2xl font-bold text-center text-foreground">
+                        حدد المساحة التقريبية (م²)
                       </h3>
-                      <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-xl border border-border/50 max-w-xl mx-auto text-center">
-                        <span className="text-3xl md:text-5xl font-black text-primary">
-                          {area} م²
+                      <div className="bg-slate-50 dark:bg-slate-800/30 p-6 md:p-10 rounded-2xl border border-border/50 max-w-2xl mx-auto text-center">
+                        <span className="text-5xl md:text-7xl font-black text-primary drop-shadow-sm">
+                          {area}{" "}
+                          <span className="text-2xl md:text-3xl text-muted-foreground font-medium">
+                            م²
+                          </span>
                         </span>
-                        <input
-                          type="range"
-                          min={selectedService.minArea}
-                          max={selectedService.maxArea}
-                          value={area}
-                          onChange={(e) => setArea(Number(e.target.value))}
-                          className="w-full h-2 mt-6 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-primary"
-                        />
+
+                        <div className="mt-8 md:mt-12 relative px-2">
+                          <input
+                            type="range"
+                            min={selectedService.minArea}
+                            max={selectedService.maxArea}
+                            value={area}
+                            onChange={(e) => setArea(Number(e.target.value))}
+                            className="w-full h-3 md:h-4 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-primary hover:accent-primary-dark transition-all"
+                          />
+                          <div className="flex justify-between mt-3 text-xs md:text-sm font-medium text-muted-foreground">
+                            <span>{selectedService.minArea} م² (الأدنى)</span>
+                            <span>{selectedService.maxArea} م² (الأقصى)</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   )}
 
-                  {/* الخطوة 3: المواد */}
+                  {/* ================= الخطوة 3: المواد ================= */}
                   {currentStep === 3 && (
-                    <div className="space-y-4">
-                      <h3 className="text-sm md:text-2xl font-bold text-center text-foreground">
-                        اختر الخامة
+                    <div className="space-y-6">
+                      <h3 className="text-xl md:text-2xl font-bold text-center text-foreground mb-6">
+                        اختر نوع التغطية (الخامة)
                       </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
-                        {materials.map((material) => (
-                          <button
-                            key={material.id}
-                            onClick={() => setSelectedMaterial(material)}
-                            className={cn(
-                              "relative p-3 md:p-5 rounded-xl border-2 transition-all text-right flex flex-col group bg-background",
-                              selectedMaterial?.id === material.id
-                                ? "border-primary bg-primary/5"
-                                : "border-border/50",
-                            )}
-                          >
-                            <div className="flex items-center justify-between w-full">
-                              <div className="flex items-center gap-2">
-                                <div className="p-1.5 bg-primary/10 rounded-lg text-primary">
-                                  <Layers className="w-4 h-4" />
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+                        {materials.map((material) => {
+                          const isSelected =
+                            selectedMaterial?.id === material.id;
+                          return (
+                            <button
+                              key={material.id}
+                              onClick={() => setSelectedMaterial(material)}
+                              className={cn(
+                                "relative p-5 md:p-6 rounded-2xl border-2 transition-all duration-300 text-right flex flex-col h-full group",
+                                isSelected
+                                  ? "border-primary ring-2 ring-primary/20 bg-primary/5 shadow-md"
+                                  : "border-border/60 hover:border-primary/50 hover:bg-slate-50 dark:hover:bg-slate-800/50 bg-background",
+                              )}
+                            >
+                              <div className="flex items-start justify-between w-full mb-3">
+                                <div className="flex items-center gap-3">
+                                  <div
+                                    className={cn(
+                                      "p-2 rounded-xl transition-colors",
+                                      isSelected
+                                        ? "bg-primary text-white"
+                                        : "bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white",
+                                    )}
+                                  >
+                                    <Layers className="w-5 h-5 md:w-6 md:h-6" />
+                                  </div>
+                                  <h4 className="font-bold text-base md:text-xl text-foreground">
+                                    {material.name}
+                                  </h4>
                                 </div>
-                                <h4 className="font-bold text-xs md:text-xl text-foreground">
-                                  {material.name}
-                                </h4>
+                                <span className="px-2.5 py-1 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 text-xs md:text-sm font-bold whitespace-nowrap">
+                                  ضمان {material.warranty}
+                                </span>
                               </div>
-                              <span className="text-[8px] md:text-xs text-primary font-bold">
-                                ضمان {material.warranty}
-                              </span>
-                            </div>
-                            <p className="text-[9px] md:text-sm text-muted-foreground mt-1 line-clamp-1">
-                              {material.description}
-                            </p>
-                          </button>
-                        ))}
+                              <p className="text-sm text-muted-foreground leading-relaxed mb-4 flex-1">
+                                {material.description}
+                              </p>
+                              <div className="flex flex-wrap gap-2 mt-auto">
+                                {material.features.map((feature, idx) => (
+                                  <span
+                                    key={idx}
+                                    className="text-xs bg-muted px-2 py-1 rounded-md text-foreground flex items-center gap-1"
+                                  >
+                                    <Check className="w-3 h-3 text-primary" />{" "}
+                                    {feature}
+                                  </span>
+                                ))}
+                              </div>
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
                 </motion.div>
               ) : (
-                /* النتيجة الكاملة */
+                /* ================= النتيجة الكاملة ================= */
                 calculationResult && (
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.98 }}
+                    initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="space-y-4"
+                    transition={{ duration: 0.4 }}
+                    className="max-w-2xl mx-auto space-y-6 md:space-y-8"
                   >
-                    <div className="bg-gradient-to-br from-primary to-primary-dark text-white p-5 rounded-2xl text-center shadow-lg">
-                      <p className="text-[10px] md:text-sm opacity-80">
+                    {/* المربع السعري */}
+                    <div className="bg-gradient-to-br from-primary to-primary-dark text-white p-6 md:p-8 rounded-3xl text-center shadow-xl shadow-primary/20 relative overflow-hidden">
+                      {/* زينة للخلفية */}
+                      <div className="absolute -top-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+                      <div className="absolute -bottom-10 -left-10 w-32 h-32 bg-black/10 rounded-full blur-2xl"></div>
+
+                      <h3 className="text-sm md:text-lg font-medium opacity-90 mb-2 relative z-10">
                         التكلفة التقديرية (شامل التركيب)
-                      </p>
-                      <p className="text-3xl md:text-5xl font-black">
+                      </h3>
+                      <p className="text-4xl md:text-6xl font-black relative z-10 tracking-tight">
                         {formatPrice(calculationResult.totalCost)}
                       </p>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2">
-                      <div className="bg-muted/50 p-3 rounded-xl border border-border/50 text-center">
-                        <Clock className="w-4 h-4 text-primary mx-auto mb-1" />
-                        <p className="text-[8px] md:text-xs text-muted-foreground">
-                          التنفيذ
+                    <div className="grid grid-cols-2 gap-3 md:gap-4">
+                      <div className="bg-muted/30 p-4 md:p-5 rounded-2xl border border-border flex flex-col items-center justify-center text-center">
+                        <Clock className="w-6 h-6 md:w-8 md:h-8 text-primary mb-2" />
+                        <p className="text-xs md:text-sm text-muted-foreground mb-1">
+                          وقت التنفيذ المتوقع
                         </p>
-                        <p className="font-bold text-[10px] md:text-sm">
+                        <p className="font-bold text-sm md:text-base text-foreground">
                           {calculationResult.estimatedTime}
                         </p>
                       </div>
-                      <div className="bg-muted/50 p-3 rounded-xl border border-border/50 text-center">
-                        <Shield className="w-4 h-4 text-primary mx-auto mb-1" />
-                        <p className="text-[8px] md:text-xs text-muted-foreground">
-                          الضمان
+                      <div className="bg-muted/30 p-4 md:p-5 rounded-2xl border border-border flex flex-col items-center justify-center text-center">
+                        <Shield className="w-6 h-6 md:w-8 md:h-8 text-primary mb-2" />
+                        <p className="text-xs md:text-sm text-muted-foreground mb-1">
+                          فترة الضمان
                         </p>
-                        <p className="font-bold text-[10px] md:text-sm">
+                        <p className="font-bold text-sm md:text-base text-foreground">
                           {calculationResult.warranty}
                         </p>
                       </div>
                     </div>
 
-                    {/* تفاصيل الحساب التي كانت محذوفة */}
-                    <div className="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-border/50 space-y-1">
+                    {/* تفاصيل الحساب */}
+                    <div className="bg-slate-50 dark:bg-slate-900 p-5 md:p-6 rounded-2xl border border-border space-y-3">
+                      <h4 className="font-bold text-sm md:text-base mb-4 border-b border-border pb-2">
+                        تفاصيل الحسبة:
+                      </h4>
                       {calculationResult.breakdown.map((item, i) => (
                         <div
                           key={i}
-                          className="flex justify-between text-[10px] md:text-sm"
+                          className="flex justify-between items-center text-sm md:text-base"
                         >
-                          <span className="text-muted-foreground">
+                          <span className="text-muted-foreground flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
                             {item.label}
                           </span>
-                          <span className="font-bold">
+                          <span className="font-bold text-foreground">
                             {formatPrice(item.amount)}
                           </span>
                         </div>
                       ))}
                     </div>
 
+                    {/* نموذج التواصل أو زر الواتساب */}
                     {!showContactForm ? (
                       <button
                         onClick={() => setShowContactForm(true)}
-                        className="w-full py-3 bg-primary text-white rounded-xl font-bold text-xs md:text-base shadow-lg"
+                        className="w-full py-4 bg-primary hover:bg-primary-dark text-white rounded-xl font-bold text-sm md:text-lg shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 flex items-center justify-center gap-2"
                       >
-                        احصل على عرض سعر رسمي (واتساب)
+                        اطلب معاينة دقيقة للموقع
                       </button>
                     ) : (
                       <motion.form
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
                         onSubmit={handleSubmit}
-                        className="space-y-2 bg-slate-100 dark:bg-slate-800/50 p-3 rounded-xl"
+                        className="space-y-4 bg-card border border-border p-5 md:p-6 rounded-2xl shadow-sm"
                       >
-                        <input
-                          type="text"
-                          placeholder="الاسم الكامل"
-                          required
-                          className="w-full px-3 py-2 text-xs md:text-base bg-background border rounded-lg outline-none"
-                          value={formData.name}
-                          onChange={(e) =>
-                            setFormData({ ...formData, name: e.target.value })
-                          }
-                        />
-                        <input
-                          type="tel"
-                          placeholder="رقم الجوال"
-                          required
-                          className="w-full px-3 py-2 text-xs md:text-base bg-background border rounded-lg outline-none"
-                          value={formData.phone}
-                          onChange={(e) =>
-                            setFormData({ ...formData, phone: e.target.value })
-                          }
-                        />
-                        <input
-                          type="email"
-                          placeholder="البريد الإلكتروني (اختياري)"
-                          className="w-full px-3 py-2 text-xs md:text-base bg-background border rounded-lg outline-none"
-                          value={formData.email}
-                          onChange={(e) =>
-                            setFormData({ ...formData, email: e.target.value })
-                          }
-                        />
+                        <h4 className="font-bold text-center mb-4">
+                          أدخل بياناتك لإرسال التسعيرة للواتساب
+                        </h4>
+                        <div>
+                          <input
+                            type="text"
+                            placeholder="الاسم الكامل"
+                            required
+                            className="w-full px-4 py-3 text-sm md:text-base bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                            value={formData.name}
+                            onChange={(e) =>
+                              setFormData({ ...formData, name: e.target.value })
+                            }
+                          />
+                        </div>
+                        <div>
+                          <input
+                            type="tel"
+                            placeholder="رقم الجوال"
+                            required
+                            className="w-full px-4 py-3 text-sm md:text-base bg-background border border-border rounded-xl focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                            value={formData.phone}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                phone: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
                         <button
                           type="submit"
-                          className="w-full py-3 bg-[#25D366] text-white rounded-lg font-bold text-xs md:text-base flex items-center justify-center gap-2"
+                          className="w-full py-4 bg-[#25D366] hover:bg-[#128C7E] text-white rounded-xl font-bold text-sm md:text-base flex items-center justify-center gap-2 transition-colors shadow-lg"
                         >
-                          <MessageCircle className="w-4 h-4" /> إرسال عبر واتساب
+                          <MessageCircle className="w-5 h-5" /> إرسال الطلب عبر
+                          واتساب
                         </button>
                       </motion.form>
                     )}
@@ -572,32 +617,34 @@ export function SmartCalculator() {
               )}
             </AnimatePresence>
 
-            {/* أزرار التحكم */}
+            {/* أزرار التحكم بالتنقل */}
             {!showResult && (
-              <div className="flex justify-between items-center mt-4 pt-4 border-t border-border/50 gap-2">
+              <div className="flex justify-between items-center mt-8 pt-6 border-t border-border gap-4">
                 <button
                   onClick={prevStep}
                   disabled={currentStep === 1}
-                  className="px-4 py-2 text-[10px] md:text-base text-muted-foreground disabled:opacity-20"
+                  className="px-5 py-2.5 text-sm md:text-base font-medium text-muted-foreground hover:text-foreground disabled:opacity-30 disabled:hover:text-muted-foreground transition-colors"
                 >
                   السابق
                 </button>
-                <div className="flex gap-2">
+
+                <div className="flex items-center gap-3">
                   {currentStep > 1 && (
                     <button
                       onClick={resetCalculator}
-                      className="p-2 md:p-3 text-muted-foreground hover:bg-muted rounded-lg"
+                      title="إعادة ضبط"
+                      className="p-2.5 md:p-3 text-muted-foreground hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950/30 rounded-xl transition-colors"
                     >
-                      <RotateCcw className="w-4 h-4" />
+                      <RotateCcw className="w-5 h-5 md:w-6 md:h-6" />
                     </button>
                   )}
                   <button
                     onClick={nextStep}
                     disabled={!canProceed()}
-                    className="px-6 py-2 bg-primary text-white rounded-lg font-bold text-xs md:text-base flex items-center gap-1"
+                    className="px-6 md:px-8 py-2.5 md:py-3 bg-primary hover:bg-primary-dark disabled:bg-muted disabled:text-muted-foreground text-white rounded-xl font-bold text-sm md:text-base flex items-center gap-2 transition-all shadow-md active:scale-95"
                   >
-                    {currentStep === 4 ? "عرض السعر" : "التالي"}{" "}
-                    <ChevronLeft className="w-4 h-4" />
+                    {currentStep === 3 ? "احسب التكلفة" : "التالي"}
+                    <ChevronLeft className="w-4 h-4 md:w-5 md:h-5" />
                   </button>
                 </div>
               </div>
@@ -608,6 +655,7 @@ export function SmartCalculator() {
     </section>
   );
 }
+
 // "use client";
 
 // import { useState, useEffect, useRef } from "react";
@@ -617,14 +665,10 @@ export function SmartCalculator() {
 //   Calculator,
 //   Check,
 //   ChevronLeft,
-//   ChevronRight,
-//   Ruler,
 //   MessageCircle,
 //   Clock,
 //   Shield,
-//   Calendar,
 //   RotateCcw,
-//   Printer,
 //   CarFront,
 //   Home,
 //   ShieldCheck,
@@ -644,7 +688,7 @@ export function SmartCalculator() {
 // interface ServiceOption {
 //   id: string;
 //   name: string;
-//   icon: React.ElementType; // استخدام مكونات الأيقونات بدلاً من النصوص
+//   icon: React.ElementType;
 //   description: string;
 //   basePrice: number;
 //   minArea: number;
@@ -673,7 +717,7 @@ export function SmartCalculator() {
 // }
 
 // // ==========================================
-// // 2. البيانات الثابتة
+// // 2. البيانات كاملة بدون حذف
 // // ==========================================
 
 // const services: ServiceOption[] = [
@@ -681,9 +725,9 @@ export function SmartCalculator() {
 //     id: "carport",
 //     name: "مظلة سيارات",
 //     icon: CarFront,
-//     description: "حماية سيارتك من الشمس والأمطار بتصاميم عصرية",
+//     description: "حماية فائقة وعزل حراري للسيارات",
 //     basePrice: 350,
-//     minArea: 120,
+//     minArea: 12,
 //     maxArea: 500,
 //   },
 //   {
@@ -692,7 +736,7 @@ export function SmartCalculator() {
 //     icon: Home,
 //     description: "جلسات خارجية أنيقة بتصاميم فاخرة",
 //     basePrice: 400,
-//     minArea: 150,
+//     minArea: 100,
 //     maxArea: 400,
 //   },
 //   {
@@ -708,25 +752,25 @@ export function SmartCalculator() {
 //     id: "school",
 //     name: "مظلة مدرسة",
 //     icon: Building2,
-//     description: "تغطية ساحات وممرات المدارس بأعلى معايير السلامة",
+//     description: "تغطية الساحات بأعلى معايير السلامة",
 //     basePrice: 380,
-//     minArea: 500,
+//     minArea: 100,
 //     maxArea: 2000,
 //   },
 //   {
 //     id: "pool",
 //     name: "مظلة مسبح",
 //     icon: Waves,
-//     description: "مظلات متحركة للمسابح بتقنيات حديثة",
+//     description: "مظلات متحركة وثابتة للمسابح",
 //     basePrice: 450,
-//     minArea: 200,
+//     minArea: 100,
 //     maxArea: 2000,
 //   },
 //   {
 //     id: "warehouse",
 //     name: "هنجر",
 //     icon: Factory,
-//     description: "هناجر ومستودعات صناعية بمواصفات عالية",
+//     description: "مستودعات صناعية بمواصفات عالية",
 //     basePrice: 280,
 //     minArea: 100,
 //     maxArea: 5000,
@@ -738,49 +782,41 @@ export function SmartCalculator() {
 //     id: "iron",
 //     name: "حديد مجلفن",
 //     priceFactor: 1.2,
-//     description: "هيكل حديدي مجلفن مقاوم للصدأ بدهان حراري",
+//     description: "هيكل مقاوم للصدأ بدهان حراري",
 //     warranty: "15 سنة",
-//     features: ["متانة عالية", "مقاوم للصدأ", "دهان حراري", "يحمل أوزان ثقيلة"],
+//     features: ["متانة عالية", "مقاوم للصدأ"],
 //   },
 //   {
 //     id: "polycarbonate",
 //     name: "لكسان",
 //     priceFactor: 1.5,
-//     description: "ألواح بولي كربونيت عازلة للحرارة والأشعة فوق البنفسجية",
+//     description: "ألواح عازلة للحرارة والكسر",
 //     warranty: "10 سنوات",
-//     features: ["عزل حراري ممتاز", "يمنع 99% من الأشعة", "شفاف", "خفيف الوزن"],
+//     features: ["عزل ممتاز", "شفاف"],
 //   },
 //   {
 //     id: "wood",
 //     name: "خشب سويدي",
 //     priceFactor: 1.8,
-//     description: "خشب طبيعي معالج ضد الرطوبة والحشرات",
+//     description: "خشب طبيعي معالج ضد الرطوبة",
 //     warranty: "8 سنوات",
-//     features: ["مظهر طبيعي", "معالج ضد الرطوبة", "مقاوم للحشرات", "عازل حراري"],
+//     features: ["مظهر فخم", "معالج"],
 //   },
 //   {
 //     id: "pvc",
 //     name: "PVC",
 //     priceFactor: 0.9,
-//     description: "قماش PVC عالي الجودة مقاوم للماء والعوامل الجوية",
+//     description: "قماش عالي الجودة ألماني/كوري",
 //     warranty: "5 سنوات",
-//     features: ["مقاوم للماء", "خفيف الوزن", "ألوان متعددة", "سهل التركيب"],
-//   },
-//   {
-//     id: "aluminum",
-//     name: "ألمنيوم",
-//     priceFactor: 1.6,
-//     description: "هيكل ألمنيوم خفيف مقاوم للصدأ",
-//     warranty: "12 سنة",
-//     features: ["خفيف جداً", "مقاوم للصدأ", "لا يحتاج صيانة", "تصاميم عصرية"],
+//     features: ["مقاوم للماء", "اقتصادي"],
 //   },
 // ];
 
 // const steps = [
-//   { id: 1, name: "الخدمة", description: "حدد نوع الخدمة التي تريدها" },
-//   { id: 2, name: "المساحة", description: "أدخل مساحة المشروع بالمتر المربع" },
-//   { id: 3, name: "المواد", description: "اختر المواد المناسبة لمشروعك" },
-//   { id: 4, name: "النتيجة", description: "عرض التكلفة التقديرية" },
+//   { id: 1, name: "الخدمة", description: "نوع الخدمة" },
+//   { id: 2, name: "المساحة", description: "المساحة" },
+//   { id: 3, name: "المواد", description: "المواد" },
+//   { id: 4, name: "النتيجة", description: "التكلفة" },
 // ];
 
 // // ==========================================
@@ -791,10 +827,8 @@ export function SmartCalculator() {
 //   const [currentStep, setCurrentStep] = useState(1);
 //   const [showResult, setShowResult] = useState(false);
 //   const [showContactForm, setShowContactForm] = useState(false);
-
 //   const calculatorTopRef = useRef<HTMLDivElement>(null);
 
-//   // حالة النموذج
 //   const [selectedService, setSelectedService] = useState<ServiceOption | null>(
 //     null,
 //   );
@@ -802,8 +836,6 @@ export function SmartCalculator() {
 //   const [selectedMaterial, setSelectedMaterial] =
 //     useState<MaterialOption | null>(null);
 //   const [formData, setFormData] = useState({ name: "", phone: "", email: "" });
-
-//   // نتيجة الحساب
 //   const [calculationResult, setCalculationResult] =
 //     useState<CalculationResult | null>(null);
 
@@ -816,13 +848,11 @@ export function SmartCalculator() {
 //     }
 //   };
 
-//   // حساب التكلفة
 //   useEffect(() => {
 //     if (selectedService && selectedMaterial) {
 //       const baseCost = selectedService.basePrice * area;
 //       const materialCost = baseCost * (selectedMaterial.priceFactor - 1);
 //       const totalCost = baseCost + materialCost;
-
 //       const estimatedDays = Math.max(3, Math.ceil(area / 50) * 2);
 
 //       // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -834,7 +864,7 @@ export function SmartCalculator() {
 //         warranty: selectedMaterial.warranty,
 //         breakdown: [
 //           { label: "التكلفة الأساسية", amount: baseCost },
-//           { label: "قيمة المواد المختارة", amount: materialCost },
+//           { label: "إضافة الخامة", amount: materialCost },
 //         ],
 //       });
 //     }
@@ -858,19 +888,10 @@ export function SmartCalculator() {
 //   };
 
 //   const canProceed = () => {
-//     switch (currentStep) {
-//       case 1:
-//         return !!selectedService;
-//       case 2:
-//         return (
-//           area >= (selectedService?.minArea || 0) &&
-//           area <= (selectedService?.maxArea || 1000)
-//         );
-//       case 3:
-//         return !!selectedMaterial;
-//       default:
-//         return true;
-//     }
+//     if (currentStep === 1) return !!selectedService;
+//     if (currentStep === 2) return area >= (selectedService?.minArea || 0);
+//     if (currentStep === 3) return !!selectedMaterial;
+//     return true;
 //   };
 
 //   const resetCalculator = () => {
@@ -889,23 +910,7 @@ export function SmartCalculator() {
 //   const handleSubmit = (e: React.FormEvent) => {
 //     e.preventDefault();
 //     if (!calculationResult) return;
-
-//     const message =
-//       `طلب عرض سعر رسمي\n\n` +
-//       `الخدمة: ${selectedService?.name}\n` +
-//       `المساحة: ${area} م²\n` +
-//       `المواد: ${selectedMaterial?.name}\n` +
-//       `التكلفة التقديرية: ${formatPrice(calculationResult.totalCost)}\n\n` +
-//       `الاسم: ${formData.name}\n` +
-//       `الجوال: ${formData.phone}\n` +
-//       `البريد: ${formData.email}`;
-
-//     trackGAEvent("contact_whatsapp", {
-//       event_category: "Lead Generation",
-//       event_label: "Calculator Form",
-//       location: "Smart Calculator",
-//     });
-
+//     const message = `طلب عرض سعر رسمي\nالاسم: ${formData.name}\nالخدمة: ${selectedService?.name}\nالمساحة: ${area} م²\nالمواد: ${selectedMaterial?.name}\nالتكلفة التقديرية: ${formatPrice(calculationResult.totalCost)}`;
 //     window.open(
 //       `https://wa.me/${COMPANY_INFO.whatsapp}?text=${encodeURIComponent(message)}`,
 //       "_blank",
@@ -914,35 +919,12 @@ export function SmartCalculator() {
 
 //   return (
 //     <section
-//       className="py-12 md:py-24 relative overflow-hidden bg-gradient-to-b from-background via-background/95 to-slate-50 dark:to-slate-950"
+//       className="py-6 md:py-24 relative overflow-hidden bg-gradient-to-b from-background via-background/95 to-slate-50 dark:to-slate-950"
 //       dir="rtl"
 //     >
 //       <SoftWavesDivider />
 
-//       {/* خلفية متحركة */}
-//       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-//         <motion.div
-//           animate={{
-//             scale: [1, 1.2, 1],
-//             opacity: [0.05, 0.1, 0.05],
-//             rotate: [0, 45, 0],
-//           }}
-//           transition={{ duration: 20, repeat: Infinity }}
-//           className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-primary/10 rounded-full blur-3xl"
-//         />
-//         <motion.div
-//           animate={{
-//             scale: [1, 1.3, 1],
-//             opacity: [0.03, 0.08, 0.03],
-//             x: [0, -100, 0],
-//           }}
-//           transition={{ duration: 25, repeat: Infinity }}
-//           className="absolute -bottom-40 -left-40 w-[700px] h-[700px] bg-primary/10 rounded-full blur-3xl"
-//         />
-//       </div>
-
-//       <div className="container mx-auto px-4 sm:px-6 relative z-10">
-//         {/* رأس القسم */}
+//       <div className="container mx-auto px-4 relative z-10">
 //         <motion.div
 //           initial={{ opacity: 0, y: 30 }}
 //           whileInView={{ opacity: 1, y: 0 }}
@@ -967,26 +949,24 @@ export function SmartCalculator() {
 //             دقائق
 //           </p>
 //         </motion.div>
-
-//         {/* المرجع للتمرير السلس */}
 //         <div ref={calculatorTopRef} className="scroll-mt-24"></div>
 
-//         {/* شريط التقدم */}
-//         <div className="max-w-4xl mx-auto mb-6 md:mb-8">
-//           <div className="flex items-center justify-between mb-4 px-1">
+//         {/* شريط التقدم الصغير */}
+//         <div className="max-w-4xl mx-auto mb-6 md:mb-10">
+//           <div className="flex items-center justify-between mb-3 px-1">
 //             {steps.map((step) => (
 //               <div
 //                 key={step.id}
 //                 className={cn(
-//                   "flex flex-col sm:flex-row items-center gap-1 sm:gap-2",
-//                   step.id > currentStep && !showResult && "opacity-50",
+//                   "flex flex-col items-center gap-1",
+//                   step.id > currentStep && !showResult && "opacity-30",
 //                 )}
 //               >
 //                 <div
 //                   className={cn(
-//                     "w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center text-xs md:text-sm font-bold transition-all min-w-[28px] md:min-w-[32px]",
+//                     "w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center text-[10px] md:text-sm font-bold transition-all",
 //                     step.id < currentStep || (step.id === 4 && showResult)
-//                       ? "bg-primary text-primary-foreground"
+//                       ? "bg-primary text-white"
 //                       : step.id === currentStep && !showResult
 //                         ? "bg-primary/20 text-primary border-2 border-primary"
 //                         : "bg-slate-200 dark:bg-slate-800 text-muted-foreground",
@@ -998,42 +978,41 @@ export function SmartCalculator() {
 //                     step.id
 //                   )}
 //                 </div>
-//                 <span className="hidden sm:inline text-xs md:text-sm font-medium text-foreground">
+//                 <span className="text-[8px] md:text-xs font-bold text-foreground">
 //                   {step.name}
 //                 </span>
 //               </div>
 //             ))}
 //           </div>
-//           <div className="w-full h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+//           <div className="w-full h-1 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
 //             <motion.div
-//               initial={{ width: "0%" }}
 //               animate={{
 //                 width: showResult ? "100%" : `${(currentStep / 4) * 100}%`,
 //               }}
-//               className="h-full bg-gradient-to-l from-primary to-primary-dark"
+//               className="h-full bg-primary"
 //             />
 //           </div>
 //         </div>
 
 //         {/* نموذج الحاسبة */}
-//         <div className="max-w-4xl mx-auto bg-card rounded-2xl md:rounded-3xl shadow-xl border border-border/50 overflow-hidden">
-//           <div className="p-5 md:p-8">
+//         <div className="max-w-4xl mx-auto bg-card rounded-2xl shadow-xl border border-border/50 overflow-hidden">
+//           <div className="p-3 md:p-8">
 //             <AnimatePresence mode="wait">
 //               {!showResult ? (
 //                 <motion.div
 //                   key={`step-${currentStep}`}
-//                   initial={{ opacity: 0, x: 50 }}
+//                   initial={{ opacity: 0, x: 20 }}
 //                   animate={{ opacity: 1, x: 0 }}
-//                   exit={{ opacity: 0, x: -50 }}
-//                   transition={{ duration: 0.3 }}
+//                   exit={{ opacity: 0, x: -20 }}
+//                   transition={{ duration: 0.2 }}
 //                 >
-//                   {/* الخطوة 1: اختيار الخدمة (أيقونات متجاوبة مع الثيم) */}
+//                   {/* الخطوة 1: الخدمات - عمودين في الجوال */}
 //                   {currentStep === 1 && (
-//                     <div className="space-y-4 md:space-y-6">
-//                       <h3 className="text-xl md:text-2xl font-bold text-center text-foreground">
+//                     <div className="space-y-4">
+//                       <h3 className="text-sm md:text-2xl font-bold text-center text-foreground">
 //                         اختر نوع الخدمة
 //                       </h3>
-//                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+//                       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-5">
 //                         {services.map((service) => {
 //                           const Icon = service.icon;
 //                           return (
@@ -1041,43 +1020,31 @@ export function SmartCalculator() {
 //                               key={service.id}
 //                               onClick={() => setSelectedService(service)}
 //                               className={cn(
-//                                 "relative p-6 rounded-2xl border-2 transition-all text-center flex flex-col items-center group hover:shadow-lg bg-background",
+//                                 "relative p-2 md:p-6 rounded-xl border-2 transition-all text-center flex flex-col items-center group bg-background",
 //                                 selectedService?.id === service.id
 //                                   ? "border-primary ring-1 ring-primary bg-primary/5"
-//                                   : "border-border/50 hover:border-primary/50",
+//                                   : "border-border/50",
 //                               )}
 //                             >
-//                               {selectedService?.id === service.id && (
-//                                 <div className="absolute top-4 right-4 w-6 h-6 bg-primary rounded-full flex items-center justify-center z-10 shadow-md">
-//                                   <Check className="w-4 h-4 text-primary-foreground" />
-//                                 </div>
-//                               )}
-
 //                               <div
 //                                 className={cn(
-//                                   "mb-4 p-4 rounded-full transition-colors",
+//                                   "mb-1 md:mb-4 p-2 md:p-4 rounded-full transition-colors",
 //                                   selectedService?.id === service.id
 //                                     ? "bg-primary/20 text-primary"
-//                                     : "bg-muted text-muted-foreground group-hover:text-primary group-hover:bg-primary/10",
+//                                     : "bg-muted text-muted-foreground",
 //                                 )}
 //                               >
 //                                 <Icon
-//                                   className="w-10 h-10 md:w-12 md:h-12"
+//                                   className="w-5 h-5 md:w-12 md:h-12"
 //                                   strokeWidth={1.5}
 //                                 />
 //                               </div>
-
-//                               <h4 className="font-bold text-lg mb-2 text-foreground">
+//                               <h4 className="font-bold text-[10px] md:text-lg text-foreground leading-tight">
 //                                 {service.name}
 //                               </h4>
-//                               <p className="text-sm text-muted-foreground mb-4 line-clamp-2 px-2">
+//                               <p className="text-[8px] md:text-xs text-muted-foreground line-clamp-1 mt-0.5">
 //                                 {service.description}
 //                               </p>
-//                               <div className="mt-auto w-full pt-4 border-t border-border/50">
-//                                 <p className="text-xs text-primary font-medium">
-//                                   من {service.minArea} إلى {service.maxArea} م²
-//                                 </p>
-//                               </div>
 //                             </button>
 //                           );
 //                         })}
@@ -1085,99 +1052,62 @@ export function SmartCalculator() {
 //                     </div>
 //                   )}
 
-//                   {/* الخطوة 2: تحديد المساحة */}
+//                   {/* الخطوة 2: المساحة */}
 //                   {currentStep === 2 && selectedService && (
-//                     <div className="space-y-4 md:space-y-6">
-//                       <h3 className="text-xl md:text-2xl font-bold text-center text-foreground">
-//                         حدد مساحة المشروع
+//                     <div className="space-y-4">
+//                       <h3 className="text-sm md:text-2xl font-bold text-center text-foreground">
+//                         المساحة م²
 //                       </h3>
-//                       <div className="bg-slate-50 dark:bg-slate-800/50 p-5 md:p-8 rounded-2xl border border-border/50 max-w-2xl mx-auto">
-//                         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
-//                           <span className="text-base font-medium text-foreground">
-//                             المساحة الإجمالية (متر مربع)
-//                           </span>
-//                           <span className="text-4xl font-black text-primary bg-primary/10 px-4 py-2 rounded-xl">
-//                             {area}{" "}
-//                             <span className="text-xl font-medium">م²</span>
-//                           </span>
-//                         </div>
+//                       <div className="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-xl border border-border/50 max-w-xl mx-auto text-center">
+//                         <span className="text-3xl md:text-5xl font-black text-primary">
+//                           {area} م²
+//                         </span>
 //                         <input
 //                           type="range"
 //                           min={selectedService.minArea}
 //                           max={selectedService.maxArea}
 //                           value={area}
 //                           onChange={(e) => setArea(Number(e.target.value))}
-//                           className="w-full h-3 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-primary"
+//                           className="w-full h-2 mt-6 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-primary"
 //                         />
-//                         <div className="flex justify-between mt-3 text-sm font-medium text-muted-foreground">
-//                           <span>{selectedService.minArea} م²</span>
-//                           <span>{selectedService.maxArea} م²</span>
-//                         </div>
-//                       </div>
-//                       <div className="flex items-center justify-center gap-2 text-sm text-primary bg-primary/5 p-4 rounded-xl max-w-2xl mx-auto border border-primary/10">
-//                         <Ruler className="w-5 h-5 shrink-0" />
-//                         <span>
-//                           يمكنك تغيير المساحة لاحقاً، المهندس سيقوم بالرفع
-//                           المساحي الدقيق مجاناً
-//                         </span>
 //                       </div>
 //                     </div>
 //                   )}
 
-//                   {/* الخطوة 3: اختيار المواد */}
+//                   {/* الخطوة 3: المواد */}
 //                   {currentStep === 3 && (
-//                     <div className="space-y-4 md:space-y-6">
-//                       <h3 className="text-xl md:text-2xl font-bold text-center text-foreground">
-//                         اختر نوع المواد
+//                     <div className="space-y-4">
+//                       <h3 className="text-sm md:text-2xl font-bold text-center text-foreground">
+//                         اختر الخامة
 //                       </h3>
-//                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+//                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-4">
 //                         {materials.map((material) => (
 //                           <button
 //                             key={material.id}
 //                             onClick={() => setSelectedMaterial(material)}
 //                             className={cn(
-//                               "relative p-6 rounded-2xl border-2 transition-all flex flex-col group hover:shadow-md bg-background text-right",
+//                               "relative p-3 md:p-5 rounded-xl border-2 transition-all text-right flex flex-col group bg-background",
 //                               selectedMaterial?.id === material.id
-//                                 ? "border-primary ring-1 ring-primary bg-primary/5"
-//                                 : "border-border/50 hover:border-primary/50",
+//                                 ? "border-primary bg-primary/5"
+//                                 : "border-border/50",
 //                             )}
 //                           >
-//                             {selectedMaterial?.id === material.id && (
-//                               <div className="absolute top-4 right-4 w-6 h-6 bg-primary rounded-full flex items-center justify-center z-10 shadow-md">
-//                                 <Check className="w-4 h-4 text-primary-foreground" />
-//                               </div>
-//                             )}
-
-//                             <div className="flex flex-col w-full h-full">
-//                               <div className="flex flex-wrap items-center gap-3 mb-3">
-//                                 <div className="p-2.5 bg-primary/10 rounded-xl">
-//                                   <Layers className="w-5 h-5 text-primary" />
+//                             <div className="flex items-center justify-between w-full">
+//                               <div className="flex items-center gap-2">
+//                                 <div className="p-1.5 bg-primary/10 rounded-lg text-primary">
+//                                   <Layers className="w-4 h-4" />
 //                                 </div>
-//                                 <h4 className="font-bold text-lg md:text-xl text-foreground">
+//                                 <h4 className="font-bold text-xs md:text-xl text-foreground">
 //                                   {material.name}
 //                                 </h4>
 //                               </div>
-//                               <p className="text-sm text-muted-foreground mb-4 leading-relaxed flex-1">
-//                                 {material.description}
-//                               </p>
-//                               <div className="space-y-3 mt-auto pt-4 border-t border-border/50">
-//                                 <div className="flex items-center gap-2">
-//                                   <span className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-bold rounded-full w-fit">
-//                                     ضمان {material.warranty}
-//                                   </span>
-//                                 </div>
-//                                 <div className="flex flex-wrap gap-2">
-//                                   {material.features.map((feature, i) => (
-//                                     <span
-//                                       key={i}
-//                                       className="px-3 py-1 bg-slate-100 dark:bg-slate-800 border border-border/50 text-xs rounded-lg text-foreground"
-//                                     >
-//                                       {feature}
-//                                     </span>
-//                                   ))}
-//                                 </div>
-//                               </div>
+//                               <span className="text-[8px] md:text-xs text-primary font-bold">
+//                                 ضمان {material.warranty}
+//                               </span>
 //                             </div>
+//                             <p className="text-[9px] md:text-sm text-muted-foreground mt-1 line-clamp-1">
+//                               {material.description}
+//                             </p>
 //                           </button>
 //                         ))}
 //                       </div>
@@ -1185,173 +1115,108 @@ export function SmartCalculator() {
 //                   )}
 //                 </motion.div>
 //               ) : (
-//                 // عرض النتيجة
+//                 /* النتيجة الكاملة */
 //                 calculationResult && (
 //                   <motion.div
-//                     initial={{ opacity: 0, scale: 0.95 }}
+//                     initial={{ opacity: 0, scale: 0.98 }}
 //                     animate={{ opacity: 1, scale: 1 }}
-//                     className="space-y-5 md:space-y-6"
+//                     className="space-y-4"
 //                   >
-//                     <div className="text-center">
-//                       <div className="inline-flex items-center justify-center w-12 h-12 md:w-16 md:h-16 bg-green-500 text-white rounded-full mb-3 md:mb-4">
-//                         <Check className="w-6 h-6 md:w-8 md:h-8" />
-//                       </div>
-//                       <h3 className="text-xl md:text-2xl font-bold mb-1 md:mb-2 text-foreground">
-//                         تم حساب التكلفة المبدئية
-//                       </h3>
-//                       <p className="text-xs md:text-sm text-muted-foreground px-2">
-//                         هذا تقدير مبدئي، قد تختلف التكلفة الفعلية بشكل بسيط حسب
-//                         تفاصيل الموقع
+//                     <div className="bg-gradient-to-br from-primary to-primary-dark text-white p-5 rounded-2xl text-center shadow-lg">
+//                       <p className="text-[10px] md:text-sm opacity-80">
+//                         التكلفة التقديرية (شامل التركيب)
 //                       </p>
-//                     </div>
-
-//                     <div className="bg-gradient-to-br from-primary to-primary-dark text-white p-6 md:p-8 rounded-2xl md:rounded-3xl text-center shadow-lg">
-//                       <p className="text-xs md:text-sm text-white/80 mb-1 md:mb-2">
-//                         التكلفة التقديرية الإجمالية
-//                       </p>
-//                       <p className="text-3xl md:text-5xl font-bold mb-1 md:mb-2 break-words sm:break-normal">
+//                       <p className="text-3xl md:text-5xl font-black">
 //                         {formatPrice(calculationResult.totalCost)}
 //                       </p>
-//                       <p className="text-xs md:text-sm text-white/80">
-//                         شامل المواد والتركيب
-//                       </p>
 //                     </div>
 
-//                     <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4 md:p-6 border border-border/50">
-//                       <h4 className="font-bold text-sm md:text-base mb-3 md:mb-4 text-foreground">
-//                         تفاصيل التكلفة
-//                       </h4>
-//                       <div className="space-y-2 md:space-y-3">
-//                         {calculationResult.breakdown.map((item, index) => (
-//                           <div
-//                             key={index}
-//                             className="flex flex-wrap justify-between gap-2 text-xs md:text-sm"
-//                           >
-//                             <span className="text-muted-foreground">
-//                               {item.label}
-//                             </span>
-//                             <span className="font-medium text-left text-foreground">
-//                               {formatPrice(item.amount)}
-//                             </span>
-//                           </div>
-//                         ))}
-//                         <div className="pt-3 mt-3 border-t border-border/50 flex flex-wrap justify-between gap-2 font-bold text-sm md:text-base text-foreground">
-//                           <span>الإجمالي</span>
-//                           <span className="text-primary text-left">
-//                             {formatPrice(calculationResult.totalCost)}
-//                           </span>
-//                         </div>
-//                       </div>
-//                     </div>
-
-//                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-//                       <div className="bg-slate-50 dark:bg-slate-800/50 p-3 md:p-4 rounded-xl text-center border border-border/50">
-//                         <Clock className="w-4 h-4 md:w-5 md:h-5 text-primary mx-auto mb-1.5 md:mb-2" />
-//                         <p className="text-[10px] md:text-xs text-muted-foreground mb-0.5">
-//                           مدة التنفيذ
+//                     <div className="grid grid-cols-2 gap-2">
+//                       <div className="bg-muted/50 p-3 rounded-xl border border-border/50 text-center">
+//                         <Clock className="w-4 h-4 text-primary mx-auto mb-1" />
+//                         <p className="text-[8px] md:text-xs text-muted-foreground">
+//                           التنفيذ
 //                         </p>
-//                         <p className="font-bold text-xs md:text-sm text-foreground">
+//                         <p className="font-bold text-[10px] md:text-sm">
 //                           {calculationResult.estimatedTime}
 //                         </p>
 //                       </div>
-//                       <div className="bg-slate-50 dark:bg-slate-800/50 p-3 md:p-4 rounded-xl text-center border border-border/50">
-//                         <Shield className="w-4 h-4 md:w-5 md:h-5 text-primary mx-auto mb-1.5 md:mb-2" />
-//                         <p className="text-[10px] md:text-xs text-muted-foreground mb-0.5">
+//                       <div className="bg-muted/50 p-3 rounded-xl border border-border/50 text-center">
+//                         <Shield className="w-4 h-4 text-primary mx-auto mb-1" />
+//                         <p className="text-[8px] md:text-xs text-muted-foreground">
 //                           الضمان
 //                         </p>
-//                         <p className="font-bold text-xs md:text-sm line-clamp-1 text-foreground">
+//                         <p className="font-bold text-[10px] md:text-sm">
 //                           {calculationResult.warranty}
-//                         </p>
-//                       </div>
-//                       <div className="bg-slate-50 dark:bg-slate-800/50 p-3 md:p-4 rounded-xl text-center border border-border/50">
-//                         <Ruler className="w-4 h-4 md:w-5 md:h-5 text-primary mx-auto mb-1.5 md:mb-2" />
-//                         <p className="text-[10px] md:text-xs text-muted-foreground mb-0.5">
-//                           المساحة
-//                         </p>
-//                         <p className="font-bold text-xs md:text-sm text-foreground">
-//                           {area} م²
-//                         </p>
-//                       </div>
-//                       <div className="bg-slate-50 dark:bg-slate-800/50 p-3 md:p-4 rounded-xl text-center border border-border/50">
-//                         <Calendar className="w-4 h-4 md:w-5 md:h-5 text-primary mx-auto mb-1.5 md:mb-2" />
-//                         <p className="text-[10px] md:text-xs text-muted-foreground mb-0.5">
-//                           المعاينة
-//                         </p>
-//                         <p className="font-bold text-xs md:text-sm text-foreground">
-//                           مجانية
 //                         </p>
 //                       </div>
 //                     </div>
 
-//                     {!showContactForm ? (
-//                       <div className="space-y-3">
-//                         <button
-//                           onClick={() => setShowContactForm(true)}
-//                           className="w-full py-3.5 md:py-4 bg-gradient-to-r from-primary to-primary-dark text-primary-foreground rounded-xl font-bold hover:shadow-lg transition-all text-sm md:text-base"
+//                     {/* تفاصيل الحساب التي كانت محذوفة */}
+//                     <div className="bg-slate-50 dark:bg-slate-900/50 p-3 rounded-xl border border-border/50 space-y-1">
+//                       {calculationResult.breakdown.map((item, i) => (
+//                         <div
+//                           key={i}
+//                           className="flex justify-between text-[10px] md:text-sm"
 //                         >
-//                           احصل على عرض سعر رسمي
-//                         </button>
-//                         <div className="flex flex-col sm:flex-row gap-2 md:gap-3">
-//                           <button
-//                             onClick={resetCalculator}
-//                             className="flex-1 py-3 border border-border/50 rounded-xl font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center justify-center gap-2 text-sm md:text-base text-foreground"
-//                           >
-//                             <RotateCcw className="w-4 h-4 shrink-0" /> حساب جديد
-//                           </button>
-//                           <button
-//                             onClick={() => window.print()}
-//                             className="flex-1 py-3 border border-border/50 rounded-xl font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center justify-center gap-2 text-sm md:text-base text-foreground"
-//                           >
-//                             <Printer className="w-4 h-4 shrink-0" /> طباعة
-//                             التفاصيل
-//                           </button>
+//                           <span className="text-muted-foreground">
+//                             {item.label}
+//                           </span>
+//                           <span className="font-bold">
+//                             {formatPrice(item.amount)}
+//                           </span>
 //                         </div>
-//                       </div>
+//                       ))}
+//                     </div>
+
+//                     {!showContactForm ? (
+//                       <button
+//                         onClick={() => setShowContactForm(true)}
+//                         className="w-full py-3 bg-primary text-white rounded-xl font-bold text-xs md:text-base shadow-lg"
+//                       >
+//                         احصل على عرض سعر رسمي (واتساب)
+//                       </button>
 //                     ) : (
 //                       <motion.form
-//                         initial={{ opacity: 0, y: 15 }}
+//                         initial={{ opacity: 0, y: 10 }}
 //                         animate={{ opacity: 1, y: 0 }}
 //                         onSubmit={handleSubmit}
-//                         className="space-y-3 md:space-y-4 bg-slate-50 dark:bg-slate-800/30 p-4 md:p-6 rounded-2xl border border-border/50"
+//                         className="space-y-2 bg-slate-100 dark:bg-slate-800/50 p-3 rounded-xl"
 //                       >
-//                         <h4 className="font-bold text-sm md:text-base text-foreground">
-//                           أدخل بياناتك للحصول على العرض رسمياً عبر الواتساب
-//                         </h4>
 //                         <input
 //                           type="text"
 //                           placeholder="الاسم الكامل"
+//                           required
+//                           className="w-full px-3 py-2 text-xs md:text-base bg-background border rounded-lg outline-none"
 //                           value={formData.name}
 //                           onChange={(e) =>
 //                             setFormData({ ...formData, name: e.target.value })
 //                           }
-//                           required
-//                           className="w-full px-4 py-3 text-sm md:text-base bg-white dark:bg-slate-900 border border-border/50 rounded-xl focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-foreground"
 //                         />
 //                         <input
 //                           type="tel"
 //                           placeholder="رقم الجوال"
+//                           required
+//                           className="w-full px-3 py-2 text-xs md:text-base bg-background border rounded-lg outline-none"
 //                           value={formData.phone}
 //                           onChange={(e) =>
 //                             setFormData({ ...formData, phone: e.target.value })
 //                           }
-//                           required
-//                           className="w-full px-4 py-3 text-sm md:text-base bg-white dark:bg-slate-900 border border-border/50 rounded-xl focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-foreground"
 //                         />
 //                         <input
 //                           type="email"
 //                           placeholder="البريد الإلكتروني (اختياري)"
+//                           className="w-full px-3 py-2 text-xs md:text-base bg-background border rounded-lg outline-none"
 //                           value={formData.email}
 //                           onChange={(e) =>
 //                             setFormData({ ...formData, email: e.target.value })
 //                           }
-//                           className="w-full px-4 py-3 text-sm md:text-base bg-white dark:bg-slate-900 border border-border/50 rounded-xl focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-foreground"
 //                         />
 //                         <button
 //                           type="submit"
-//                           className="w-full py-3.5 md:py-4 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-xl font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 text-sm md:text-base mt-2"
+//                           className="w-full py-3 bg-[#25D366] text-white rounded-lg font-bold text-xs md:text-base flex items-center justify-center gap-2"
 //                         >
-//                           <MessageCircle className="w-5 h-5 shrink-0" /> إرسال
-//                           الطلب عبر واتساب
+//                           <MessageCircle className="w-4 h-4" /> إرسال عبر واتساب
 //                         </button>
 //                       </motion.form>
 //                     )}
@@ -1360,36 +1225,34 @@ export function SmartCalculator() {
 //               )}
 //             </AnimatePresence>
 
-//             {/* أزرار التنقل السفلية */}
+//             {/* أزرار التحكم */}
 //             {!showResult && (
-//               <div className="flex justify-between items-center mt-6 md:mt-8 pt-5 md:pt-6 border-t border-border/50 gap-2">
+//               <div className="flex justify-between items-center mt-4 pt-4 border-t border-border/50 gap-2">
 //                 <button
 //                   onClick={prevStep}
 //                   disabled={currentStep === 1}
-//                   className={cn(
-//                     "px-4 md:px-6 py-2.5 md:py-3 rounded-xl font-medium transition-all flex items-center gap-1.5 md:gap-2 text-sm md:text-base",
-//                     currentStep === 1
-//                       ? "text-muted-foreground cursor-not-allowed opacity-50"
-//                       : "text-foreground hover:bg-slate-100 dark:hover:bg-slate-800",
-//                   )}
+//                   className="px-4 py-2 text-[10px] md:text-base text-muted-foreground disabled:opacity-20"
 //                 >
-//                   <ChevronRight className="w-4 h-4 md:w-5 md:h-5 shrink-0" />{" "}
 //                   السابق
 //                 </button>
-
-//                 <button
-//                   onClick={nextStep}
-//                   disabled={!canProceed()}
-//                   className={cn(
-//                     "px-5 md:px-8 py-2.5 md:py-3 rounded-xl font-bold transition-all flex items-center gap-1.5 md:gap-2 text-sm md:text-base",
-//                     canProceed()
-//                       ? "bg-gradient-to-r from-primary to-primary-dark text-primary-foreground shadow-md hover:shadow-lg"
-//                       : "bg-slate-200 dark:bg-slate-700 text-muted-foreground cursor-not-allowed",
+//                 <div className="flex gap-2">
+//                   {currentStep > 1 && (
+//                     <button
+//                       onClick={resetCalculator}
+//                       className="p-2 md:p-3 text-muted-foreground hover:bg-muted rounded-lg"
+//                     >
+//                       <RotateCcw className="w-4 h-4" />
+//                     </button>
 //                   )}
-//                 >
-//                   {currentStep === 4 ? "عرض التكلفة" : "التالي"}{" "}
-//                   <ChevronLeft className="w-4 h-4 md:w-5 md:h-5 shrink-0" />
-//                 </button>
+//                   <button
+//                     onClick={nextStep}
+//                     disabled={!canProceed()}
+//                     className="px-6 py-2 bg-primary text-white rounded-lg font-bold text-xs md:text-base flex items-center gap-1"
+//                   >
+//                     {currentStep === 4 ? "عرض السعر" : "التالي"}{" "}
+//                     <ChevronLeft className="w-4 h-4" />
+//                   </button>
+//                 </div>
 //               </div>
 //             )}
 //           </div>
