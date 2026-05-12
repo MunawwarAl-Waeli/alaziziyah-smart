@@ -35,7 +35,7 @@ export default function robots(): MetadataRoute.Robots {
         "/blog/category/*/page/*", // منع الصفحات المكررة
       ],
     },
-    sitemap: "https://www.al-azizia.com/sitemap.xml",
-    host: "https://www.al-azizia.com",
+    sitemap: "https://al-azizia.com/sitemap.xml",
+    host: "https://al-azizia.com",
   };
 }
