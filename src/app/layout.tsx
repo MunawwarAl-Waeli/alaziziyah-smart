@@ -1,14 +1,17 @@
 import type { Metadata, Viewport } from "next";
 import "@/app/globals.css";
-import { Header } from "@/components/layout/header";
 import { ThemeProvider } from "@/components/theme/provider";
 import { Footer } from "@/components/layout/footer";
-import { FloatingChat } from "@/components/FloatingChat";
+import dynamic from 'next/dynamic';
+
 import { GoogleTagManager } from "@next/third-parties/google";
 import { getAllProjects, getGlobalData, getWPData } from "@/lib/api";
 import { JsonLd } from "@/components/seo/JsonLd";
 
 import { Cairo } from "next/font/google";
+const FloatingChat = dynamic(() => import('@/components/FloatingChat').then(mod => mod.FloatingChat));
+const Header = dynamic(() => import('@/components/layout/header').then(mod => mod.Header));
+
 const cairo = Cairo({
   subsets: ["arabic"],
   weight: ["400", "500", "600", "700", "800"],

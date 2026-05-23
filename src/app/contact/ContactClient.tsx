@@ -11,7 +11,7 @@ import {
   ShieldCheck,
   Hammer,
 } from "lucide-react";
-import { trackGAEvent } from "@/lib/analytics";
+
 import { Icon } from "next/dist/lib/metadata/types/metadata-types";
 
 export default function ContactClient() {

@@ -1,19 +1,26 @@
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function middleware(request:any) {
+export function middleware(request: NextRequest) {
   const url = request.nextUrl;
   try {
-    // محاولة فك تشفير الرابط
     const decodedPath = decodeURIComponent(url.pathname);
 
-    // إذا وجدنا أن الرابط يحتوي على رموز تشفير مزدوج (مثل %C3)
-    // نقوم بإعادة توجيهه للرابط الصحيح
+    // إذا وجدنا أن الرابط يحتوي على رموز تشفير (مثل الروابط العربية)
     if (url.pathname.includes("%C3")) {
       return NextResponse.redirect(new URL(decodedPath, request.url));
     }
   } catch (e) {
     console.error("Encoding error", e);
   }
+
   return NextResponse.next();
 }
+
+// 💡 هذا هو الجزء الذي يحل المشكلة:
+// نستثني الأيقونة والصور وملفات النظام من المرور عبر هذا الـ Middleware
+export const config = {
+  matcher: [
+    "/((?!api|_next/static|_next/image|favicon.ico|icon.png|apple-touch-icon.png|images|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.svg$).*)",
+  ],
+};

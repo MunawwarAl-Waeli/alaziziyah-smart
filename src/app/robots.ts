@@ -36,6 +36,6 @@ export default function robots(): MetadataRoute.Robots {
       ],
     },
     sitemap: "https://al-azizia.com/sitemap.xml",
-    host: "https://al-azizia.com",
+ 
   };
 }
