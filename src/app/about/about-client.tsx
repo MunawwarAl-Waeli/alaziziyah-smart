@@ -65,7 +65,7 @@ const OptimizedImage = ({
         onLoad={() => setIsLoading(false)}
       />
       {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-background/50">
+        <div className="absolute inset-0 flex items-center justify-center bg-background/50 backdrop-blur-sm">
           <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
         </div>
       )}
@@ -593,7 +593,7 @@ export default function AboutClient() {
           className="py-16 md:py-24 bg-slate-50/50 dark:bg-slate-900/20 relative overflow-hidden border-y border-border/50"
           aria-label="أرقام وإحصائيات"
         >
-      
+       
           <div className="container mx-auto px-4 max-w-7xl relative z-10">
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
               {achievements.map((item, index) => (
