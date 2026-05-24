@@ -5,8 +5,9 @@ import { BlogPost } from "@/app/blog/types/bolg.types";
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
 
-// 🚀 تم تغيير الاستدعاءات العادية إلى استدعاءات ديناميكية (Lazy Load)
-// هذا سيوقف تحميل هذه الأقسام حتى يقترب منها المستخدم!
+// استيراد واجهة الفيديو (تأكد من تصديرها في ملف video-section.tsx)
+import { YouTubeVideo } from "@/components/features/home/video-section";
+
 const VideoGallery = dynamic(
   () =>
     import("@/components/features/home/video-section").then(
@@ -15,11 +16,12 @@ const VideoGallery = dynamic(
   {
     loading: () => (
       <div className="min-h-[400px] flex items-center justify-center">
-        جاري التحميل...
+        جاري تحميل الفيديوهات...
       </div>
     ),
   },
 );
+
 const BlogSection = dynamic(
   () =>
     import("@/components/features/home/BlogSection").then(
@@ -63,13 +65,18 @@ const CTASection = dynamic(
   },
 );
 
+// ✅ 1. تحديث الـ Props لاستقبال بيانات الفيديو
 interface HomeSectionsProps {
   allPosts: BlogPost[];
+  initialVideos: YouTubeVideo[];
+  videoError: string | null;
 }
 
-export default function HomeSections({ allPosts }: HomeSectionsProps) {
-  console.log("Received posts in BlogSection:", allPosts); // ✅ للتأكد من البيانات
-
+export default function HomeSections({
+  allPosts,
+  initialVideos,
+  videoError,
+}: HomeSectionsProps) {
   return (
     <>
       <section id="videos">
@@ -79,7 +86,8 @@ export default function HomeSections({ allPosts }: HomeSectionsProps) {
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
         >
-          <VideoGallery />
+          {/* ✅ 2. تمرير البيانات للمكون */}
+          <VideoGallery initialVideos={initialVideos} error={videoError} />
         </motion.div>
       </section>
 
@@ -90,7 +98,6 @@ export default function HomeSections({ allPosts }: HomeSectionsProps) {
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8, ease: "easeOut", delay: 0.6 }}
         >
-          {/* 2. تمرير البيانات للمكون */}
           <BlogSection posts={allPosts} />
         </motion.div>
       </section>

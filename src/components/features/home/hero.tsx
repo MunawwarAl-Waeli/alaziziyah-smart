@@ -56,8 +56,8 @@ export function MainHero({ title, description }: HeroProps) {
       {/* ===== 1. حاوية الخلفية (Pure CSS) ===== */}
       <div className="absolute inset-0 w-full h-full pointer-events-none overflow-hidden">
         {/* إضاءات الخلفية (Glowing Orbs) - ثابتة أو بنبض خفيف جداً للأداء */}
-        <div className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[100px]" />
-        <div className="absolute -bottom-40 -left-40 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px]" />
+        {/* <div className="absolute -top-40 -right-40 w-[500px] h-[500px] bg-amber-500/10 rounded-full blur-[100px]" />
+        <div className="absolute -bottom-40 -left-40 w-[600px] h-[600px] bg-blue-600/10 rounded-full blur-[120px]" /> */}
 
         {/* شبكة الخلفية */}
         <div className="absolute inset-0 opacity-[0.03]">

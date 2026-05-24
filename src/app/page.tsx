@@ -139,21 +139,85 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
+// 💡 1. دالة جلب الفيديوهات الآمنة في السيرفر
+async function getYouTubeVideos() {
+  try {
+    const API_KEY = process.env.YOUTUBE_API_KEY; // لا تنسَ إزالة NEXT_PUBLIC من ملف .env
+    const PLAYLIST_ID = "UUWYMhK-jwAHKgO94NtorJ9w";
+
+    if (!API_KEY) throw new Error("مفتاح يوتيوب مفقود");
+
+    const playlistRes = await fetch(
+      `https://www.googleapis.com/youtube/v3/playlistItems?key=${API_KEY}&playlistId=${PLAYLIST_ID}&part=snippet&maxResults=20`,
+      { next: { revalidate: 3600 } },
+    );
+    const playlistData = await playlistRes.json();
+
+    if (playlistData.error) throw new Error(playlistData.error.message);
+    if (!playlistData.items?.length) return [];
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const videoIds = playlistData.items
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .map((item: any) => item.snippet.resourceId.videoId)
+      .join(",");
+
+    const detailsRes = await fetch(
+      `https://www.googleapis.com/youtube/v3/videos?key=${API_KEY}&id=${videoIds}&part=contentDetails,snippet`,
+      { next: { revalidate: 3600 } },
+    );
+    const detailsData = await detailsRes.json();
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return detailsData.items.map((video: any) => {
+      const duration = video.contentDetails.duration
+        .replace("PT", "")
+        .replace("H", ":")
+        .replace("M", ":")
+        .replace("S", "")
+        .split(":")
+        .map((p: string) => p.padStart(2, "0"))
+        .join(":")
+        .replace(/^00:/, "");
+
+      return {
+        id: video.id,
+        title: video.snippet.title,
+        duration: duration,
+        thumbnail:
+          video.snippet.thumbnails?.maxres?.url ||
+          video.snippet.thumbnails?.high?.url ||
+          video.snippet.thumbnails?.default?.url,
+        videoId: video.id,
+        type: "youtube",
+      };
+    });
+  } catch (error) {
+    console.error("YouTube Fetch Error:", error);
+    return null;
+  }
+}
+
+// 💡 2. تحديث الدالة الرئيسية لتمرير البيانات
 export default async function Home() {
-  const [data, allPosts] = await Promise.all([getData(), fetchAllBlogPosts()]);
+  // نضيف جلب الفيديوهات إلى Promise.all لكي يتم تحميل كل شيء في نفس الوقت وبسرعة فائقة
+  const [data, allPosts, videos] = await Promise.all([
+    getData(),
+    fetchAllBlogPosts(),
+    getYouTubeVideos(), // جلب الفيديوهات
+  ]);
+
+  const videoError = videos === null ? "حدث خطأ أثناء الاتصال بيوتيوب." : null;
+
   let heroDescription = cleanContent(data?.nodeByUri?.content);
   if (heroDescription.length < 10) {
     heroDescription =
       "نحول المساحات الخارجية إلى مناطق حيوية مستدامة بتقنيات هندسية متطورة وتصاميم عصرية تناسب ذوقك الرفيع.";
   }
-
   const acfHeroText = data?.nodeByUri?.homeCustomFields?.heroMotivationText;
 
   return (
     <main className="min-h-screen bg-background font-sans" dir="rtl">
-      {/* ملاحظة: كود الـ JSON-LD الخاص بالتقييمات (5 نجوم) 
-          يتم حقنه تلقائياً هنا لأنه موجود في layout.js الرئيسي */}
-
       <MainHero
         title={data?.generalSettings?.title || "العزيزية للمظلات"}
         description={acfHeroText || heroDescription}
@@ -182,7 +246,12 @@ export default async function Home() {
         </div>
       </section>
 
-      <HomeSections allPosts={allPosts} />
+      {/* ✅ 3. تمرير البيانات هنا */}
+      <HomeSections
+        allPosts={allPosts}
+        initialVideos={videos || []}
+        videoError={videoError}
+      />
     </main>
   );
 }

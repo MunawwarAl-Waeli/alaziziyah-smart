@@ -11,7 +11,8 @@ const withPWA = require("@ducanh2912/next-pwa").default({
   reloadOnOnline: true,
   swcMinify: true,
   // نعطل الـ PWA في بيئة التطوير المحلية حتى لا يزعجك الكاش أثناء البرمجة
-  disable: process.env.NODE_ENV === "development",
+  disable: true,
+  // process.env.NODE_ENV === "development",
   workboxOptions: {
     disableDevLogs: true,
   },
@@ -68,7 +69,6 @@ const nextConfig = {
   },
   async redirects() {
     return [
-     
       // ==========================================
       // 1. قسم الخدمات (الروابط التي تبدأ بـ "تركيب")
       // ==========================================

@@ -9,8 +9,12 @@ import { getAllProjects, getGlobalData, getWPData } from "@/lib/api";
 import { JsonLd } from "@/components/seo/JsonLd";
 
 import { Cairo } from "next/font/google";
+
+// ✅ 1. استدعاء طبيعي للـ Header لضمان ظهوره فوراً بدون تقطيع
+import { Header } from "@/components/layout/header"; 
+
+// ✅ 2. إبقاء الشات ديناميكي لعدم إبطاء الصفحة
 const FloatingChat = dynamic(() => import('@/components/FloatingChat').then(mod => mod.FloatingChat));
-const Header = dynamic(() => import('@/components/layout/header').then(mod => mod.Header));
 
 const cairo = Cairo({
   subsets: ["arabic"],
@@ -27,11 +31,6 @@ export const metadata: Metadata = {
   verification: {
     google: "bNOlDODG6YCLIKLCc8Ho2UBEmoI_z49zJUbs5rDM44c",
   },
-  icons: {
-    icon: "/icon.png",
-    shortcut: "/icon.png",
-    apple: "/icon.png", // مهم جداً لأجهزة آيفون
-  },
 };
 
 export const viewport: Viewport = {
@@ -43,7 +42,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // بدلاً من السطور الأربعة الحالية، استخدم هذا:
+  
   const [globalData, wpData, latestProjects] = await Promise.all([
     getGlobalData(),
     getWPData(),
@@ -54,11 +53,10 @@ export default async function RootLayout({
     <html
       lang="ar"
       dir="rtl"
-      className={cairo.className}
       suppressHydrationWarning
     >
-      {/* ✅ تم تفعيل الخط هنا */}
-      <body className={"font-sans antialiased bg-background text-foreground"}>
+      {/* ✅ 4. دمجنا خط Cairo مع كلاسات Tailwind في الـ body لضمان عمله 100% */}
+      <body className={`${cairo.className} antialiased bg-background text-foreground`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="dark"
@@ -70,10 +68,9 @@ export default async function RootLayout({
           <Header
             wpMenuData={globalData.menu.menuItems.nodes}
             fetchedServices={wpData.services}
-            fetchedProjects={latestProjects} // تمرير المشاريع هنا
+            fetchedProjects={latestProjects} 
           />
 
-          {/* ✅ الحاوية الرئيسية: دفعت الفوتر للأسفل وجعلت المحتوى يأخذ المساحة المتبقية */}
           <div className="flex flex-col min-h-screen">
             <main className="flex-1">{children}</main>
             <Footer />
