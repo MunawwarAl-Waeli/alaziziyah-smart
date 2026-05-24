@@ -226,74 +226,71 @@ export function ProjectsClient({ initialProjects }: Props) {
           {/* خط متدرج ناعم في الأسفل لدمج القسم مع ما بعده */}
           <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background to-transparent z-10" />
         </section>
-{/* ===== شريط البحث والفلترة المطور (انسيابي للجوال والحاسوب) ===== */}
-<section
-  id="projects"
-  className="sticky top-6 md:top-0 z-40 bg-background/90 backdrop-blur-xl border-y border-border py-3 md:py-4 shadow-sm"
->
-  <div className="container mx-auto px-4 max-w-7xl">
-    <div className="flex flex-col gap-3 md:gap-4">
-     
-      {/* 2. السطر الثاني: الفلاتر + تبديل العرض (في نفس الصف للجوال) */}
-      <div className="flex items-center gap-2 md:gap-4">
-        
-        {/* شريط الأقسام: تمرير أفقي انسيابي */}
-        <div className="flex-1 flex items-center gap-2 overflow-x-auto hide-scrollbar py-1">
-          <button
-            onClick={() => setSelectedCategory("all")}
-            className={`px-4 md:px-6 h-9 md:h-11 rounded-lg md:rounded-xl font-bold text-xs md:text-sm whitespace-nowrap transition-all border ${
-              selectedCategory === "all"
-                ? "bg-primary text-white border-primary shadow-md shadow-primary/20"
-                : "bg-card border-border text-muted-foreground hover:border-primary/40"
-            }`}
-          >
-            الكل
-          </button>
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setSelectedCategory(category)}
-              className={`px-4 md:px-6 h-9 md:h-11 rounded-lg md:rounded-xl font-bold text-xs md:text-sm whitespace-nowrap transition-all border ${
-                selectedCategory === category
-                  ? "bg-primary text-white border-primary shadow-md shadow-primary/20"
-                  : "bg-card border-border text-muted-foreground hover:border-primary/40"
-              }`}
-            >
-              {category}
-            </button>
-          ))}
-        </div>
+        {/* ===== شريط البحث والفلترة المطور (انسيابي للجوال والحاسوب) ===== */}
+        <section
+          id="projects"
+          className="sticky top-6 md:top-0 z-40 bg-background/90 backdrop-blur-xl border-y border-border py-3 md:py-4 shadow-sm"
+        >
+          <div className="container mx-auto px-4 max-w-7xl">
+            <div className="flex flex-col gap-3 md:gap-4">
+              {/* 2. السطر الثاني: الفلاتر + تبديل العرض (في نفس الصف للجوال) */}
+              <div className="flex items-center gap-2 md:gap-4">
+                {/* شريط الأقسام: تمرير أفقي انسيابي */}
+                <div className="flex-1 flex items-center gap-2 overflow-x-auto hide-scrollbar py-1">
+                  <button
+                    onClick={() => setSelectedCategory("all")}
+                    className={`px-4 md:px-6 h-9 md:h-11 rounded-lg md:rounded-xl font-bold text-xs md:text-sm whitespace-nowrap transition-all border ${
+                      selectedCategory === "all"
+                        ? "bg-primary text-white border-primary shadow-md shadow-primary/20"
+                        : "bg-card border-border text-muted-foreground hover:border-primary/40"
+                    }`}
+                  >
+                    الكل
+                  </button>
+                  {categories.map((category) => (
+                    <button
+                      key={category}
+                      onClick={() => setSelectedCategory(category)}
+                      className={`px-4 md:px-6 h-9 md:h-11 rounded-lg md:rounded-xl font-bold text-xs md:text-sm whitespace-nowrap transition-all border ${
+                        selectedCategory === category
+                          ? "bg-primary text-white border-primary shadow-md shadow-primary/20"
+                          : "bg-card border-border text-muted-foreground hover:border-primary/40"
+                      }`}
+                    >
+                      {category}
+                    </button>
+                  ))}
+                </div>
 
-        {/* أزرار تبديل العرض: ثابتة في الطرف الأيسر */}
-        <div className="flex items-center gap-1 bg-card border border-border rounded-lg md:rounded-xl p-1 shrink-0">
-          <button
-            onClick={() => setViewMode("grid")}
-            className={`p-1.5 md:p-2 rounded-md md:rounded-lg transition-colors ${
-              viewMode === "grid"
-                ? "bg-primary text-white"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-            aria-label="عرض شبكي"
-          >
-            <LayoutGrid className="w-4 h-4 md:w-5 md:h-5" />
-          </button>
-          <button
-            onClick={() => setViewMode("list")}
-            className={`p-1.5 md:p-2 rounded-md md:rounded-lg transition-colors ${
-              viewMode === "list"
-                ? "bg-primary text-white"
-                : "text-muted-foreground hover:text-foreground"
-            }`}
-            aria-label="عرض قائمة"
-          >
-            <List className="w-4 h-4 md:w-5 md:h-5" />
-          </button>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</section>
+                {/* أزرار تبديل العرض: ثابتة في الطرف الأيسر */}
+                <div className="flex items-center gap-1 bg-card border border-border rounded-lg md:rounded-xl p-1 shrink-0">
+                  <button
+                    onClick={() => setViewMode("grid")}
+                    className={`p-1.5 md:p-2 rounded-md md:rounded-lg transition-colors ${
+                      viewMode === "grid"
+                        ? "bg-primary text-white"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                    aria-label="عرض شبكي"
+                  >
+                    <LayoutGrid className="w-4 h-4 md:w-5 md:h-5" />
+                  </button>
+                  <button
+                    onClick={() => setViewMode("list")}
+                    className={`p-1.5 md:p-2 rounded-md md:rounded-lg transition-colors ${
+                      viewMode === "list"
+                        ? "bg-primary text-white"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                    aria-label="عرض قائمة"
+                  >
+                    <List className="w-4 h-4 md:w-5 md:h-5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
         {/* ===== عرض المشاريع ===== */}
         <section className="py-8 md:py-12 lg:py-16 min-h-[50vh]">
           <div className="container mx-auto px-4 max-w-7xl">
@@ -364,12 +361,12 @@ export function ProjectsClient({ initialProjects }: Props) {
         </section>
 
         {/* ===== إحصائيات موسعة (ثيم موحد ومرن) ===== */}
-        <section className="py-12 md:py-20 bg-gradient-to-b from-transparent via-primary/5 to-transparent border-y border-border/50">
+        <section className="py-12 md:py-20 bg-slate-50 dark:bg-slate-900/40 border-y border-border/50">
           <div className="container mx-auto px-4 max-w-7xl">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, margin: "-50px" }}
               className="text-center mb-10 md:mb-16"
             >
               <h2 className="text-3xl md:text-5xl font-black text-foreground mb-4">
@@ -412,17 +409,21 @@ export function ProjectsClient({ initialProjects }: Props) {
                   key={i}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  whileHover={{ y: -10 }}
-                  className="group relative bg-card border border-border/60 rounded-[2rem] p-6 md:p-8 text-center hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/40 transition-all duration-500"
+                  viewport={{ once: true, margin: "-30px" }}
+                  transition={{
+                    delay: i * 0.05,
+                    duration: 0.5,
+                    ease: "easeOut",
+                  }}
+                  whileHover={{ y: -8 }} // نتحكم في الحركة هنا فقط لمنع التعارض
+                  className="group relative bg-card border border-border/60 rounded-[2rem] p-6 md:p-8 text-center shadow-sm hover:shadow-lg md:hover:shadow-2xl hover:border-primary/40 transition-[background-color,border-color,box-shadow] duration-300"
                 >
                   {/* خلفية خفيفة تظهر عند الهوفير */}
-                  <div className="absolute inset-0 bg-primary/[0.02] opacity-0 group-hover:opacity-100 rounded-[2rem] transition-opacity" />
+                  <div className="absolute inset-0 bg-primary/[0.02] opacity-0 group-hover:opacity-100 rounded-[2rem] transition-opacity duration-300" />
 
                   {/* حاوية الأيقونة - تتبع الثيم تماماً */}
-                  <div className="relative w-16 h-16 md:w-20 md:h-20 bg-primary/10 dark:bg-primary/20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-primary group-hover:rotate-[10deg] transition-all duration-500 shadow-sm">
-                    <stat.icon className="w-8 h-8 md:w-10 md:h-10 text-primary group-hover:text-white transition-colors duration-500" />
+                  <div className="relative w-16 h-16 md:w-20 md:h-20 bg-primary/10 dark:bg-primary/20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-primary group-hover:rotate-[10deg] transition-[background-color,transform] duration-300 shadow-sm">
+                    <stat.icon className="w-8 h-8 md:w-10 md:h-10 text-primary group-hover:text-white transition-colors duration-300" />
                   </div>
 
                   <div className="relative">
