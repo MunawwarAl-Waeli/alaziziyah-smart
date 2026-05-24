@@ -273,7 +273,7 @@ export function SmartCalculator() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-10 md:mb-14 max-w-3xl mx-auto will-change-transform transform-gpu"
+          className="text-center mb-10 md:mb-14 max-w-3xl mx-auto "
         >
           <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-primary/10 border border-primary/20 mb-6">
             <Calculator className="w-5 h-5 text-primary" />
@@ -353,7 +353,7 @@ export function SmartCalculator() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: shouldReduceMotion ? 0 : -20 }}
                   transition={{ duration: 0.3 }}
-                  className="will-change-transform transform-gpu"
+                  
                 >
                   {/* ================= الخطوة 1: الخدمات ================= */}
                   {currentStep === 1 && (
@@ -507,13 +507,12 @@ export function SmartCalculator() {
                     initial={{ opacity: 0, scale: shouldReduceMotion ? 1 : 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.4 }}
-                    className="max-w-2xl mx-auto space-y-6 md:space-y-8 will-change-transform transform-gpu"
+                    className="max-w-2xl mx-auto space-y-6 md:space-y-8"
                   >
 
              
-                    {/* المربع السعري */}
-                    {/* التعديل هنا: أضفنا isolate و transform-gpu لمنع تداخل الطبقات */}
-                    <div className="bg-gradient-to-br from-primary to-primary-dark text-white p-6 md:p-8 rounded-3xl text-center shadow-xl shadow-primary/20 relative overflow-hidden isolate transform-gpu">
+                  
+                    <div className="bg-gradient-to-br from-primary to-primary-dark text-white p-6 md:p-8 rounded-3xl text-center shadow-xl shadow-primary/20 relative overflow-hidden isolate">
                       {/* التعديل هنا: استخدمنا radial-gradient بدلاً من blur-2xl المكلف حسابياً */}
                       <div
                         className="absolute -top-10 -right-10 w-32 h-32 rounded-full pointer-events-none"

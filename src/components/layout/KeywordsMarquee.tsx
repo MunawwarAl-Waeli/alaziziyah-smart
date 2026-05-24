@@ -65,10 +65,7 @@ export function KeywordsMarquee() {
       {/* إضاءة خلفية خفيفة جداً تتماشى مع الثيم */}
       <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-primary/5 opacity-50 pointer-events-none" />
 
-      {/* الظلال الجانبية (التلاشي) بخلفية الـ Card لتندمج بسلاسة */}
-      {/* <div className="absolute inset-y-0 right-0 w-24 md:w-40 bg-gradient-to-l from-card to-transparent z-10 pointer-events-none" />
-      <div className="absolute inset-y-0 left-0 w-24 md:w-40 bg-gradient-to-r from-card to-transparent z-10 pointer-events-none" /> */}
-
+    
       <div className="flex min-w-max animate-marquee hover:[animation-play-state:paused] items-center">
         {marqueeItems.map((item, index) => (
           <MarqueeItem key={`${index}-${item.text}`} item={item} />

@@ -58,28 +58,7 @@ export function ServicesGridClient({
       dir="rtl"
     >
 
-      {/* ===== خلفية القسم البصرية ===== */}
-      {/* <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <motion.div
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.1, 0.15, 0.1],
-            rotate: [0, 45, 0],
-          }}
-          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-          // className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-amber-500/10 rounded-full blur-3xl"
-        />
-        <motion.div
-          animate={{
-            scale: [1, 1.3, 1],
-            opacity: [0.05, 0.1, 0.05],
-            x: [0, 100, 0],
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-          // className="absolute -bottom-40 -left-40 w-[700px] h-[700px] bg-amber-600/10 rounded-full blur-3xl"
-        />
-      </div> */}
-
+   
       <div className="container mx-auto px-4 relative z-10">
         {/* ===== عنوان القسم ===== */}
         <motion.div

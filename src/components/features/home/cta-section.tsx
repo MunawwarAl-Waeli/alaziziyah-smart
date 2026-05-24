@@ -16,10 +16,7 @@ export function CTASection() {
 
       {/* 🚀 تم حذف سطر noise.svg المعطل من هنا لتسريع الموقع ومنع خطأ 404 */}
 
-      {/* دوائر خلفية جمالية */}
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-500/10 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/2 pointer-events-none" />
-
+   
       <div className="container mx-auto relative z-10 text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

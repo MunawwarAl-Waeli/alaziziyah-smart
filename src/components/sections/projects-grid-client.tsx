@@ -23,10 +23,7 @@ export default function ProjectsGridClient({
       dir="rtl"
     >
 
-      {/* إضاءة خلفية فخمة لكسر جمود اللون الداكن */}
-      {/* <div className="absolute top-0 right-0 w-[40rem] h-[40rem] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-[30rem] h-[30rem] bg-primary/5 rounded-full blur-[100px] pointer-events-none" /> */}
-
+   
       <div className="container mx-auto px-4 relative z-10">
         {/* رأس القسم (العنوان) */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 md:mb-16">

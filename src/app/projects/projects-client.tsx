@@ -119,12 +119,12 @@ export function ProjectsClient({ initialProjects }: Props) {
     "@type": "CollectionPage",
     name: "معرض مشاريع العزيزية",
     description: "مجموعة متكاملة من مشاريع المظلات والسواتر والبرجولات",
-    url: "https://alaziziah.com/projects",
+    url: "https://al-azizia.com/projects",
     numberOfItems: stats.total,
     itemListElement: filteredProjects.map((project, index) => ({
       "@type": "CreativeWork",
       position: index + 1,
-      url: `https://alaziziah.com/projects/${project.slug}`,
+      url: `https://al-azizia.com/projects/${project.slug}`,
       name: project.title,
       dateCreated: project.date,
     })),
@@ -170,7 +170,7 @@ export function ProjectsClient({ initialProjects }: Props) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 px-4 py-1.5 rounded-full mb-6"
+              className="inline-flex items-center gap-2 bg-white/10  border border-white/20 px-4 py-1.5 rounded-full mb-6"
             >
               <Sparkles className="w-4 h-4 text-amber-400" />
               <span className="text-white/90 font-medium text-xs md:text-sm tracking-wide">

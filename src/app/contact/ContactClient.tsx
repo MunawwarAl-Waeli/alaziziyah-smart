@@ -107,9 +107,7 @@ export default function ContactClient() {
     >
       {/* Hero Section */}
       <section className="relative pt-20 pb-28 md:pt-32 md:pb-40 lg:pt-40 lg:pb-48 overflow-hidden bg-slate-900 rounded-b-3xl md:rounded-b-[4rem] shadow-2xl z-0">
-        <div className="absolute top-0 right-0 w-[20rem] md:w-[40rem] h-[20rem] md:h-[40rem] bg-amber-500/10 rounded-full blur-[80px] md:blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[20rem] md:w-[30rem] h-[20rem] md:h-[30rem] bg-blue-500/10 rounded-full blur-[80px] md:blur-[100px] translate-y-1/3 -translate-x-1/3 pointer-events-none" />
-
+ 
         <div className="container mx-auto px-4 sm:px-6 relative z-10 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
