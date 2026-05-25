@@ -1,6 +1,6 @@
 // components/floating-chat/mobile-service-card.tsx
 import React, { memo } from "react";
-import { LucideIcon, Briefcase } from "lucide-react";
+import { LucideIcon } from "lucide-react";
 
 export interface CombinedItem {
   id: string;
@@ -19,9 +19,9 @@ const ServiceCard = memo(
         className="flex flex-col items-center gap-2 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-border/50 hover:border-amber-500/50 transition-colors text-center relative overflow-hidden"
         style={{
           width: "100%",
-          height: "130px", // ارتفاع ثابت يمنع القفزات
-          contentVisibility: "auto", // يرسم فقط ما يظهر في الشاشة
-          containIntrinsicSize: "auto 130px", // يحافظ على المساحة قبل الرسم
+          height: "130px",
+          contentVisibility: "auto",
+          containIntrinsicSize: "auto 130px",
         }}
       >
         {type === "project" && (
@@ -40,8 +40,7 @@ const ServiceCard = memo(
   },
   (prevProps, nextProps) =>
     prevProps.item.id === nextProps.item.id &&
-    prevProps.item.name === nextProps.item.name &&
-    prevProps.item.href === nextProps.item.href,
+    prevProps.item.name === nextProps.item.name,
 );
 ServiceCard.displayName = "ServiceCard";
 

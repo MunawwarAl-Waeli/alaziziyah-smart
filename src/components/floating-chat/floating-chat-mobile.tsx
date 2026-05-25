@@ -30,7 +30,7 @@ import { cn } from "@/lib/utils";
 import { getAllProjects, getAllServices } from "@/lib/api";
 import ServiceCard, { type CombinedItem } from "./mobile-service-card";
 
-// دالة الأيقونة (بدون تغيير)
+// دالة الأيقونة (كما هي)
 export const getServiceIcon = (text: string): LucideIcon => {
   const lowerText = text.toLowerCase();
   if (lowerText.includes("سيارات")) return CarFront;
@@ -49,19 +49,15 @@ export const getServiceIcon = (text: string): LucideIcon => {
   return PenTool;
 };
 
+const ITEMS_PER_PAGE = 8; // عدد العناصر في الدفعة الواحدة
+
 const FloatingChatMobile = memo(() => {
   const [showCombinedMenu, setShowCombinedMenu] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [combinedList, setCombinedList] = useState<CombinedItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showScrollTop, setShowScrollTop] = useState(false);
-
-  // Debounce للبحث
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedSearch(searchTerm), 200);
-    return () => clearTimeout(timer);
-  }, [searchTerm]);
+  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE); // يتحكم في العدد المعروض
 
   // تحميل البيانات مرة واحدة وحساب الأيقونات مسبقاً
   useEffect(() => {
@@ -103,13 +99,24 @@ const FloatingChatMobile = memo(() => {
     };
   }, []);
 
-  // فلترة باستخدام البحث المؤجل
+  // فلترة حسب البحث
   const filteredList = useMemo(() => {
-    if (!debouncedSearch) return combinedList;
+    if (!searchTerm) return combinedList;
     return combinedList.filter((item) =>
-      item.name.toLowerCase().includes(debouncedSearch.toLowerCase()),
+      item.name.toLowerCase().includes(searchTerm.toLowerCase()),
     );
-  }, [combinedList, debouncedSearch]);
+  }, [combinedList, searchTerm]);
+
+  // القائمة النهائية التي سنعرضها (محدودة بالعدد)
+  const displayedList = useMemo(
+    () => filteredList.slice(0, visibleCount),
+    [filteredList, visibleCount],
+  );
+
+  // إعادة تعيين العداد عند تغيير البحث أو إغلاق القائمة
+  useEffect(() => {
+    setVisibleCount(ITEMS_PER_PAGE);
+  }, [searchTerm, showCombinedMenu]);
 
   // مؤشر التمرير للأعلى
   useEffect(() => {
@@ -169,7 +176,7 @@ const FloatingChatMobile = memo(() => {
         </div>
       </div>
 
-      {/* القائمة المدمجة المحسّنة جداً */}
+      {/* القائمة المدمجة مع دفعات */}
       <div
         className={cn(
           "fixed inset-0 z-[110] bg-black/60 transition-opacity duration-200",
@@ -209,7 +216,7 @@ const FloatingChatMobile = memo(() => {
           </div>
         </div>
 
-        {/* منطقة العرض: Grid ثابت مع content-visibility على البطاقات */}
+        {/* منطقة العرض مع دفعات */}
         <div
           className="flex-1 overflow-y-auto overscroll-contain p-4 pt-2 no-scrollbar"
           style={{ contain: "paint layout" }}
@@ -219,11 +226,28 @@ const FloatingChatMobile = memo(() => {
               جاري التحميل...
             </div>
           ) : (
-            <div className="grid grid-cols-2 gap-4">
-              {filteredList.map((item) => (
-                <ServiceCard key={item.id} item={item} />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-2 gap-4">
+                {displayedList.map((item) => (
+                  <ServiceCard key={item.id} item={item} />
+                ))}
+              </div>
+              {/* زر عرض المزيد */}
+              {visibleCount < filteredList.length && (
+                <div className="flex justify-center mt-4 pb-2">
+                  <button
+                    onClick={() =>
+                      setVisibleCount((prev) =>
+                        Math.min(prev + ITEMS_PER_PAGE, filteredList.length),
+                      )
+                    }
+                    className="px-6 py-2 bg-amber-500 text-white text-sm font-medium rounded-full hover:bg-amber-600 transition-colors"
+                  >
+                    عرض المزيد ({filteredList.length - visibleCount} المتبقي)
+                  </button>
+                </div>
+              )}
+            </>
           )}
           {!isLoading && filteredList.length === 0 && (
             <div className="text-center py-16 text-muted-foreground">
