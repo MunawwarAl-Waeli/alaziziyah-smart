@@ -72,7 +72,10 @@ export default async function RootLayout({
           />
 
           <div className="flex flex-col min-h-screen">
-            <main className="flex-1">{children}</main>
+            <main className="flex-1 relative isolation-auto" style={{
+              WebkitTransform:'translate3d(0,0,0)',
+              WebkitBackfaceVisibility:'hidden'
+            }}>{children}</main>
             <Footer />
           </div>
         </ThemeProvider>

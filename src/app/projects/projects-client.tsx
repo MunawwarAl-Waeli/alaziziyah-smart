@@ -360,25 +360,28 @@ export function ProjectsClient({ initialProjects }: Props) {
           </div>
         </section>
 
-        {/* ===== إحصائيات موسعة (ثيم موحد ومرن) ===== */}
+        {/* ===== إحصائيات موسعة (نسخة محسنة للأداء) ===== */}
         <section className="py-12 md:py-20 bg-slate-50 dark:bg-slate-900/40 border-y border-border/50">
           <div className="container mx-auto px-4 max-w-7xl">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 12 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.45 }}
               className="text-center mb-10 md:mb-16"
             >
               <h2 className="text-3xl md:text-5xl font-black text-foreground mb-4">
                 إحصائياتنا
               </h2>
+
               <div className="w-20 h-1.5 bg-primary/30 mx-auto rounded-full mb-4" />
+
               <p className="text-muted-foreground text-base md:text-xl max-w-2xl mx-auto font-medium">
                 أرقام تعكس مسيرة النجاح وجودة التنفيذ في كل مشروع
               </p>
             </motion.div>
 
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
               {[
                 {
                   icon: Briefcase,
@@ -407,33 +410,32 @@ export function ProjectsClient({ initialProjects }: Props) {
               ].map((stat, i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 12 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-30px" }}
+                  viewport={{ once: true }}
                   transition={{
-                    delay: i * 0.05,
-                    duration: 0.5,
-                    ease: "easeOut",
+                    delay: i * 0.04,
+                    duration: 0.4,
                   }}
-                  whileHover={{ y: -8 }} // نتحكم في الحركة هنا فقط لمنع التعارض
-                  className="group relative bg-card border border-border/60 rounded-[2rem] p-6 md:p-8 text-center shadow-sm hover:shadow-lg md:hover:shadow-2xl hover:border-primary/40 transition-[background-color,border-color,box-shadow] duration-300"
+                  whileHover={{ scale: 1.02 }}
+                  className="group relative rounded-3xl border border-border/60 bg-card p-5 md:p-7 text-center shadow-sm hover:shadow-lg transition-all duration-200 will-change-transform"
                 >
-                  {/* خلفية خفيفة تظهر عند الهوفير */}
-                  <div className="absolute inset-0 bg-primary/[0.02] opacity-0 group-hover:opacity-100 rounded-[2rem] transition-opacity duration-300" />
-
-                  {/* حاوية الأيقونة - تتبع الثيم تماماً */}
-                  <div className="relative w-16 h-16 md:w-20 md:h-20 bg-primary/10 dark:bg-primary/20 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-primary group-hover:rotate-[10deg] transition-[background-color,transform] duration-300 shadow-sm">
-                    <stat.icon className="w-8 h-8 md:w-10 md:h-10 text-primary group-hover:text-white transition-colors duration-300" />
+                  {/* الأيقونة */}
+                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-primary/10 dark:bg-primary/20 flex items-center justify-center mx-auto mb-5 transition-colors duration-200 group-hover:bg-primary/15">
+                    <stat.icon className="w-8 h-8 md:w-10 md:h-10 text-primary" />
                   </div>
 
-                  <div className="relative">
-                    <div className="text-3xl md:text-5xl font-black text-foreground mb-2 tracking-tight">
+                  {/* المحتوى */}
+                  <div>
+                    <div className="text-3xl md:text-5xl font-black tracking-tight text-foreground mb-2">
                       {stat.value}
                     </div>
+
                     <div className="text-base md:text-xl font-bold text-primary mb-2">
                       {stat.label}
                     </div>
-                    <div className="text-xs md:text-sm text-muted-foreground font-medium">
+
+                    <div className="text-xs md:text-sm font-medium text-muted-foreground">
                       {stat.description}
                     </div>
                   </div>
