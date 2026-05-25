@@ -27,7 +27,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getAllProjects, getAllServices } from "@/lib/api";
+import {  getAllServices } from "@/lib/api";
 import ServiceCard, { type CombinedItem } from "./mobile-service-card";
 
 export const getServiceIcon = (text: string): LucideIcon => {
@@ -63,9 +63,9 @@ const FloatingChatMobile = memo(() => {
     async function fetchAllData() {
       try {
         setIsLoading(true);
-        const [services, projects] = await Promise.all([
+        const [services] = await Promise.all([
           getAllServices(),
-          getAllProjects(),
+        //   getAllProjects(),
         ]);
         if (!isSubscribed) return;
 
@@ -76,15 +76,15 @@ const FloatingChatMobile = memo(() => {
           type: "service",
           IconComponent: getServiceIcon(s.title),
         }));
-        const formattedProjects: CombinedItem[] = projects.map((p) => ({
-          id: `project-${p.slug}`,
-          name: p.title,
-          href: `/projects/${p.slug}`,
-          type: "project",
-          IconComponent: Briefcase,
-        }));
+        // const formattedProjects: CombinedItem[] = projects.map((p) => ({
+        //   id: `project-${p.slug}`,
+        //   name: p.title,
+        //   href: `/projects/${p.slug}`,
+        //   type: "project",
+        //   IconComponent: Briefcase,
+        // }));
 
-        setCombinedList([...formattedServices, ...formattedProjects]);
+        setCombinedList([...formattedServices]);
       } catch (error) {
         console.error("Failed to load data:", error);
       } finally {
