@@ -180,8 +180,8 @@ export function Header({
               desc: s.categoryName,
             }))
           : isProjectsMenu
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            ? uniqueProjects.slice(0, 12).map((p: any, idx) => ({
+            ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              uniqueProjects.slice(0, 12).map((p: any, idx) => ({
                 id: p.id || p.slug || `project-${idx}`,
                 title: p.title,
                 href: `/projects/${p.slug}`,
@@ -694,14 +694,7 @@ export function Header({
           </div>
         </div>
 
-        <div className="p-6 border-t border-border bg-background/90 backdrop-blur-md relative z-10 shrink-0">
-          <Link href="/contact" onClick={closeAllMenus}>
-            <button className="w-full bg-gradient-to-l from-primary-dark to-primary text-primary-foreground font-bold py-4 rounded-xl shadow-lg shadow-primary/25 active:scale-95 transition-transform flex items-center justify-center gap-3 border border-primary-light/30">
-              <CalendarCheck className="w-5 h-5" />
-              <span>احجز موعد المعاينة</span>
-            </button>
-          </Link>
-        </div>
+        <div className="p-6 border-t border-border bg-background/90 backdrop-blur-md relative z-10 shrink-0"></div>
       </div>
 
       {/* 💡 6. Desktop Search Overlay - حركة نعومة عالية عند البحث */}
