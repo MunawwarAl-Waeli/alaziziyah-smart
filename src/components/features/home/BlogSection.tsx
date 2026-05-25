@@ -49,9 +49,7 @@ const safePosts = Array.isArray(posts) ? posts : [];
   return (
     <section
       className="py-16 md:py-24 relative overflow-hidden bg-gradient-to-b from-background to-slate-50 dark:to-slate-950"
-      dir="rtl"
     >
-      <ElegantCurveDivider />
 
     
 

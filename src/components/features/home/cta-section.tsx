@@ -9,14 +9,11 @@ import { ElegantCurveDivider } from "@/components/ui/ElegantCurveDivider";
 export function CTASection() {
   return (
     <section className="relative py-16 md:py-24 px-4 overflow-hidden">
-      <ElegantCurveDivider />
+
 
       {/* خلفية مع تدرج لوني جذاب */}
       <div className="absolute inset-0 bg-primary/10 dark:bg-primary/5" />
 
-      {/* 🚀 تم حذف سطر noise.svg المعطل من هنا لتسريع الموقع ومنع خطأ 404 */}
-
-   
       <div className="container mx-auto relative z-10 text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

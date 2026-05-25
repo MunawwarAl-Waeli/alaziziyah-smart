@@ -237,7 +237,7 @@ export default async function Home() {
 
       <section id="projects" className="relative bg-background pt-20 pb-16">
         <div className="[&>svg>path]:fill-slate-50 dark:[&>svg>path]:fill-slate-900/50">
-          <ElegantCurveDivider />
+       
         </div>
         <div className="relative z-10">
           <SectionWrapper delay={0.2}>
