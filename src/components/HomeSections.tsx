@@ -37,20 +37,6 @@ const BlogSection = dynamic(
   },
 );
 
-const SmartCalculator = dynamic(
-  () =>
-    import("@/components/features/home/SmartCalculator").then(
-      (mod) => mod.SmartCalculator,
-    ),
-  {
-    loading: () => (
-      <div className="min-h-[400px] flex items-center justify-center">
-        جاري التحميل...
-      </div>
-    ),
-  },
-);
-
 const CTASection = dynamic(
   () =>
     import("@/components/features/home/cta-section").then(
@@ -99,17 +85,6 @@ export default function HomeSections({
           transition={{ duration: 0.8, ease: "easeOut", delay: 0.6 }}
         >
           <BlogSection posts={allPosts} />
-        </motion.div>
-      </section>
-
-      <section id="calculator">
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8, ease: "easeOut", delay: 0.8 }}
-        >
-          <SmartCalculator />
         </motion.div>
       </section>
 
