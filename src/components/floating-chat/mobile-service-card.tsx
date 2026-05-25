@@ -20,8 +20,8 @@ const ServiceCard = memo(
         style={{
           width: "100%",
           height: "130px",
-          contentVisibility: "auto",
-          containIntrinsicSize: "auto 130px",
+          contain: "strict",         // يمنع أي تسرب للتخطيط
+          willChange: "transform",   // يضع البطاقة في طبقة GPU مستقلة
         }}
       >
         {type === "project" && (

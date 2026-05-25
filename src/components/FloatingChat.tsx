@@ -44,7 +44,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { getAllProjects, getAllServices } from "@/lib/api";
+import {  getAllServices } from "@/lib/api";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import FloatingChatMobile from "./floating-chat/floating-chat-mobile";
 
