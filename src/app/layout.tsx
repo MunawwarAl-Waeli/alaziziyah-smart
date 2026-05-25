@@ -75,7 +75,8 @@ export default async function RootLayout({
             <main className="flex-1 relative isolation-auto" style={{
               WebkitTransform:'translate3d(0,0,0)',
               WebkitBackfaceVisibility:'hidden'
-            }}>{children}</main>
+            }}
+            >{children}</main>
             <Footer />
           </div>
         </ThemeProvider>

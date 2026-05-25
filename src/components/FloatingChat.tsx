@@ -207,7 +207,7 @@ QuickActionItem.displayName = "QuickActionItem";
 
 // ==================== المكون الرئيسي ====================
 
-export  function FloatingChat() {
+export function FloatingChat() {
   const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [showChat, setShowChat] = useState(false);
@@ -285,9 +285,17 @@ export  function FloatingChat() {
   }, []);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isTyping]);
+    if (!messagesEndRef.current) return;
 
+    if (isMobile) {
+      messagesEndRef.current.scrollIntoView();
+    } else {
+      messagesEndRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
+    }
+  }, [messages, isTyping, isMobile]);
   useEffect(() => {
     if (isOpen) {
       setUnreadCount(0);
@@ -362,7 +370,7 @@ export  function FloatingChat() {
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           className={cn(
-            "fixed bottom-24 right-4 z-[100] w-10 h-10 bg-amber-600 text-white rounded-full shadow-lg flex items-center justify-center transition-all duration-300",
+            "fixed bottom-24 right-4 z-[100] w-10 h-10 bg-amber-600 text-white rounded-full shadow-lg flex items-center justify-center transition-[opacity,transform] duration-300 will-change-transform",
             showScrollTop
               ? "opacity-100 translate-y-0 visible"
               : "opacity-0 translate-y-4 invisible",
@@ -410,7 +418,7 @@ export  function FloatingChat() {
         {/* القائمة المدمجة للجوال (CSS Transitions فقط) */}
         <div
           className={cn(
-            "fixed inset-0 z-[110] bg-black/60  transition-opacity duration-300",
+            "fixed inset-0 z-[110] bg-black/60  transition-opacity duration-200",
             showCombinedMenu ? "opacity-100 visible" : "opacity-0 invisible",
           )}
           onClick={() => setShowCombinedMenu(false)}
@@ -418,7 +426,7 @@ export  function FloatingChat() {
         <div
           dir="rtl"
           className={cn(
-            "fixed bottom-0 left-0 right-0 z-[120] bg-white dark:bg-slate-900 rounded-t-3xl max-h-[85vh] h-[80vh] flex flex-col shadow-2xl transition-transform duration-300 ease-in-out origin-bottom",
+            "fixed bottom-0 left-0 right-0 z-[120] bg-white dark:bg-slate-900 rounded-t-3xl max-h-[85vh] h-[80vh] flex flex-col shadow-lg transition-transform duration-300 ease-in-out origin-bottom",
             showCombinedMenu ? "translate-y-0" : "translate-y-full",
           )}
         >
@@ -446,7 +454,7 @@ export  function FloatingChat() {
               />
             </div>
           </div>
-          <div className="flex-1 overflow-y-auto p-4 pt-2 no-scrollbar">
+          <div className="flex-1 overflow-y-auto overscroll-contain p-4 pt-2 no-scrollbar">
             {isLoading ? (
               <div className="flex items-center justify-center h-40 text-muted-foreground">
                 جاري التحميل...
@@ -500,10 +508,10 @@ export  function FloatingChat() {
       {/* نافذة الدردشة - CSS Transitions Only */}
       <div
         className={cn(
-          "absolute bottom-20 right-0 w-[380px] bg-white dark:bg-slate-900 rounded-2xl border border-border/50 flex flex-col shadow-2xl transition-all duration-300 origin-bottom-right z-10",
+          "absolute bottom-20 right-0 w-[380px] bg-white dark:bg-slate-900 rounded-2xl border border-border/50 flex flex-col shadow-lg transition-[opacity,transform] duration-300 origin-bottom-right will-change-transform z-10",
           isOpen && showChat
             ? "opacity-100 scale-100 visible pointer-events-auto"
-            : "opacity-0 scale-90 invisible pointer-events-none",
+            : "opacity-0 scale-95 invisible pointer-events-none",
         )}
         style={{ maxHeight: "75vh", height: "600px" }}
       >
@@ -511,7 +519,7 @@ export  function FloatingChat() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="relative">
-                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur">
+                <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
                   <Headphones className="w-6 h-6" />
                 </div>
                 {/* Fixed dot بدل الـ pulse المستمر لتقليل استهلاك الموارد */}
@@ -538,7 +546,13 @@ export  function FloatingChat() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50 dark:bg-slate-900/50">
+        <div
+          className="flex-1 overflow-y-auto overscroll-contain p-4 space-y-4 bg-slate-50 dark:bg-slate-900/50"
+          style={{
+            contain: "layout paint",
+            WebkitOverflowScrolling: "touch",
+          }}
+        >
           {messages.map((message) => (
             <MessageBubble key={message.id} msg={message} />
           ))}
@@ -602,10 +616,10 @@ export  function FloatingChat() {
       {/* قائمة الخيارات السريعة - CSS Transitions Only */}
       <div
         className={cn(
-          "absolute bottom-20 right-0 w-72 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-border/50 overflow-hidden transition-all duration-300 origin-bottom-right z-10",
+          "absolute bottom-20 right-0 w-72 bg-white dark:bg-slate-900 rounded-2xl shadow-lg border border-border/50 overflow-hidden transition-[opacity,transform] duration-300 origin-bottom-right will-change-transform z-10",
           isOpen && !showChat
             ? "opacity-100 scale-100 visible pointer-events-auto"
-            : "opacity-0 scale-90 invisible pointer-events-none",
+            : "opacity-0 scale-95 invisible pointer-events-none",
         )}
       >
         <div className="p-3 bg-gradient-to-r from-amber-600 to-amber-500 text-white flex items-center justify-between">
@@ -653,10 +667,10 @@ export  function FloatingChat() {
             if (!isOpen) setShowChat(false);
           }}
           className={cn(
-            "relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center shadow-2xl transition-all duration-300",
+            "relative w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center shadow-lg transition-transform duration-300",
             isOpen
               ? "bg-slate-900 text-white rotate-90 scale-95"
-              : "bg-gradient-to-br from-amber-600 to-amber-500 text-white hover:scale-105",
+              : "bg-gradient-to-br from-amber-600 to-amber-500 text-white hover:scale-[1.03]",
           )}
         >
           {isOpen ? (
@@ -675,5 +689,3 @@ export  function FloatingChat() {
     </div>
   );
 }
-
-
