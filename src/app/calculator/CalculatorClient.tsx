@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useMemo, memo, useCallback } from "react";
+import { useState, useRef, useMemo, useCallback } from "react";
 import { COMPANY_INFO } from "@/lib/config";
 import {
   Calculator,
@@ -21,7 +21,7 @@ import {
 import { cn } from "@/lib/utils";
 
 /* =========================
-   TYPES (unchanged)
+   TYPES
 ========================= */
 
 interface ServiceOption {
@@ -44,7 +44,7 @@ interface MaterialOption {
 }
 
 /* =========================
-   DATA (unchanged)
+   DATA (نفسك السابق)
 ========================= */
 
 const services: ServiceOption[] = [
@@ -52,7 +52,7 @@ const services: ServiceOption[] = [
     id: "carport",
     name: "مظلة سيارات",
     icon: CarFront,
-    description: "",
+    description: "حماية سيارات",
     basePrice: 350,
     minArea: 12,
     maxArea: 500,
@@ -61,7 +61,7 @@ const services: ServiceOption[] = [
     id: "pergola",
     name: "برجولة",
     icon: Home,
-    description: "",
+    description: "جلسات خارجية",
     basePrice: 400,
     minArea: 10,
     maxArea: 400,
@@ -70,7 +70,7 @@ const services: ServiceOption[] = [
     id: "fence",
     name: "ساتر",
     icon: ShieldCheck,
-    description: "",
+    description: "خصوصية",
     basePrice: 300,
     minArea: 10,
     maxArea: 500,
@@ -79,7 +79,7 @@ const services: ServiceOption[] = [
     id: "school",
     name: "مظلة مدرسة",
     icon: Building2,
-    description: "",
+    description: "مدارس",
     basePrice: 380,
     minArea: 50,
     maxArea: 2000,
@@ -88,7 +88,7 @@ const services: ServiceOption[] = [
     id: "pool",
     name: "مظلة مسبح",
     icon: Waves,
-    description: "",
+    description: "مسابح",
     basePrice: 450,
     minArea: 20,
     maxArea: 2000,
@@ -97,7 +97,7 @@ const services: ServiceOption[] = [
     id: "warehouse",
     name: "هنجر",
     icon: Factory,
-    description: "",
+    description: "مستودعات",
     basePrice: 280,
     minArea: 100,
     maxArea: 5000,
@@ -139,175 +139,159 @@ const materials: MaterialOption[] = [
   },
 ];
 
-const steps = [
-  { id: 1, name: "الخدمة" },
-  { id: 2, name: "المساحة" },
-  { id: 3, name: "المواد" },
-  { id: 4, name: "النتيجة" },
-];
-
 /* =========================
-   MAIN COMPONENT
+   MAIN
 ========================= */
 
 export default function CalculatorClient() {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [showResult, setShowResult] = useState(false);
+  // 🔥 5 steps (بدون showResult)
+  const [step, setStep] = useState(1);
 
-  const [selectedService, setSelectedService] = useState<ServiceOption | null>(
-    null,
-  );
-  const [selectedMaterial, setSelectedMaterial] =
-    useState<MaterialOption | null>(null);
+  const [service, setService] = useState<ServiceOption | null>(null);
+  const [material, setMaterial] = useState<MaterialOption | null>(null);
   const [area, setArea] = useState(20);
 
-  const [formData, setFormData] = useState({ name: "", phone: "" });
+  const [form, setForm] = useState({ name: "", phone: "" });
 
-  const calculatorTopRef = useRef<HTMLDivElement>(null);
-
-  /* =========================
-     MEMOIZED RESULT
-  ========================= */
   const result = useMemo(() => {
-    if (!selectedService || !selectedMaterial) return null;
+    if (!service || !material) return null;
 
-    const base = selectedService.basePrice * area;
-    const material = base * (selectedMaterial.priceFactor - 1);
+    const base = service.basePrice * area;
+    const mat = base * (material.priceFactor - 1);
 
     return {
-      total: base + material,
+      total: base + mat,
       time: Math.max(3, Math.ceil(area / 50) * 2),
-      warranty: selectedMaterial.warranty,
+      warranty: material.warranty,
     };
-  }, [selectedService, selectedMaterial, area]);
+  }, [service, material, area]);
 
-  /* =========================
-     NAVIGATION (stable callbacks)
-  ========================= */
-  const nextStep = useCallback(() => {
-    if (currentStep < 4) setCurrentStep((s) => s + 1);
-    else setShowResult(true);
-  }, [currentStep]);
-
-  const prevStep = useCallback(() => {
-    if (currentStep > 1) setCurrentStep((s) => s - 1);
-  }, [currentStep]);
-
-  const reset = useCallback(() => {
-    setCurrentStep(1);
-    setSelectedService(null);
-    setSelectedMaterial(null);
-    setArea(20);
-    setShowResult(false);
+  const next = useCallback(() => {
+    setStep((s) => Math.min(s + 1, 5));
   }, []);
 
-  const canProceed =
-    (currentStep === 1 && selectedService) ||
-    (currentStep === 2 && area >= (selectedService?.minArea || 0)) ||
-    (currentStep === 3 && selectedMaterial);
+  const prev = useCallback(() => {
+    setStep((s) => Math.max(s - 1, 1));
+  }, []);
+
+  const reset = useCallback(() => {
+    setStep(1);
+    setService(null);
+    setMaterial(null);
+    setArea(20);
+    setForm({ name: "", phone: "" });
+  }, []);
+
+  const canNext =
+    (step === 1 && service) ||
+    (step === 2 && area >= (service?.minArea || 0)) ||
+    (step === 3 && material) ||
+    (step === 4 && result);
 
   const format = (n: number) => Math.round(n).toLocaleString("en-US") + " ريال";
 
-  /* =========================
-     RENDER
-  ========================= */
+  const send = () => {
+    if (!result) return;
+
+    const msg = `
+طلب عرض سعر
+الاسم: ${form.name}
+الجوال: ${form.phone}
+الخدمة: ${service?.name}
+المساحة: ${area}
+التكلفة: ${format(result.total)}
+    `;
+
+    window.open(
+      `https://wa.me/${COMPANY_INFO.whatsapp}?text=${encodeURIComponent(msg)}`,
+      "_blank",
+    );
+  };
 
   return (
     <main className="w-full bg-slate-50 dark:bg-slate-950" dir="rtl">
-      {/* مساحة للهيدر */}
+      {/* spacing للهيدر */}
       <div className="h-16 md:h-20" />
 
       <div className="container mx-auto px-4">
         {/* HEADER */}
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10">
+        <div className="text-center mb-8">
+          <div className="inline-flex gap-2 items-center bg-primary/10 px-4 py-2 rounded-full">
             <Calculator className="w-5 h-5" />
-            حاسبة التكلفة
+            الحاسبة الذكية
           </div>
         </div>
 
-        <div ref={calculatorTopRef} />
-
         {/* PROGRESS */}
         <div className="max-w-4xl mx-auto mb-8">
-          <div className="flex justify-between mb-3">
-            {steps.map((s) => (
-              <div
-                key={s.id}
-                className={cn("text-xs", s.id <= currentStep && "text-primary")}
-              >
-                {s.name}
-              </div>
-            ))}
-          </div>
-
-          <div className="h-1 bg-slate-200 rounded-full">
+          <div className="h-1 bg-slate-200 rounded">
             <div
               className="h-full bg-primary transition-all"
-              style={{ width: `${((currentStep - 1) / 3) * 100}%` }}
+              style={{ width: `${(step - 1) * 25}%` }}
             />
           </div>
         </div>
 
         {/* CARD */}
-        <div className="max-w-4xl mx-auto bg-white dark:bg-slate-900 rounded-2xl border">
-          <div className="p-6">
-            {/* ================= STEP 1 ================= */}
-            <div className={cn(currentStep === 1 ? "block" : "hidden")}>
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
-                {services.map((s) => (
-                  <button
-                    key={s.id}
-                    onClick={() => setSelectedService(s)}
-                    className={cn(
-                      "p-4 border rounded-xl",
-                      selectedService?.id === s.id && "border-primary",
-                    )}
-                  >
-                    <s.icon className="w-6 h-6 mx-auto mb-2" />
-                    {s.name}
-                  </button>
-                ))}
-              </div>
+        <div className="max-w-4xl mx-auto bg-white dark:bg-slate-900 rounded-2xl border p-6">
+          {/* STEP 1 */}
+          <div className={cn(step === 1 ? "block" : "hidden")}>
+            <div className="grid grid-cols-2 gap-3">
+              {services.map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => setService(s)}
+                  className={cn(
+                    "p-4 border rounded-xl",
+                    service?.id === s.id && "border-primary",
+                  )}
+                >
+                  <s.icon className="w-6 h-6 mx-auto mb-2" />
+                  {s.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* STEP 2 */}
+          <div className={cn(step === 2 ? "block" : "hidden")}>
+            <div className="text-center text-4xl font-bold text-primary">
+              {area} م²
             </div>
 
-            {/* ================= STEP 2 ================= */}
-            <div className={cn(currentStep === 2 ? "block" : "hidden")}>
-              <div className="text-center">
-                <div className="text-5xl font-bold text-primary">{area} م²</div>
-                <input
-                  type="range"
-                  min={selectedService?.minArea || 10}
-                  max={selectedService?.maxArea || 1000}
-                  value={area}
-                  onChange={(e) => setArea(Number(e.target.value))}
-                  className="w-full mt-6"
-                />
-              </div>
-            </div>
+            <input
+              type="range"
+              min={service?.minArea || 10}
+              max={service?.maxArea || 1000}
+              value={area}
+              onChange={(e) => setArea(Number(e.target.value))}
+              className="w-full mt-6"
+            />
+          </div>
 
-            {/* ================= STEP 3 ================= */}
-            <div className={cn(currentStep === 3 ? "block" : "hidden")}>
-              <div className="grid grid-cols-2 gap-3">
-                {materials.map((m) => (
-                  <button
-                    key={m.id}
-                    onClick={() => setSelectedMaterial(m)}
-                    className={cn(
-                      "p-4 border rounded-xl",
-                      selectedMaterial?.id === m.id && "border-primary",
-                    )}
-                  >
-                    {m.name}
-                  </button>
-                ))}
-              </div>
+          {/* STEP 3 */}
+          <div className={cn(step === 3 ? "block" : "hidden")}>
+            <div className="grid grid-cols-2 gap-3">
+              {materials.map((m) => (
+                <button
+                  key={m.id}
+                  onClick={() => setMaterial(m)}
+                  className={cn(
+                    "p-4 border rounded-xl",
+                    material?.id === m.id && "border-primary",
+                  )}
+                >
+                  {m.name}
+                </button>
+              ))}
             </div>
+          </div>
 
-            {/* ================= RESULT ================= */}
-            {showResult && result && (
+          {/* STEP 4 - RESULT */}
+          <div className={cn(step === 4 ? "block" : "hidden")}>
+            {result && (
               <div className="text-center space-y-4">
-                <div className="text-4xl font-black text-primary">
+                <div className="text-5xl font-black text-primary">
                   {format(result.total)}
                 </div>
 
@@ -316,27 +300,51 @@ export default function CalculatorClient() {
                 </div>
               </div>
             )}
+          </div>
 
-            {/* ================= NAV ================= */}
-            {!showResult && (
-              <div className="flex justify-between mt-8 pt-4 border-t">
-                <button onClick={prevStep}>السابق</button>
+          {/* STEP 5 - FORM */}
+          <div className={cn(step === 5 ? "block" : "hidden")}>
+            <div className="space-y-4">
+              <input
+                placeholder="الاسم"
+                className="w-full p-3 border rounded-xl"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+              />
 
-                <div className="flex gap-2">
-                  <button onClick={reset}>
-                    <RotateCcw className="w-5 h-5" />
-                  </button>
+              <input
+                placeholder="رقم الجوال"
+                className="w-full p-3 border rounded-xl"
+                value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+              />
 
-                  <button
-                    onClick={nextStep}
-                    disabled={!canProceed}
-                    className="bg-primary text-white px-6 py-2 rounded-xl disabled:opacity-50"
-                  >
-                    التالي
-                  </button>
-                </div>
-              </div>
-            )}
+              <button
+                onClick={send}
+                className="w-full bg-green-500 text-white p-4 rounded-xl"
+              >
+                إرسال واتساب
+              </button>
+            </div>
+          </div>
+
+          {/* NAV */}
+          <div className="flex justify-between mt-8 pt-4 border-t">
+            <button onClick={prev}>السابق</button>
+
+            <div className="flex gap-2">
+              <button onClick={reset}>
+                <RotateCcw className="w-5 h-5" />
+              </button>
+
+              <button
+                onClick={next}
+                disabled={!canNext}
+                className="bg-primary text-white px-6 py-2 rounded-xl disabled:opacity-50"
+              >
+                التالي
+              </button>
+            </div>
           </div>
         </div>
       </div>
