@@ -27,7 +27,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import {  getAllServices } from "@/lib/api";
+import {  getAllServices ,getAllProjects} from "@/lib/api";
 import ServiceCard, { type CombinedItem } from "./mobile-service-card";
 
 export const getServiceIcon = (text: string): LucideIcon => {
@@ -63,9 +63,9 @@ const FloatingChatMobile = memo(() => {
     async function fetchAllData() {
       try {
         setIsLoading(true);
-        const [services] = await Promise.all([
+        const [services,projects] = await Promise.all([
           getAllServices(),
-        //   getAllProjects(),
+          getAllProjects(),
         ]);
         if (!isSubscribed) return;
 
@@ -76,15 +76,15 @@ const FloatingChatMobile = memo(() => {
           type: "service",
           IconComponent: getServiceIcon(s.title),
         }));
-        // const formattedProjects: CombinedItem[] = projects.map((p) => ({
-        //   id: `project-${p.slug}`,
-        //   name: p.title,
-        //   href: `/projects/${p.slug}`,
-        //   type: "project",
-        //   IconComponent: Briefcase,
-        // }));
+        const formattedProjects: CombinedItem[] = projects.map((p) => ({
+          id: `project-${p.slug}`,
+          name: p.title,
+          href: `/projects/${p.slug}`,
+          type: "project",
+          IconComponent: Briefcase,
+        }));
 
-        setCombinedList([...formattedServices]);
+        setCombinedList([...formattedServices, ...formattedProjects]);
       } catch (error) {
         console.error("Failed to load data:", error);
       } finally {
@@ -179,9 +179,12 @@ const FloatingChatMobile = memo(() => {
       <div
         dir="rtl"
         className={cn(
-          "fixed bottom-0 left-0 right-0 z-[120] bg-white dark:bg-slate-900 rounded-t-3xl max-h-[85vh] h-[80vh] flex flex-col shadow-lg transition-transform duration-300 ease-in-out",
-          showCombinedMenu ? "translate-y-0" : "translate-y-full",
-        )}
+          "fixed bottom-0 left-0 right-0 z-[120] bg-white dark:bg-slate-900 rounded-t-3xl max-h-[85vh] h-[80vh] flex flex-col shadow-lg",
+        )} 
+        //     className={cn(
+        //   "fixed bottom-0 left-0 right-0 z-[120] bg-white dark:bg-slate-900 rounded-t-3xl max-h-[85vh] h-[80vh] flex flex-col shadow-lg transition-transform duration-300 ease-in-out",
+        //   showCombinedMenu ? "translate-y-0" : "translate-y-full",
+        // )}
       >
         <div className="w-12 h-1.5 bg-gray-300 dark:bg-slate-700 rounded-full mx-auto mt-4 shrink-0" />
         <div className="flex justify-between items-center p-5 border-b border-border/50 shrink-0">
