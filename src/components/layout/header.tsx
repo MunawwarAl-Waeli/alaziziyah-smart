@@ -538,7 +538,7 @@ export function Header({
           >
             <Image
               src="/images/logo.png"
-              alt="الشعار"
+              alt="شعار مؤسسة العزيزية للمظلات والسواتر"
               fill
               className="object-contain object-right"
             />
