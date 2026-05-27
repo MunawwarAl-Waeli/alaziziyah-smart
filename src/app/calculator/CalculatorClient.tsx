@@ -189,18 +189,32 @@ export default function CalculatorClient() {
     (step === 4 && result);
 
   const format = (n: number) => Math.round(n).toLocaleString("en-US") + " ريال";
-
   const send = () => {
-    if (!result) return;
+    if (!result || !service || !material) return;
 
+    // 🔥 Analytics / GTM Event
+    if (typeof window !== "undefined") {
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: "calculator_whatsapp_lead",
+        lead_category: "Smart Calculator",
+        service_name: service.name,
+        material_type: material.name,
+        project_area: area,
+        estimated_value: result.total,
+      });
+    }
+
+    // WhatsApp message
     const msg = `
-طلب عرض سعر
+طلب عرض سعر رسمي
 الاسم: ${form.name}
 الجوال: ${form.phone}
 الخدمة: ${service?.name}
-المساحة: ${area}
-التكلفة: ${format(result.total)}
-    `;
+المساحة: ${area} م²
+الخامة: ${material?.name}
+التكلفة التقديرية: ${format(result.total)}
+  `;
 
     window.open(
       `https://wa.me/${COMPANY_INFO.whatsapp}?text=${encodeURIComponent(msg)}`,
