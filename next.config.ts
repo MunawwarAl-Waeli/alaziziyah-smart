@@ -67,283 +67,283 @@ const nextConfig = {
       },
     ];
   },
-  async redirects() {
-    return [
-      // ==========================================
-      // 1. قسم الخدمات (الروابط التي تبدأ بـ "تركيب")
-      // ==========================================
-      {
-        source: encodeURI("/تركيب-مظلات-جدة"),
-        destination: "/",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/تركيب-مظلات-الأحساء"),
-        destination: "/",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/تركيب-مظلات-الدمام"),
-        destination: "/",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/تركيب-مظلات-خارجية"),
-        destination: "/services",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/تركيب-مظلات-متحركة"),
-        destination: "/services/تركيب-مظلات-سيارات",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/تركيب-مظلات-حدائق"),
-        destination: "/services",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/تركيب-مظلات-مدارس"),
-        destination: "/projects/مظلات-مدارس",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/تركيب-مظلات-سيارات"),
-        destination: "/services/تركيب-مظلات-سيارات",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/تركيب-قماش-مظلات"),
-        destination: "/services/تركيب-مظلات-سيارات",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/تركيب-مظلات"),
-        destination: "/services/تركيب-مظلات-سيارات",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/تركيب-مظلات-وسواتر"),
-        destination: "/services/تركيب-مظلات-سيارات",
-        permanent: true,
-      },
+  // async redirects() {
+  //   return [
+  //     // ==========================================
+  //     // 1. قسم الخدمات (الروابط التي تبدأ بـ "تركيب")
+  //     // ==========================================
+  //     {
+  //       source: encodeURI("/تركيب-مظلات-جدة"),
+  //       destination: "/",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/تركيب-مظلات-الأحساء"),
+  //       destination: "/",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/تركيب-مظلات-الدمام"),
+  //       destination: "/",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/تركيب-مظلات-خارجية"),
+  //       destination: "/services",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/تركيب-مظلات-متحركة"),
+  //       destination: "/services/تركيب-مظلات-سيارات",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/تركيب-مظلات-حدائق"),
+  //       destination: "/services",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/تركيب-مظلات-مدارس"),
+  //       destination: "/projects/مظلات-مدارس",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/تركيب-مظلات-سيارات"),
+  //       destination: "/services/تركيب-مظلات-سيارات",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/تركيب-قماش-مظلات"),
+  //       destination: "/services/تركيب-مظلات-سيارات",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/تركيب-مظلات"),
+  //       destination: "/services/تركيب-مظلات-سيارات",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/تركيب-مظلات-وسواتر"),
+  //       destination: "/services/تركيب-مظلات-سيارات",
+  //       permanent: true,
+  //     },
 
-      // خدمات السواتر
-      {
-        source: encodeURI("/تركيب-سواتر-حديد"),
-        destination: "/services/تركيب-سواتر",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/تركيب-سواتر-ابواب"),
-        destination: "/services/تركيب-سواتر",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/تركيب-سواتر"),
-        destination: "/services/تركيب-سواتر",
-        permanent: true,
-      },
+  //     // خدمات السواتر
+  //     {
+  //       source: encodeURI("/تركيب-سواتر-حديد"),
+  //       destination: "/services/تركيب-سواتر",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/تركيب-سواتر-ابواب"),
+  //       destination: "/services/تركيب-سواتر",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/تركيب-سواتر"),
+  //       destination: "/services/تركيب-سواتر",
+  //       permanent: true,
+  //     },
 
-      // خدمات البرجولات والجلسات الشد_الانشائي
-      {
-        source: encodeURI("/تركيب-برجولات"),
-        destination: "/services/تركيب-برجولات",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/تركيب-جلسات-خارجية"),
-        destination: "/services/تصميم-وتركيب-مظلات-حدائق",
-        permanent: true,
-      },
+  //     // خدمات البرجولات والجلسات الشد_الانشائي
+  //     {
+  //       source: encodeURI("/تركيب-برجولات"),
+  //       destination: "/services/تركيب-برجولات",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/تركيب-جلسات-خارجية"),
+  //       destination: "/services/تصميم-وتركيب-مظلات-حدائق",
+  //       permanent: true,
+  //     },
 
-      // خدمات أخرى
-      {
-        source: encodeURI("/تركيب-لكسان"),
-        destination: "/services/تركيب-مظلات-مسابح-لكسان-ضد-الكسر",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/تركيب-سندوش-بنل"),
-        destination: "/services/ساندوتش-بانل",
-        permanent: true,
-      },
+  //     // خدمات أخرى
+  //     {
+  //       source: encodeURI("/تركيب-لكسان"),
+  //       destination: "/services/تركيب-مظلات-مسابح-لكسان-ضد-الكسر",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/تركيب-سندوش-بنل"),
+  //       destination: "/services/ساندوتش-بانل",
+  //       permanent: true,
+  //     },
 
-      // ==========================================
-      // 2. قسم معارض الأعمال (المشاريع)
-      // ==========================================
-      {
-        source: encodeURI("/مظلات-منازل"),
-        destination: "/projects/مظلات-حدائق",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/مظلات-محلات"),
-        destination: "/projects",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/مظلات-قرميد"),
-        destination: "/services/قرميد",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/مظلات-مسابح"),
-        destination: "/projects/مظلات-مسابح",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/مظلات-مدارس"),
-        destination: "/projects/مظلات-مدارس",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/مظلات-الشد-الانشائي"),
-        destination: "/projects/مظلات-الشد-الانشائي",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/مظلات-بي-في-سي"),
-        destination: "/projects",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/مظلات-قماش"),
-        destination: "/services/قماش-مظلات",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/مظلات-سيارات-حديد"),
-        destination: "/projects/مظلات-سيارات",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/مظلات-برجولات"),
-        destination: "/projects/معرض_برجولات_حديد",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/مظلات-خارجية-للمنازل"),
-        destination: "/projects/مظلات-حدائق",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/مظلات-حدائق-منزلية"),
-        destination: "/projects/مظلات-حدائق",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/قماش-مظلات"),
-        destination: "/services/قماش-مظلات",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/مظلات-لكسان"),
-        destination: "/projects/مظلات-لكسان",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/مظلات-حديد"),
-        destination: "/projects/معرض_برجولات_حديد",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/مظلات-خشبية"),
-        destination: "/projects/معرض_برجولات_حديد",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/مظلات-جلسات"),
-        destination: "/projects/مظلات-حدائق",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/مظلات-سيارات-متحركة"),
-        destination: "/projects/مظلات-سيارات",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/مظلات-متحركة"),
-        destination: "/projects",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/مظلات-حدائق"),
-        destination: "/projects/مظلات-حدائق",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/مظلات-سيارات"),
-        destination: "/projects/مظلات-سيارات",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/تفصيل-مظلة-للسيارة"),
-        destination: "/projects/مظلات-سيارات",
-        permanent: true,
-      },
+  //     // ==========================================
+  //     // 2. قسم معارض الأعمال (المشاريع)
+  //     // ==========================================
+  //     {
+  //       source: encodeURI("/مظلات-منازل"),
+  //       destination: "/projects/مظلات-حدائق",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/مظلات-محلات"),
+  //       destination: "/projects",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/مظلات-قرميد"),
+  //       destination: "/services/قرميد",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/مظلات-مسابح"),
+  //       destination: "/projects/مظلات-مسابح",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/مظلات-مدارس"),
+  //       destination: "/projects/مظلات-مدارس",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/مظلات-الشد-الانشائي"),
+  //       destination: "/projects/مظلات-الشد-الانشائي",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/مظلات-بي-في-سي"),
+  //       destination: "/projects",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/مظلات-قماش"),
+  //       destination: "/services/قماش-مظلات",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/مظلات-سيارات-حديد"),
+  //       destination: "/projects/مظلات-سيارات",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/مظلات-برجولات"),
+  //       destination: "/projects/معرض_برجولات_حديد",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/مظلات-خارجية-للمنازل"),
+  //       destination: "/projects/مظلات-حدائق",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/مظلات-حدائق-منزلية"),
+  //       destination: "/projects/مظلات-حدائق",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/قماش-مظلات"),
+  //       destination: "/services/قماش-مظلات",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/مظلات-لكسان"),
+  //       destination: "/projects/مظلات-لكسان",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/مظلات-حديد"),
+  //       destination: "/projects/معرض_برجولات_حديد",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/مظلات-خشبية"),
+  //       destination: "/projects/معرض_برجولات_حديد",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/مظلات-جلسات"),
+  //       destination: "/projects/مظلات-حدائق",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/مظلات-سيارات-متحركة"),
+  //       destination: "/projects/مظلات-سيارات",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/مظلات-متحركة"),
+  //       destination: "/projects",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/مظلات-حدائق"),
+  //       destination: "/projects/مظلات-حدائق",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/مظلات-سيارات"),
+  //       destination: "/projects/مظلات-سيارات",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/تفصيل-مظلة-للسيارة"),
+  //       destination: "/projects/مظلات-سيارات",
+  //       permanent: true,
+  //     },
 
-      // مشاريع السواتر
-      {
-        source: encodeURI("/سواتر-شرائح-حديد"),
-        destination: "/projects/سواتر-حديد",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/سواتر-لكسان"),
-        destination: "/projects/مظلات-لكسان",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/سواتر-خشبية"),
-        destination: "/projects/سواتر-حديد",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/سواتر-حديد"),
-        destination: "/projects/سواتر-حديد",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/سواتر-قماش"),
-        destination: "/projects/سواتر-حديد",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/برجولات-حديد"),
-        destination: "/projects/معرض_برجولات_حديد",
-        permanent: true,
-      },
+  //     // مشاريع السواتر
+  //     {
+  //       source: encodeURI("/سواتر-شرائح-حديد"),
+  //       destination: "/projects/سواتر-حديد",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/سواتر-لكسان"),
+  //       destination: "/projects/مظلات-لكسان",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/سواتر-خشبية"),
+  //       destination: "/projects/سواتر-حديد",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/سواتر-حديد"),
+  //       destination: "/projects/سواتر-حديد",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/سواتر-قماش"),
+  //       destination: "/projects/سواتر-حديد",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/برجولات-حديد"),
+  //       destination: "/projects/معرض_برجولات_حديد",
+  //       permanent: true,
+  //     },
 
-      // روابط عامة
-      {
-        source: encodeURI("/شركة-عمل-سواتر-ومظلات"),
-        destination: "/contact",
-        permanent: true,
-      },
-      {
-        source: encodeURI("/شركة-تركيب-السواتر-والمظلات"),
-        destination: "/",
-        permanent: true,
-      },
+  //     // روابط عامة
+  //     {
+  //       source: encodeURI("/شركة-عمل-سواتر-ومظلات"),
+  //       destination: "/contact",
+  //       permanent: true,
+  //     },
+  //     {
+  //       source: encodeURI("/شركة-تركيب-السواتر-والمظلات"),
+  //       destination: "/",
+  //       permanent: true,
+  //     },
 
-      // ==========================================
-      // 3. الصفحات الثابتة (السياسات والشروط)
-      // ==========================================
-      {
-        source: encodeURI("/العزيزية-للمظلات-والسواتر"),
-        destination: "/",
-        permanent: true,
-      },
-      {
-        // الرابط "الناقص" الذي يظهر في جوجل
-        source: encodeURI("/projects/معرض_برجولات"),
-        // الرابط "الصحيح" الموجود فعلياً في موقعك
-        destination: "/projects/معرض_برجولات_حديد",
-        permanent: true,
-      },
-    ];
-  },
+  //     // ==========================================
+  //     // 3. الصفحات الثابتة (السياسات والشروط)
+  //     // ==========================================
+  //     {
+  //       source: encodeURI("/العزيزية-للمظلات-والسواتر"),
+  //       destination: "/",
+  //       permanent: true,
+  //     },
+  //     {
+  //       // الرابط "الناقص" الذي يظهر في جوجل
+  //       source: encodeURI("/projects/معرض_برجولات"),
+  //       // الرابط "الصحيح" الموجود فعلياً في موقعك
+  //       destination: "/projects/معرض_برجولات_حديد",
+  //       permanent: true,
+  //     },
+  //   ];
+  // },
   experimental: {
     optimizeCss: true,
   },
