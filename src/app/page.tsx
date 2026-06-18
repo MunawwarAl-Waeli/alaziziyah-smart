@@ -4,7 +4,6 @@ import { MainHero } from "@/components/features/home/hero";
 import { KeywordsMarquee } from "@/components/layout/KeywordsMarquee";
 import { SectionWrapper } from "@/components/layout/SectionWrapper";
 import { Metadata } from "next";
-import { ElegantCurveDivider } from "@/components/ui/ElegantCurveDivider";
 
 // استيراد الإعدادات الموحدة التي أنشأناها سابقاً
 import { siteConfig } from "@/lib/seo-config";
@@ -207,7 +206,7 @@ export default async function Home() {
     getYouTubeVideos(), // جلب الفيديوهات
   ]);
 
-  const videoError = videos === null ? "حدث خطأ أثناء الاتصال بيوتيوب." : null;
+  const videoError = videos === null ? "حدث خطأ أثناء الاتصال " : null;
 
   let heroDescription = cleanContent(data?.nodeByUri?.content);
   if (heroDescription.length < 10) {
