@@ -5,7 +5,7 @@ import { getAllServices, getAllProjects } from "@/lib/api";
 import { fetchAllBlogPosts } from "./blog/data/posts";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://al-azizia.com";
+  const baseUrl = "https://support.al-azizia.com";
 
   // 1. جلب البيانات من الووردبريس (باستخدام دوالك الجاهزة)
   // نستخدم Promise.all لنجلب الخدمات والمشاريع في نفس اللحظة لتسريع بناء الموقع

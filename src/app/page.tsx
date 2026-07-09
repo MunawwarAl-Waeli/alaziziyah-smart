@@ -105,7 +105,7 @@ export async function generateMetadata(): Promise<Metadata> {
     "شركة العزيزية للمظلات والسواتر: متخصصون في تركيب مظلات سيارات، سواتر حديد، برجولات حدائق، هناجر ومستودعات، وأعمال الشد الإنشائي في جدة والمملكة.";
 
   // الرابط المباشر للصورة التي تريدها أن تظهر في جوجل (يفضل أن تكون صورة واجهة مميزة)
-  const ogImage = "https://al-azizia.com/main-project-image.jpg";
+  const ogImage = "https://support.al-azizia.com/main-project-image.jpg";
 
   return {
     title: `${title} | الخيار الأول للمظلات والسواتر`,

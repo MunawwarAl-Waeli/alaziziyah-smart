@@ -10,9 +10,9 @@ export function JsonLd() {
     "@context": "https://schema.org",
     "@type": "HomeAndConstructionBusiness",
     name: "العزيزية للمظلات والسواتر",
-    url: "https://al-azizia.com",
-    logo: "https://al-azizia.com/icon.png",
-    image: "https://al-azizia.com/main-project-image.jpg", // إضافة الحقل المفقود (image) لحل التحذير الأصفر
+    url: "https://support.al-azizia.com",
+    logo: "https://support.al-azizia.com/icon.png",
+    image: "https://support.al-azizia.com/main-project-image.jpg", // إضافة الحقل المفقود (image) لحل التحذير الأصفر
     description:
       "شركة رائدة في تركيب المظلات والسواتر والبرجولات في المملكة العربية السعودية",
     telephone: "+966530989975", // إضافة الهاتف في المستوى الرئيسي لحل التحذير الثاني
@@ -59,7 +59,7 @@ export function JsonLd() {
         "@type": "ListItem",
         position: 1,
         name: "الرئيسية",
-        item: "https://al-azizia.com",
+        item: "https://support.al-azizia.com",
       },
       ...pathNodes.map((node, index) => ({
         "@type": "ListItem",
