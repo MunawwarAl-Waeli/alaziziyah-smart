@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     title: "خدمات مؤسسة العزيزية | أفضل حلول التظليل بجدة",
     description:
       "تصفح كتالوج خدماتنا المتكامل في تركيب المظلات والسواتر والبرجولات بأعلى جودة.",
-    url: "https://al-azizia.com/services",
+    url: "https://support.al-azizia.com/services",
     siteName: "العزيزية للمظلات والسواتر",
     locale: "ar_SA",
     type: "website",
@@ -48,7 +48,7 @@ export default async function ServicesPage() {
       .map((service: any, index: number) => ({
         "@type": "ListItem",
         position: index + 1,
-        url: `https://al-azizia.com/services/${service.slug}`,
+        url: `https://support.al-azizia.com/services/${service.slug}`,
         name: service.title, // تأكد من أن المتغير title يطابق اسم الخاصية في بياناتك
       })),
   };

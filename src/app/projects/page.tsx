@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     title: "معرض أعمال العزيزية | أفضل مشاريع التظليل بجدة",
     description:
       "تصفح بالصور أحدث المشاريع التي نفذناها لعملائنا بنجاح. دقة في التنفيذ وضمان على الجودة.",
-    url: "https://al-azizia.com/projects",
+    url: "https://support.al-azizia.com/projects",
     siteName: "العزيزية للمظلات والسواتر",
     locale: "ar_SA",
     type: "website",
@@ -44,7 +44,7 @@ export default async function ProjectsPage() {
       .map((project: any, index: number) => ({
         "@type": "ListItem",
         position: index + 1,
-        url: `https://al-azizia.com/projects/${project.slug}`,
+        url: `https://support.al-azizia.com/projects/${project.slug}`,
         name: project.title,
       })),
   };

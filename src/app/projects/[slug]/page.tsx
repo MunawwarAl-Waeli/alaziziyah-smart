@@ -26,10 +26,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const project = await getProjectGallery(cleanSlug);
   if (!project) return { title: "غير موجود" };
 
-  const projectUrl = `https://al-azizia.com/projects/${cleanSlug}`;
+  const projectUrl = `https://support.al-azizia.com/projects/${cleanSlug}`;
   const ogImage =
     project.featuredImage?.node?.sourceUrl ||
-    "https://al-azizia.com/0.jpg";
+    "https://support.al-azizia.com/0.jpg";
 
   return {
     // 🚀 العنوان البيعي لكتالوج الصور
@@ -72,13 +72,13 @@ export default async function ProjectPage({ params }: Props) {
     "@type": ["CollectionPage", "ImageGallery"],
     name: `معرض صور ${project.title}`,
     description: `كتالوج شامل يعرض أحدث تصميمات وأشكال ${project.title}`,
-    url: `https://al-azizia.com${path}`,
+    url: `https://support.al-azizia.com${path}`,
     publisher: {
       "@type": "HomeAndConstructionBusiness",
       name: "العزيزية للمظلات والسواتر",
     },
     // ربط الصور مباشرة بالكتالوج مع استخدام النص البديل (altText) من ووردبريس
-    mainEntity: galleryImages.map((img, index) => ({
+    mainEntity: galleryImages?.map((img, index) => ({
       "@type": "ImageObject",
       contentUrl: img.sourceUrl,
       // ⚠️ هذه النقطة هي التي ستجعلك تتصدر بحث الصور
