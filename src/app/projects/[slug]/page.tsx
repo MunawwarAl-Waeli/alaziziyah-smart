@@ -78,7 +78,7 @@ export default async function ProjectPage({ params }: Props) {
       name: "العزيزية للمظلات والسواتر",
     },
     // ربط الصور مباشرة بالكتالوج مع استخدام النص البديل (altText) من ووردبريس
-    mainEntity: galleryImages?.map((img, index) => ({
+    mainEntity: galleryImages?.map((img:{ sourceUrl: string; altText: string }, index: number) => ({
       "@type": "ImageObject",
       contentUrl: img.sourceUrl,
       // ⚠️ هذه النقطة هي التي ستجعلك تتصدر بحث الصور

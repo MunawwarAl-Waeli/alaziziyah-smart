@@ -89,11 +89,11 @@ export default async function ServiceDetailPage({ params }: Props) {
 
   const allServices = await getAllServices();
   const currentCategorySlugs =
-    service.serviceCategories?.nodes.map((n) => n.slug) || [];
+    service.serviceCategories?.nodes.map((n:{ slug: string }) => n.slug) || [];
 
   let relatedServices = allServices.filter((s) => {
     const isDifferentService = s.slug !== service.slug;
-    const shareCategory = s.serviceCategories?.nodes.some((cat) =>
+    const shareCategory = s.serviceCategories?.nodes.some((cat:{ slug: string }) =>
       currentCategorySlugs.includes(cat.slug),
     );
     return isDifferentService && shareCategory;
